@@ -1,4 +1,4 @@
-// ====================== AI PERSONA ENGINE v11.0 (Auto‑Discovery Media, Fixed Naming) ======================
+// ====================== AI PERSONA ENGINE v11.1 (Strict Ownership + GitHub Pages Fix) ======================
 // 150 custom personas · Files named: "paul_jande_1.jpg", "das_haruna_fearless_1.jpg", etc.
 // =======================================================================================================
 
@@ -23,6 +23,11 @@
     SESSION_RESET_TIMEOUT: 3600000,
     MAX_FILES_PER_PERSONA: 20
   };
+
+  // ---------- BASE PATH FOR GITHUB PAGES ----------
+  const BASE_PATH = window.location.hostname.includes('github.io') 
+    ? '/New-Group-Test-3/' 
+    : '/';
 
   // ---------- MESSAGE TYPES ----------
   const MessageType = {
@@ -73,7 +78,7 @@
         .trim()
         .replace(/\s+/g, '_')
         .toLowerCase();
-      return `assets/avatars/${safeName}.jpg`;
+      return `${BASE_PATH}assets/avatars/${safeName}.jpg`;
     } else {
       const names = displayName.split(' ');
       const firstLetter = names[0]?.[0] || '';
@@ -82,14 +87,14 @@
     }
   }
 
-  // ---------- HELPER: STRIP EMOJIS AND NORMALIZE FOR FILENAME (FIXED) ----------
+  // ---------- HELPER: STRIP EMOJIS AND NORMALIZE FOR FILENAME ----------
   function normalizeNameForMedia(name) {
     return name
-      .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')   // remove emojis
-      .replace(/[^\w\s]/g, '')                  // remove punctuation
+      .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
+      .replace(/[^\w\s]/g, '')
       .trim()
-      .replace(/\s+/g, '_')                     // spaces → underscores
-      .toLowerCase();                           // all lowercase
+      .replace(/\s+/g, '_')
+      .toLowerCase();
   }
 
   // ---------- PERSONALITY PRESETS ----------
@@ -580,7 +585,7 @@
     }
     
     const normalized = normalizeNameForMedia(personaName);
-    const url = `assets/${type}/${normalized}_${index}.${extension}`;
+    const url = `${BASE_PATH}assets/${type}/${normalized}_${index}.${extension}`;
     
     return new Promise(resolve => {
       if (type === 'images') {
@@ -611,7 +616,7 @@
             personaName: p.name,
             type: 'images',
             filename: `${normalized}_${i}.jpg`,
-            url: `assets/images/${normalized}_${i}.jpg`,
+            url: `${BASE_PATH}assets/images/${normalized}_${i}.jpg`,
             mediaType: 'image'
           });
         }
@@ -625,7 +630,7 @@
             personaName: p.name,
             type: 'voices',
             filename: `${normalized}_${i}.webm`,
-            url: `assets/voices/${normalized}_${i}.webm`,
+            url: `${BASE_PATH}assets/voices/${normalized}_${i}.webm`,
             mediaType: 'audio'
           });
         }
@@ -639,7 +644,7 @@
             personaName: p.name,
             type: 'videos',
             filename: `${normalized}_${i}.mp4`,
-            url: `assets/videos/${normalized}_${i}.mp4`,
+            url: `${BASE_PATH}assets/videos/${normalized}_${i}.mp4`,
             mediaType: 'video'
           });
         }
@@ -686,26 +691,28 @@
     }
 
     const pool = await buildGlobalMediaPool();
-    const unusedPool = pool.filter(item => !isMediaSent(item.personaId, item.type, item.filename));
+    const personaPool = pool.filter(item => item.personaId === preferredPersonaId);
+    
+    if (personaPool.length === 0) {
+      log(`📭 No media files exist for this persona at all`);
+      return null;
+    }
+
+    const unusedPool = personaPool.filter(item => !isMediaSent(item.personaId, item.type, item.filename));
     
     if (unusedPool.length === 0) {
-      log('📭 No unused media available in global pool');
+      log(`📭 All media for this persona has been used in this session`);
       return null;
     }
 
     let filtered = unusedPool.filter(item => preferredTypes.includes(item.type));
     if (filtered.length === 0) filtered = unusedPool;
 
-    if (preferredPersonaId && Math.random() < 0.7) {
-      const personaItems = filtered.filter(item => item.personaId === preferredPersonaId);
-      if (personaItems.length > 0) filtered = personaItems;
-    }
-
     const chosen = pick(filtered);
     markMediaSent(chosen.personaId, chosen.type, chosen.filename);
     sessionMediaCount++;
     if (!sessionHasMedia) sessionHasMedia = true;
-    log(`📎 Attaching media: ${chosen.url} (from ${chosen.personaName}) [${sessionMediaCount}/${CONFIG.MAX_MEDIA_PER_SESSION}]`);
+    log(`📎 Attaching own media: ${chosen.url} (from ${chosen.personaName}) [${sessionMediaCount}/${CONFIG.MAX_MEDIA_PER_SESSION}]`);
     return chosen;
   }
 
@@ -818,14 +825,6 @@
     if (mediaItem) {
       msgData.mediaType = mediaItem.mediaType;
       msgData.mediaUrl = mediaItem.url;
-      if (mediaItem.personaId !== persona.id) {
-        const attribution = pick([
-          `📸 Shared by ${mediaItem.personaName}:`,
-          `🎤 From ${mediaItem.personaName}:`,
-          `📹 ${mediaItem.personaName} sent this:`
-        ]);
-        msgData.text = `${attribution} ${text}`;
-      }
     }
 
     const replyTarget = replyTo || getLastReplyTarget(persona.id);
@@ -975,5 +974,5 @@
     if(recentMessages.length > 30) recentMessages.shift();
   };
 
-  log(`🤖 AI Persona Engine v11.0 loaded with ${personas.length} custom personas. Auto-discovery media active.`);
+  log(`🤖 AI Persona Engine v11.1 loaded with ${personas.length} custom personas. Strict media ownership. BASE_PATH: ${BASE_PATH}`);
 })();
