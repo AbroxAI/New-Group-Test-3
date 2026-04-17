@@ -1,6 +1,6 @@
-// ====================== AI PERSONA ENGINE v11.1 (Strict Ownership + GitHub Pages Fix) ======================
-// 150 custom personas · Files named: "paul_jande_1.jpg", "das_haruna_fearless_1.jpg", etc.
-// =======================================================================================================
+// ====================== AI PERSONA ENGINE v12.1 (Auto‑Refresh Queue) ======================
+// 150 custom personas · Infinite media cycle · Detects new uploads automatically
+// =======================================================================================
 
 (function(){
   "use strict";
@@ -17,11 +17,9 @@
     ENABLE_LOGGING: true,
     WATCHER_ACTIVITY_PENALTY: 0.65,
     REPLY_CHANCE: 0.95,
-    MEDIA_ATTACH_CHANCE: 0.75,
-    MIN_MEDIA_PER_SESSION: 1,
-    MAX_MEDIA_PER_SESSION: 3,
-    SESSION_RESET_TIMEOUT: 3600000,
-    MAX_FILES_PER_PERSONA: 20
+    MEDIA_COOLDOWN_MINUTES: 10,               // same file won't repeat within this time
+    MAX_FILES_PER_PERSONA: 20,
+    POOL_REFRESH_INTERVAL: 300000             // 5 minutes – check for new files
   };
 
   // ---------- BASE PATH FOR GITHUB PAGES ----------
@@ -575,145 +573,158 @@
     p.messageBank = bank;
   });
 
-  // ---------- AUTO-DISCOVERY MEDIA SYSTEM ----------
-  const MEDIA_CACHE = {};
+  // ---------- GLOBAL MEDIA QUEUE (AUTO‑REFRESH) ----------
+  let mediaQueue = [];
+  let personaMediaMap = new Map();
+  let mediaInitialized = false;
+  let refreshTimer = null;
+  const recentlyUsed = new Map();
 
-  function probeMediaExists(personaId, personaName, type, index, extension) {
-    const cacheKey = `${personaId}|${type}|${index}`;
-    if (MEDIA_CACHE.hasOwnProperty(cacheKey)) {
-      return Promise.resolve(MEDIA_CACHE[cacheKey]);
-    }
-    
-    const normalized = normalizeNameForMedia(personaName);
-    const url = `${BASE_PATH}assets/${type}/${normalized}_${index}.${extension}`;
-    
+  function imageExists(url) {
     return new Promise(resolve => {
-      if (type === 'images') {
-        const img = new Image();
-        img.onload = () => { MEDIA_CACHE[cacheKey] = true; resolve(true); };
-        img.onerror = () => { MEDIA_CACHE[cacheKey] = false; resolve(false); };
-        img.src = url;
-      } else {
-        fetch(url, { method: 'HEAD' })
-          .then(res => { MEDIA_CACHE[cacheKey] = res.ok; resolve(res.ok); })
-          .catch(() => { MEDIA_CACHE[cacheKey] = false; resolve(false); });
-      }
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
     });
   }
 
-  async function buildGlobalMediaPool() {
+  async function headExists(url) {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      return res.ok;
+    } catch { return false; }
+  }
+
+  async function buildMediaPool() {
     const pool = [];
     const maxFiles = CONFIG.MAX_FILES_PER_PERSONA;
+    log('🔨 Building media pool...');
     
     for (const p of personas) {
       const normalized = normalizeNameForMedia(p.name);
       
+      const imagePromises = [];
+      const voicePromises = [];
+      const videoPromises = [];
+      
       for (let i = 1; i <= maxFiles; i++) {
-        const exists = await probeMediaExists(p.id, p.name, 'images', i, 'jpg');
+        imagePromises.push(imageExists(`${BASE_PATH}assets/images/${normalized}_${i}.jpg`));
+        voicePromises.push(headExists(`${BASE_PATH}assets/voices/${normalized}_${i}.webm`));
+        videoPromises.push(headExists(`${BASE_PATH}assets/videos/${normalized}_${i}.mp4`));
+      }
+      
+      const [imageResults, voiceResults, videoResults] = await Promise.all([
+        Promise.all(imagePromises),
+        Promise.all(voicePromises),
+        Promise.all(videoPromises)
+      ]);
+      
+      imageResults.forEach((exists, idx) => {
         if (exists) {
+          const i = idx + 1;
           pool.push({
             personaId: p.id,
             personaName: p.name,
             type: 'images',
-            filename: `${normalized}_${i}.jpg`,
             url: `${BASE_PATH}assets/images/${normalized}_${i}.jpg`,
             mediaType: 'image'
           });
         }
-      }
+      });
       
-      for (let i = 1; i <= maxFiles; i++) {
-        const exists = await probeMediaExists(p.id, p.name, 'voices', i, 'webm');
+      voiceResults.forEach((exists, idx) => {
         if (exists) {
+          const i = idx + 1;
           pool.push({
             personaId: p.id,
             personaName: p.name,
             type: 'voices',
-            filename: `${normalized}_${i}.webm`,
             url: `${BASE_PATH}assets/voices/${normalized}_${i}.webm`,
             mediaType: 'audio'
           });
         }
-      }
+      });
       
-      for (let i = 1; i <= maxFiles; i++) {
-        const exists = await probeMediaExists(p.id, p.name, 'videos', i, 'mp4');
+      videoResults.forEach((exists, idx) => {
         if (exists) {
+          const i = idx + 1;
           pool.push({
             personaId: p.id,
             personaName: p.name,
             type: 'videos',
-            filename: `${normalized}_${i}.mp4`,
             url: `${BASE_PATH}assets/videos/${normalized}_${i}.mp4`,
             mediaType: 'video'
           });
         }
-      }
+      });
     }
     
     return pool;
   }
 
-  // ---------- SESSION MEDIA TRACKING ----------
-  let sentMedia = {};
-  let sessionMediaCount = 0;
-  let sessionStartTime = Date.now();
-  let sessionHasMedia = false;
+  function rebuildQueueFromPool(pool) {
+    mediaQueue = shuffleArray([...pool]);
+    personaMediaMap.clear();
+    for (const item of mediaQueue) {
+      if (!personaMediaMap.has(item.personaId)) {
+        personaMediaMap.set(item.personaId, []);
+      }
+      personaMediaMap.get(item.personaId).push(item);
+    }
+    log(`✅ Media queue ready: ${mediaQueue.length} items`);
+  }
 
-  function resetSessionMediaIfExpired() {
-    if (Date.now() - sessionStartTime > CONFIG.SESSION_RESET_TIMEOUT) {
-      sentMedia = {};
-      sessionMediaCount = 0;
-      sessionHasMedia = false;
-      sessionStartTime = Date.now();
-      log('🔄 Session media tracking reset (timeout)');
+  async function refreshMediaQueue() {
+    log('🔄 Refreshing media pool...');
+    const freshPool = await buildMediaPool();
+    rebuildQueueFromPool(freshPool);
+    mediaInitialized = true;
+  }
+
+  async function initializeMediaQueue() {
+    if (mediaInitialized) return;
+    await refreshMediaQueue();
+    if (refreshTimer) clearInterval(refreshTimer);
+    refreshTimer = setInterval(async () => {
+      await refreshMediaQueue();
+    }, CONFIG.POOL_REFRESH_INTERVAL);
+  }
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function cleanRecentlyUsed() {
+    const now = Date.now();
+    const cooldownMs = CONFIG.MEDIA_COOLDOWN_MINUTES * 60 * 1000;
+    for (const [url, timestamp] of recentlyUsed.entries()) {
+      if (now - timestamp > cooldownMs) recentlyUsed.delete(url);
     }
   }
 
-  function getSentSet(personaId, type) {
-    if (!sentMedia[personaId]) sentMedia[personaId] = { images: new Set(), voices: new Set(), videos: new Set() };
-    return sentMedia[personaId][type];
-  }
-
-  function markMediaSent(personaId, type, filename) {
-    getSentSet(personaId, type).add(filename);
-  }
-
-  function isMediaSent(personaId, type, filename) {
-    return getSentSet(personaId, type).has(filename);
-  }
-
-  async function pickUnusedMedia(preferredPersonaId = null, preferredTypes = ['images','videos','voices']) {
-    resetSessionMediaIfExpired();
-    if (sessionMediaCount >= CONFIG.MAX_MEDIA_PER_SESSION) {
-      log('📦 Media limit reached for this session');
-      return null;
-    }
-
-    const pool = await buildGlobalMediaPool();
-    const personaPool = pool.filter(item => item.personaId === preferredPersonaId);
+  function pickMediaForPersona(personaId, preferredTypes = ['images','videos','voices']) {
+    cleanRecentlyUsed();
+    const personaItems = personaMediaMap.get(personaId) || [];
+    if (personaItems.length === 0) return null;
     
-    if (personaPool.length === 0) {
-      log(`📭 No media files exist for this persona at all`);
-      return null;
+    for (let i = 0; i < personaItems.length; i++) {
+      const item = personaItems[i];
+      if (!preferredTypes.includes(item.type)) continue;
+      if (recentlyUsed.has(item.url)) continue;
+      
+      personaItems.splice(i, 1);
+      personaItems.push(item);
+      recentlyUsed.set(item.url, Date.now());
+      log(`🎯 Selected media: ${item.url}`);
+      return item;
     }
-
-    const unusedPool = personaPool.filter(item => !isMediaSent(item.personaId, item.type, item.filename));
-    
-    if (unusedPool.length === 0) {
-      log(`📭 All media for this persona has been used in this session`);
-      return null;
-    }
-
-    let filtered = unusedPool.filter(item => preferredTypes.includes(item.type));
-    if (filtered.length === 0) filtered = unusedPool;
-
-    const chosen = pick(filtered);
-    markMediaSent(chosen.personaId, chosen.type, chosen.filename);
-    sessionMediaCount++;
-    if (!sessionHasMedia) sessionHasMedia = true;
-    log(`📎 Attaching own media: ${chosen.url} (from ${chosen.personaName}) [${sessionMediaCount}/${CONFIG.MAX_MEDIA_PER_SESSION}]`);
-    return chosen;
+    log(`⏳ All media for persona in cooldown`);
+    return null;
   }
 
   // ---------- SIMULATION STATE ----------
@@ -796,19 +807,17 @@
     const now = new Date(); const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
     let mediaItem = null;
-    const shouldConsiderMedia = (type === MessageType.TESTIMONIAL || type === MessageType.RESULT || type === MessageType.FLEX || type === MessageType.HYPE);
-    const forceAttach = (!sessionHasMedia && sessionMediaCount < CONFIG.MIN_MEDIA_PER_SESSION);
-    if (shouldConsiderMedia && (forceAttach || Math.random() < CONFIG.MEDIA_ATTACH_CHANCE)) {
+    const qualifiesForMedia = (type === MessageType.TESTIMONIAL || type === MessageType.RESULT || type === MessageType.FLEX || type === MessageType.HYPE);
+    if (qualifiesForMedia) {
+      if (!mediaInitialized) await initializeMediaQueue();
       const preferredTypes = (type === MessageType.TESTIMONIAL || type === MessageType.RESULT) 
         ? ['images','videos','voices'] 
         : ['images','videos'];
-      mediaItem = await pickUnusedMedia(persona.id, preferredTypes);
+      mediaItem = pickMediaForPersona(persona.id, preferredTypes);
     }
 
     let typingType = 'text';
-    if (mediaItem && mediaItem.mediaType === 'audio') {
-      typingType = 'audio';
-    }
+    if (mediaItem && mediaItem.mediaType === 'audio') typingType = 'audio';
     showTyping(persona, typingType);
 
     const msgData = {
@@ -821,7 +830,6 @@
       experience: persona.type,
       archetype: persona.archetype
     };
-
     if (mediaItem) {
       msgData.mediaType = mediaItem.mediaType;
       msgData.mediaUrl = mediaItem.url;
@@ -961,18 +969,20 @@
   }
 
   window.addEventListener('chat-room-changed', () => {
-    sentMedia = {}; sessionMediaCount = 0; sessionHasMedia = false; sessionStartTime = Date.now();
     syncSimulationState();
   });
   setInterval(syncSimulationState, 1000);
-  syncSimulationState();
+
+  (async function init() {
+    await initializeMediaQueue();
+    syncSimulationState();
+  })();
 
   window.AIPersonaSimulator = { isActive: ()=>simulationActive, getPersonas: ()=>personas, injectTradeResult: ()=>injectTradeResult() };
-
   window.onUserMessage = function(msg) {
     recentMessages.push({ id: 'user_'+Date.now(), personaId:'user', senderName:msg.senderName, text:msg.text, element:null });
     if(recentMessages.length > 30) recentMessages.shift();
   };
 
-  log(`🤖 AI Persona Engine v11.1 loaded with ${personas.length} custom personas. Strict media ownership. BASE_PATH: ${BASE_PATH}`);
+  log(`🤖 AI Persona Engine v12.1 loaded with ${personas.length} custom personas. Auto-refresh queue active.`);
 })();
