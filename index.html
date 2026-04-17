@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Media Debug – Paul jande & Das Haruna Fearless</title>
+  <style>
+    body { font-family: monospace; background: #0f0f0f; color: #eee; padding: 20px; }
+    button { margin: 5px; padding: 10px 20px; background: #2f5b9c; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    pre { background: #1e1e1e; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    .success { color: #4caf50; }
+    .error { color: #f44336; }
+  </style>
+</head>
+<body>
+  <h2>🔍 Media Discovery Debug</h2>
+  <p>Testing: <strong>Paul jande</strong> & <strong>Das Haruna Fearless</strong></p>
+  
+  <button onclick="testImages()">📷 Test Images</button>
+  <button onclick="testVoices()">🎤 Test Voices</button>
+  <button onclick="testVideos()">🎬 Test Videos</button>
+  <button onclick="testFullPool()">🌐 Build Full Media Pool</button>
+  <button onclick="simulateMediaAttach()">📎 Simulate Testimonial with Media</button>
+  
+  <pre id="output">Click a button to start...</pre>
+
+  <script>
+    // ---------- Copy of the relevant engine functions (simplified) ----------
+    function normalizeNameForMedia(name) {
+      return name
+        .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
+        .replace(/[^\w\s]/g, '')
+        .trim()
+        .replace(/\s+/g, '_')
+        .toLowerCase();
+    }
+
+    // The two personas exactly as in the engine
+    const testPersonas = [
+      { id: 'p_paul', name: 'Paul jande', gender: 'men', country: 'Nigeria' },
+      { id: 'p_das', name: 'Das Haruna Fearless', gender: 'men', country: 'Nigeria' }
+    ];
+
+    const output = document.getElementById('output');
+    
+    function log(message, isError = false) {
+      const line = document.createElement('div');
+      line.className = isError ? 'error' : '';
+      line.textContent = `> ${message}`;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function clearLog() {
+      output.innerHTML = '';
+    }
+
+    // Probe a single media file
+    function probeMedia(personaId, personaName, type, index, extension) {
+      const normalized = normalizeNameForMedia(personaName);
+      const url = `assets/${type}/${normalized}_${index}.${extension}`;
+      
+      return new Promise(resolve => {
+        log(`Probing: ${url}`);
+        if (type === 'images') {
+          const img = new Image();
+          img.onload = () => {
+            log(`✅ EXISTS: ${url}`, false);
+            resolve({ exists: true, url });
+          };
+          img.onerror = () => {
+            log(`❌ NOT FOUND: ${url}`, true);
+            resolve({ exists: false, url });
+          };
+          img.src = url;
+        } else {
+          fetch(url, { method: 'HEAD' })
+            .then(res => {
+              if (res.ok) {
+                log(`✅ EXISTS: ${url} (status: ${res.status})`, false);
+                resolve({ exists: true, url });
+              } else {
+                log(`❌ NOT FOUND: ${url} (status: ${res.status})`, true);
+                resolve({ exists: false, url });
+              }
+            })
+            .catch(err => {
+              log(`❌ ERROR: ${url} (${err.message})`, true);
+              resolve({ exists: false, url });
+            });
+        }
+      });
+    }
+
+    async function testImages() {
+      clearLog();
+      log('🔎 Testing images (1..5) for both personas...');
+      for (const p of testPersonas) {
+        log(`--- ${p.name} ---`);
+        for (let i = 1; i <= 5; i++) {
+          await probeMedia(p.id, p.name, 'images', i, 'jpg');
+        }
+      }
+    }
+
+    async function testVoices() {
+      clearLog();
+      log('🎤 Testing voices (1..3) for both personas...');
+      for (const p of testPersonas) {
+        log(`--- ${p.name} ---`);
+        for (let i = 1; i <= 3; i++) {
+          await probeMedia(p.id, p.name, 'voices', i, 'webm');
+          await probeMedia(p.id, p.name, 'voices', i, 'mp3'); // also check mp3
+        }
+      }
+    }
+
+    async function testVideos() {
+      clearLog();
+      log('🎬 Testing videos (1..3) for both personas...');
+      for (const p of testPersonas) {
+        log(`--- ${p.name} ---`);
+        for (let i = 1; i <= 3; i++) {
+          await probeMedia(p.id, p.name, 'videos', i, 'mp4');
+        }
+      }
+    }
+
+    async function testFullPool() {
+      clearLog();
+      log('🌐 Building full media pool (up to 20 files per type)...');
+      const maxFiles = 5; // keep small for test
+      const pool = [];
+      
+      for (const p of testPersonas) {
+        const normalized = normalizeNameForMedia(p.name);
+        
+        for (let i = 1; i <= maxFiles; i++) {
+          const imgRes = await probeMedia(p.id, p.name, 'images', i, 'jpg');
+          if (imgRes.exists) {
+            pool.push({
+              personaName: p.name,
+              type: 'image',
+              url: imgRes.url
+            });
+          }
+        }
+        
+        for (let i = 1; i <= maxFiles; i++) {
+          const voiceRes = await probeMedia(p.id, p.name, 'voices', i, 'webm');
+          if (voiceRes.exists) {
+            pool.push({
+              personaName: p.name,
+              type: 'audio',
+              url: voiceRes.url
+            });
+          }
+        }
+        
+        for (let i = 1; i <= maxFiles; i++) {
+          const vidRes = await probeMedia(p.id, p.name, 'videos', i, 'mp4');
+          if (vidRes.exists) {
+            pool.push({
+              personaName: p.name,
+              type: 'video',
+              url: vidRes.url
+            });
+          }
+        }
+      }
+      
+      log(`📦 Total media items found: ${pool.length}`);
+      pool.forEach(item => {
+        log(`   ${item.type}: ${item.url} (${item.personaName})`);
+      });
+    }
+
+    async function simulateMediaAttach() {
+      clearLog();
+      log('📎 Simulating a testimonial message from Paul jande...');
+      const paul = testPersonas[0];
+      const normalized = normalizeNameForMedia(paul.name);
+      
+      // First check what's available
+      const available = [];
+      for (let i = 1; i <= 5; i++) {
+        const res = await probeMedia(paul.id, paul.name, 'images', i, 'jpg');
+        if (res.exists) available.push(res.url);
+      }
+      
+      if (available.length > 0) {
+        const chosen = available[Math.floor(Math.random() * available.length)];
+        log(`✅ Would attach: ${chosen}`);
+        log(`📝 Message: "Just hit a nice win! ${chosen.split('/').pop()}"`);
+        
+        // Actually try to display the image in a new browser tab to confirm it's accessible
+        window.open(chosen, '_blank');
+      } else {
+        log(`❌ No images found for ${paul.name}. Check file naming.`, true);
+        log(`Expected pattern: assets/images/${normalized}_1.jpg`);
+      }
+    }
+
+    // Initial load – show expected filenames
+    (function showExpected() {
+      clearLog();
+      log('📋 Expected filenames (based on normalizeNameForMedia):');
+      testPersonas.forEach(p => {
+        const norm = normalizeNameForMedia(p.name);
+        log(`  ${p.name} → ${norm}_1.jpg, ${norm}_2.jpg, etc.`);
+      });
+      log('Click a button to test.');
+    })();
+  </script>
+</body>
+</html>
