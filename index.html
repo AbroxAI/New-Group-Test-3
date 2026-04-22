@@ -27,18 +27,20 @@
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
     .toast { animation: slide-in 0.3s ease-out; }
+    /* Prevent text overflow in cards */
+    .card-title { word-break: break-word; }
   </style>
 </head>
-<body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-6 md:p-8">
+<body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-4 md:p-6 lg:p-8">
 
 <!-- Toast Notification -->
-<div id="toast" class="fixed top-4 right-4 bg-[#111827] border border-emerald-500/30 rounded-xl p-4 shadow-2xl toast z-50 flex items-center gap-3">
+<div id="toast" class="fixed top-4 right-4 bg-[#111827] border border-emerald-500/30 rounded-xl p-4 shadow-2xl toast z-50 flex items-center gap-3 hidden">
   <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
-  <div><p class="text-sm font-medium">Recent Deposit</p><p class="text-xs text-gray-400">+0.042 BTC ($2,100) · 2 min ago</p></div>
-  <button onclick="this.parentElement.remove()" class="ml-4 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
+  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+0.042 BTC ($2,100)</p></div>
+  <button onclick="hideToast()" class="ml-4 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto">
   
   <!-- HEADER: Neptune AI top right -->
   <div class="flex justify-between items-center mb-6">
@@ -60,20 +62,20 @@
   </div>
 
   <!-- ===== MINING RIG VISUAL ===== -->
-  <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-6 md:p-8 mb-8 shadow-xl">
-    <div class="flex flex-col lg:flex-row gap-8 items-center">
+  <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
       
       <!-- LEFT: Realistic Rig -->
-      <div class="lg:w-2/5">
+      <div class="lg:w-2/5 w-full">
         <div class="flex items-center gap-2 mb-3">
-          <i data-lucide="server" class="w-5 h-5 text-emerald-400"></i>
-          <h3 class="font-semibold text-lg">Neptune S21 Pro · ASIC Miner</h3>
+          <i data-lucide="server" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
+          <h3 class="font-semibold text-base md:text-lg truncate">Neptune S21 Pro · ASIC Miner</h3>
         </div>
         
-        <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+        <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
           
-          <div class="metal-gradient rounded-xl p-4 border border-[#3a4a5a] shadow-inner relative">
+          <div class="metal-gradient rounded-xl p-3 md:p-4 border border-[#3a4a5a] shadow-inner relative">
             
             <!-- Ventilation Slots -->
             <div class="flex gap-1.5 mb-4">
@@ -84,93 +86,93 @@
             </div>
             
             <!-- Fans -->
-            <div class="flex justify-between gap-3 mb-4">
-              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-14 h-14 flex items-center justify-center">
+            <div class="flex justify-between gap-2 md:gap-3 mb-4">
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
                   <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
                   </div>
-                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
                   </div>
                 </div>
-                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
               </div>
-              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-14 h-14 flex items-center justify-center">
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
                   <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
                   </div>
-                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
                   </div>
                 </div>
-                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
               </div>
-              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-14 h-14 flex items-center justify-center">
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
                   <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
                   </div>
-                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
                   </div>
                 </div>
-                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
               </div>
             </div>
             
             <!-- Status Panel -->
-            <div class="bg-[#0a1018] rounded-lg p-3 mb-3 border border-[#1e2a3a]">
-              <div class="flex justify-between items-center">
-                <div class="flex gap-5">
-                  <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[10px] text-gray-400 uppercase">PWR</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[10px] text-gray-400 uppercase">HASH</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[10px] text-gray-400 uppercase">NET</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[10px] text-gray-400 uppercase">TEMP</span></div>
+            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border border-[#1e2a3a]">
+              <div class="flex flex-wrap justify-between items-center gap-2">
+                <div class="flex gap-3 md:gap-5">
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">PWR</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">HASH</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">NET</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">TEMP</span></div>
                 </div>
-                <div class="bg-[#0f1822] px-3 py-1 rounded-full border border-emerald-500/20">
-                  <span class="text-emerald-400 text-[10px] font-mono">312.5 TH/s</span>
+                <div class="bg-[#0f1822] px-2 md:px-3 py-1 rounded-full border border-emerald-500/20">
+                  <span class="text-emerald-400 text-[8px] md:text-[10px] font-mono">312.5 TH/s</span>
                 </div>
               </div>
             </div>
             
             <!-- Hash Boards -->
-            <div class="grid grid-cols-3 gap-2">
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30">
-                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
-                <div class="flex justify-between"><span class="text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[8px] text-gray-500">ASIC</span></div>
+            <div class="grid grid-cols-3 gap-1.5 md:gap-2">
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
                 <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div>
               </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30">
-                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
-                <div class="flex justify-between"><span class="text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[8px] text-gray-500">ASIC</span></div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
                 <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div>
               </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30">
-                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
-                <div class="flex justify-between"><span class="text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[8px] text-gray-500">ASIC</span></div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
                 <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div>
               </div>
             </div>
             
             <!-- I/O Ports -->
-            <div class="flex justify-between items-end mt-4">
-              <div class="flex gap-3">
-                <div class="flex flex-col items-center"><div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[8px] text-gray-500 mt-0.5">ETH</span></div>
-                <div class="flex flex-col items-center"><div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[6px] text-emerald-400">⚡</span></div><span class="text-[8px] text-gray-500 mt-0.5">PWR</span></div>
-                <div class="flex flex-col items-center"><div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[8px] text-gray-500 mt-0.5">USB</span></div>
+            <div class="flex justify-between items-end mt-3 md:mt-4">
+              <div class="flex gap-2 md:gap-3">
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">ETH</span></div>
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[5px] md:text-[6px] text-emerald-400">⚡</span></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">PWR</span></div>
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">USB</span></div>
               </div>
-              <div class="text-right"><span class="text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
+              <div class="text-right"><span class="text-[8px] md:text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] md:text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
             </div>
             
             <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
@@ -180,40 +182,40 @@
           </div>
         </div>
         
-        <p class="text-sm text-gray-400 mt-4 flex items-center gap-1">
-          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-400"></i>
           Real hardware · Geothermal cooled · 99.9% uptime
         </p>
       </div>
       
       <!-- RIGHT: Stats -->
-      <div class="lg:w-3/5">
+      <div class="lg:w-3/5 w-full">
         <div class="mb-4">
-          <h2 class="text-2xl font-bold text-white mb-1">Rent Hash Power</h2>
-          <p class="text-gray-400">Connect to our farm and earn BTC daily — no hardware required.</p>
+          <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power</h2>
+          <p class="text-sm md:text-base text-gray-400">Connect to our farm and earn BTC daily — no hardware required.</p>
         </div>
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="bg-[#0f1822] rounded-xl p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div>
-          <div class="bg-[#0f1822] rounded-xl p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-2xl font-bold text-emerald-400">312.5 TH/s</div></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
+          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div>
+          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div>
         </div>
         <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4">
-          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-5 h-5"></i><span class="font-semibold">Instant Withdrawals</span></div>
-          <p class="text-sm text-gray-300">Once payment is received, your wallet connects directly to our rig farm. Daily earnings sent automatically.</p>
+          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals</span></div>
+          <p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly to our rig farm. Daily earnings sent automatically.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== INVESTMENT CALCULATOR (Minimalist Design) ===== -->
-  <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8 shadow-xl">
-    <h3 class="text-xl font-semibold mb-2">Investment Calculator</h3>
-    <p class="text-gray-400 text-sm mb-6">See your estimated profits based on any mining unit.</p>
+  <!-- ===== INVESTMENT CALCULATOR ===== -->
+  <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
+    <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator</h3>
+    <p class="text-gray-400 text-xs md:text-sm mb-6">See your estimated profits based on any mining unit.</p>
     
     <!-- Investment Amount Slider -->
     <div class="mb-6">
       <div class="flex justify-between items-center mb-1">
-        <label class="text-gray-400 text-sm">Investment ($)</label>
-        <span id="amountDisplay" class="text-emerald-400 font-bold text-xl">$5,000</span>
+        <label class="text-gray-400 text-xs md:text-sm">Investment ($)</label>
+        <span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">$5,000</span>
       </div>
       <input type="range" id="investSlider" min="10" max="20000" value="5000" step="10" class="w-full accent-emerald-400 h-2 rounded-full">
       <div class="flex justify-between text-xs text-gray-500 mt-1"><span>$10</span><span>$20,000</span></div>
@@ -221,8 +223,8 @@
     
     <!-- Unit Selector -->
     <div class="mb-6">
-      <label class="block text-gray-400 text-sm mb-2">Mining Unit</label>
-      <select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-lg font-medium">
+      <label class="block text-gray-400 text-xs md:text-sm mb-2">Mining Unit</label>
+      <select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-base md:text-lg font-medium">
         <option value="bronze">Bronze</option>
         <option value="silver">Silver</option>
         <option value="gold">Gold</option>
@@ -239,20 +241,20 @@
     </div>
     
     <!-- Three Column Results -->
-    <div class="grid grid-cols-3 gap-4 text-center">
-      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Daily</p>
-        <p id="dailyUsd" class="text-2xl font-bold text-white">$8.40</p>
+    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center">
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily</p>
+        <p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">$8.40</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
-      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Monthly</p>
-        <p id="monthlyUsd" class="text-2xl font-bold text-white">$252</p>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly</p>
+        <p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">$252</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
-      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Yearly</p>
-        <p id="yearlyUsd" class="text-2xl font-bold text-white">$3,066</p>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly</p>
+        <p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">$3,066</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
     </div>
@@ -260,94 +262,91 @@
   </div>
 
   <!-- ===== ENROLL CARD ===== -->
-  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8 shadow-xl">
-    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-emerald-400"></i> Enroll Now</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
+    <h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       <div>
-        <label class="block text-gray-400 text-sm mb-1">Email</label>
-        <input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4 focus:outline-none focus:border-emerald-400">
-        <label class="block text-gray-400 text-sm mb-1">BTC Wallet Address</label>
-        <input type="text" placeholder="bc1q..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4 focus:outline-none focus:border-emerald-400">
-        <button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-5 h-5"></i> Order Now</button>
+        <label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label>
+        <input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 focus:outline-none focus:border-emerald-400 text-sm">
+        <label class="block text-gray-400 text-xs md:text-sm mb-1">BTC Wallet Address</label>
+        <input type="text" placeholder="bc1q..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 focus:outline-none focus:border-emerald-400 text-sm">
+        <button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order Now</button>
       </div>
-      <div class="bg-[#0f1822] rounded-xl p-5">
-        <p class="text-gray-400 text-sm">Your Order</p>
-        <p class="text-2xl font-bold text-white" id="orderAmount">$5,000</p>
+      <div class="bg-[#0f1822] rounded-xl p-4 md:p-5">
+        <p class="text-gray-400 text-xs md:text-sm">Your Order</p>
+        <p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">$5,000</p>
         <p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p>
-        <hr class="border-[#2a3a4a] my-4">
+        <hr class="border-[#2a3a4a] my-3 md:my-4">
         <p class="text-gray-400 text-xs">Expected Daily Profit</p>
-        <p class="text-lg font-bold text-emerald-400" id="orderDaily">$8.40</p>
+        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">$8.40</p>
       </div>
     </div>
   </div>
 
   <!-- ===== INFO SECTIONS ===== -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
-      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4>
-      <p class="text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8">
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5">
+      <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4>
+      <p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers.</p>
     </div>
-    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
-      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4>
-      <p class="text-sm text-gray-300">You will get payouts daily and monthly. Our system automatically transfers mined coins directly to your BTC wallet.</p>
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5">
+      <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4>
+      <p class="text-xs md:text-sm text-gray-300">You will get payouts daily and monthly. Our system automatically transfers mined coins directly to your BTC wallet.</p>
     </div>
-    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
-      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a BTC Wallet?</h4>
-      <p class="text-sm text-gray-300">If you prefer security, try KYC platforms like Binance or Coinbase. If you prefer anonymity, try non-KYC platforms like ShapeShift or Trezor.</p>
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5 sm:col-span-2 lg:col-span-1">
+      <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a BTC Wallet?</h4>
+      <p class="text-xs md:text-sm text-gray-300">If you prefer security, try KYC platforms like Binance or Coinbase. If you prefer anonymity, try non-KYC platforms like ShapeShift or Trezor.</p>
     </div>
   </div>
 
   <!-- ===== HISTORY TRANSACTIONS ===== -->
-  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8">
-    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> History Transactions</h3>
+  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8">
+    <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions</h3>
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Description</th><th class="text-right">Amount</th><th class="text-right">Status</th></tr></thead>
-        <tbody>
-          <tr class="border-b border-[#1e2a3a]"><td class="py-2">32 min ago</td><td>TLxP5V6i27PeCku...zaRg33J45</td><td class="text-right">52.516137 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
-          <tr class="border-b border-[#1e2a3a]"><td class="py-2">32 min ago</td><td>DTFGBzS6Z7TionV...hKujFwgoa</td><td class="text-right">188.9364225 DOGE</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
-          <tr class="border-b border-[#1e2a3a]"><td class="py-2">2 hours ago</td><td>TNJpBiMMA3b3Eet...WX9JVJdq5</td><td class="text-right">340 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
-          <tr class="border-b border-[#1e2a3a]"><td class="py-2">2 hours ago</td><td>TPLWrd2vDo4NYqd...yBg4Gs5sn</td><td class="text-right">82 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
-          <tr class="border-b border-[#1e2a3a]"><td class="py-2">16 hours ago</td><td>LTjtvYKWDu913zj...TDEHQWeaW</td><td class="text-right">0.10392361 LTC</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+      <table class="w-full text-xs md:text-sm">
+        <thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount</th><th class="text-right">Status</th></tr></thead>
+        <tbody id="transactionBody">
+          <!-- Transactions will be injected here by JS -->
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <div class="text-center text-gray-500 text-sm">minefarm.netlify.app · Refundable on any purchase · Built by real crypto engineers</div>
+  <div class="text-center text-gray-500 text-xs md:text-sm">minefarm.netlify.app · Refundable on any purchase · Built by real crypto engineers</div>
 </div>
 
 <!-- ENROLL MODAL -->
-<div id="enrollModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
-  <div class="bg-[#111827] border border-[#2a3a4a] rounded-3xl p-6 max-w-md w-full mx-4">
-    <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white">Galactic Mining Unit</h3><button onclick="closeModal()"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button></div>
-    <p class="text-sm text-gray-400 mb-4">Your profit schedule for <span id="modalTier"></span> Tier</p>
+<div id="enrollModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-4">
+  <div class="bg-[#111827] border border-[#2a3a4a] rounded-3xl p-5 md:p-6 max-w-md w-full">
+    <div class="flex justify-between items-center mb-4"><h3 class="text-lg md:text-xl font-bold text-white" id="modalTitle">Cosmic Mining Unit</h3><button onclick="closeModal()"><i data-lucide="x" class="w-5 h-5 md:w-6 md:h-6 text-gray-400"></i></button></div>
+    <p class="text-xs md:text-sm text-gray-400 mb-4">Your profit schedule for <span id="modalTier"></span> Tier</p>
     <div class="grid grid-cols-3 gap-2 text-center mb-4">
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1D</p><p id="modal1d" class="text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">2D</p><p id="modal2d" class="text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">3D</p><p id="modal3d" class="text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1M</p><p id="modal1m" class="text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">6M</p><p id="modal6m" class="text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1Y</p><p id="modal1y" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1D</p><p id="modal1d" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">2D</p><p id="modal2d" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">3D</p><p id="modal3d" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1M</p><p id="modal1m" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">6M</p><p id="modal6m" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1Y</p><p id="modal1y" class="text-base md:text-lg font-bold text-white">$0</p></div>
     </div>
-    <p class="text-xs text-gray-500 mb-4">Payments are made automatically once a day.</p>
-    <p class="text-gray-400 text-sm">Your Order: <span id="modalOrderAmount" class="text-white font-bold">$0</span></p>
-    <input type="email" placeholder="Email" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white my-3">
-    <input type="text" placeholder="BTC wallet address" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4">
-    <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-xl">Order Now</button>
+    <p class="text-[10px] md:text-xs text-gray-500 mb-4">Payments are made automatically once a day.</p>
+    <p class="text-gray-400 text-xs md:text-sm">Your Order: <span id="modalOrderAmount" class="text-white font-bold">$0</span></p>
+    <input type="email" placeholder="Email" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white my-3 text-sm">
+    <input type="text" placeholder="BTC wallet address" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 text-sm">
+    <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl text-sm md:text-base">Order Now</button>
   </div>
 </div>
 
 <script>
-  // Realistic mining profitability: ~0.00000012 BTC per day per $1 invested (approx 0.04% daily yield)
-  const BTC_PRICE = 70000; // $70k/BTC
-  const YIELD_PER_DOLLAR_PER_DAY_BTC = 0.00000012; // BTC per $1 per day
+  // Realistic mining profitability
+  const BTC_PRICE = 70000;
+  const YIELD_PER_DOLLAR_PER_DAY_BTC = 0.00000012;
   
   const tierMultiplier = {
     bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10
   };
 
+  // DOM elements
   const slider = document.getElementById('investSlider');
   const amountDisplay = document.getElementById('amountDisplay');
   const tierSelect = document.getElementById('tierSelect');
@@ -391,12 +390,80 @@
   tierSelect.addEventListener('change', updateUI);
   updateUI();
 
+  // Toast notification
+  const toast = document.getElementById('toast');
+  const toastName = document.getElementById('toastName');
+  const toastAmount = document.getElementById('toastAmount');
+  
+  const names = ['Michael R.', 'Sarah K.', 'David L.', 'Emma W.', 'James B.', 'Lisa M.', 'Robert T.', 'Jennifer P.'];
+  
+  function showRandomToast() {
+    const name = names[Math.floor(Math.random() * names.length)];
+    const btcAmount = (Math.random() * 0.1 + 0.01).toFixed(4);
+    const usdAmount = (btcAmount * BTC_PRICE).toFixed(0);
+    toastName.textContent = name;
+    toastAmount.textContent = `+${btcAmount} BTC ($${Number(usdAmount).toLocaleString()})`;
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      if (toast) toast.classList.add('hidden');
+    }, 5000);
+  }
+  
+  window.hideToast = () => toast.classList.add('hidden');
+  
+  // Show first toast after 3s, then every 12s
+  setTimeout(showRandomToast, 3000);
+  setInterval(showRandomToast, 12000);
+
+  // History transactions
+  const tbody = document.getElementById('transactionBody');
+  
+  function generateRandomTx() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let addr = '';
+    for (let i = 0; i < 8; i++) addr += chars[Math.floor(Math.random() * chars.length)];
+    addr = addr.slice(0,4) + '...' + addr.slice(-4);
+    const coins = ['BTC', 'ETH', 'TRX', 'DOGE', 'LTC'];
+    const coin = coins[Math.floor(Math.random() * coins.length)];
+    let amount;
+    if (coin === 'BTC') amount = (Math.random() * 0.1).toFixed(6);
+    else if (coin === 'ETH') amount = (Math.random() * 2).toFixed(4);
+    else if (coin === 'TRX') amount = Math.floor(Math.random() * 500 + 10);
+    else if (coin === 'DOGE') amount = Math.floor(Math.random() * 1000 + 50);
+    else amount = (Math.random() * 0.5).toFixed(4);
+    const time = Math.floor(Math.random() * 60) + 1;
+    return { time: `${time} min ago`, addr, amount: `${amount} ${coin}`, status: 'SUCCESS' };
+  }
+  
+  function addTransaction(tx) {
+    const row = document.createElement('tr');
+    row.className = 'border-b border-[#1e2a3a]';
+    row.innerHTML = `<td class="py-2">${tx.time}</td><td class="py-2">${tx.addr}</td><td class="py-2 text-right">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
+    tbody.appendChild(row);
+    if (tbody.children.length > 10) tbody.removeChild(tbody.children[0]);
+  }
+  
+  // Initial transactions
+  const initialTxs = [
+    { time: '32 min ago', addr: 'TLxP5...J45', amount: '52.516137 TRX', status: 'SUCCESS' },
+    { time: '32 min ago', addr: 'DTFGB...goa', amount: '188.9364225 DOGE', status: 'SUCCESS' },
+    { time: '2 hours ago', addr: 'TNJpB...dq5', amount: '340 TRX', status: 'SUCCESS' },
+    { time: '2 hours ago', addr: 'TPLWr...5sn', amount: '82 TRX', status: 'SUCCESS' },
+    { time: '16 hours ago', addr: 'LTjtv...eaW', amount: '0.10392361 LTC', status: 'SUCCESS' },
+  ];
+  initialTxs.forEach(tx => addTransaction(tx));
+  
+  // Add new transaction every 15 seconds
+  setInterval(() => addTransaction(generateRandomTx()), 15000);
+
   // Modal functions
   function openModal(amount, tier) {
     const multiplier = tierMultiplier[tier] || 1;
     const dailyBtc = amount * YIELD_PER_DOLLAR_PER_DAY_BTC * multiplier;
     const dailyUsd = dailyBtc * BTC_PRICE;
-    document.getElementById('modalTier').textContent = tierSelect.options[tierSelect.selectedIndex].text;
+    const tierName = tierSelect.options[tierSelect.selectedIndex].text;
+    document.getElementById('modalTitle').textContent = tierName + ' Mining Unit';
+    document.getElementById('modalTier').textContent = tierName;
     document.getElementById('modal1d').textContent = '$' + Math.round(dailyUsd);
     document.getElementById('modal2d').textContent = '$' + Math.round(dailyUsd * 2);
     document.getElementById('modal3d').textContent = '$' + Math.round(dailyUsd * 3);
@@ -406,7 +473,7 @@
     document.getElementById('modalOrderAmount').textContent = '$' + amount.toLocaleString();
     document.getElementById('enrollModal').classList.remove('hidden');
   }
-  function closeModal() { document.getElementById('enrollModal').classList.add('hidden'); }
+  window.closeModal = () => document.getElementById('enrollModal').classList.add('hidden');
 
   document.getElementById('orderBtn').addEventListener('click', (e) => {
     e.preventDefault();
