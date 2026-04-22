@@ -11,32 +11,27 @@
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     
-    /* Mining Rig SVG animations */
-    @keyframes fanSpin {
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; box-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
+      50% { opacity: 0.5; box-shadow: 0 0 2px #10b981; }
+    }
+    @keyframes fan-spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px #10b981); }
-      50% { opacity: 0.5; filter: drop-shadow(0 0 15px #10b981); }
+    .rig-glow {
+      animation: pulse-glow 2s infinite;
     }
-    @keyframes dataFlow {
-      0% { stroke-dashoffset: 20; }
-      100% { stroke-dashoffset: 0; }
-    }
-    .fan-blades {
-      animation: fanSpin 0.8s linear infinite;
+    .fan {
+      animation: fan-spin 0.8s linear infinite;
       transform-origin: center;
     }
-    .led-pulse {
-      animation: pulseGlow 1.5s ease-in-out infinite;
+    /* Metallic texture overlay */
+    .metal-gradient {
+      background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%);
     }
-    .data-line {
-      stroke-dasharray: 4 4;
-      animation: dataFlow 0.5s linear infinite;
-    }
-    .rig-card {
-      background: linear-gradient(145deg, #111827 0%, #0f1822 100%);
+    .metal-border {
+      border-image: linear-gradient(145deg, #3a4a5a, #1a2533) 1;
     }
   </style>
 </head>
@@ -61,184 +56,216 @@
     </div>
   </div>
 
-  <!-- ===== HARDWARE SHOWCASE ===== -->
-  <div class="bg-gradient-to-br from-[#0a121c] to-[#0d1624] border border-[#1f2a3a] rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
+  <!-- ===== MINING RIG VISUAL + STATS ===== -->
+  <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-6 md:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-8 items-center">
       
-      <!-- LEFT: Detailed SVG Mining Rig -->
-      <div class="lg:w-1/2">
-        <div class="flex items-center gap-2 mb-4">
-          <i data-lucide="microchip" class="w-5 h-5 text-emerald-400"></i>
+      <!-- LEFT: Enhanced Realistic Rig Illustration -->
+      <div class="lg:w-2/5">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="server" class="w-5 h-5 text-emerald-400"></i>
           <h3 class="font-semibold text-lg">Neptune S21 Pro · ASIC Miner</h3>
-          <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full ml-2">312 TH/s</span>
         </div>
         
-        <!-- SVG Rig Illustration -->
-        <div class="rig-card rounded-2xl p-4 border border-[#2a3a4a] shadow-2xl">
-          <svg viewBox="0 0 500 280" class="w-full h-auto">
-            <!-- Chassis Base -->
-            <rect x="20" y="40" width="460" height="200" rx="16" fill="url(#chassisGrad)" stroke="#2a3a4a" stroke-width="2"/>
-            <!-- Chassis Top Highlight -->
-            <rect x="24" y="44" width="452" height="8" rx="4" fill="#1e3a4a" opacity="0.5"/>
+        <!-- Realistic Hardware Render -->
+        <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+          <!-- Ambient glow behind rig -->
+          <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
+          
+          <!-- Chassis with metallic finish -->
+          <div class="metal-gradient rounded-xl p-4 border border-[#3a4a5a] shadow-inner relative">
             
-            <!-- Front Panel Detail Lines -->
-            <line x1="40" y1="60" x2="460" y2="60" stroke="#2a3a4a" stroke-width="1"/>
-            <line x1="40" y1="220" x2="460" y2="220" stroke="#2a3a4a" stroke-width="1"/>
+            <!-- Ventilation Slots (Top) -->
+            <div class="flex gap-1.5 mb-4">
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+            </div>
             
-            <!-- Ventilation Grille Top -->
-            <rect x="40" y="70" width="420" height="4" rx="2" fill="#1a2533"/>
-            <rect x="40" y="78" width="420" height="4" rx="2" fill="#1a2533"/>
-            <rect x="40" y="86" width="420" height="4" rx="2" fill="#1a2533"/>
+            <!-- Cooling Fans Array -->
+            <div class="flex justify-between gap-3 mb-4">
+              <!-- Fan 1 -->
+              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-14 h-14 flex items-center justify-center">
+                  <!-- Fan grill pattern -->
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <!-- Grill lines -->
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <!-- Spinning fan blades -->
+                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
+              </div>
+              <!-- Fan 2 -->
+              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-14 h-14 flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
+              </div>
+              <!-- Fan 3 -->
+              <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-14 h-14 flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-14 h-14 rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <div class="fan w-10 h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-10 h-10 drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
+              </div>
+            </div>
             
-            <!-- Fan 1 -->
-            <g transform="translate(110, 150)">
-              <circle cx="0" cy="0" r="40" fill="#0d1624" stroke="#2a3a4a" stroke-width="2"/>
-              <circle cx="0" cy="0" r="34" fill="none" stroke="#1e3a4a" stroke-width="1" stroke-dasharray="3 3"/>
-              <g class="fan-blades">
-                <path d="M0,-30 L8,-8 L30,0 L8,8 L0,30 L-8,8 L-30,0 L-8,-8 Z" fill="#10b981" opacity="0.7"/>
-                <path d="M0,-20 L5,-5 L20,0 L5,5 L0,20 L-5,5 L-20,0 L-5,-5 Z" fill="#34d399" opacity="0.4"/>
-              </g>
-              <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-              <text x="0" y="58" text-anchor="middle" fill="#5e6a78" font-size="10">FAN 1</text>
-            </g>
+            <!-- Control Panel / Status Area -->
+            <div class="bg-[#0a1018] rounded-lg p-3 mb-3 border border-[#1e2a3a]">
+              <div class="flex justify-between items-center">
+                <!-- Status LEDs -->
+                <div class="flex gap-5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wide">PWR</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wide">HASH</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wide">NET</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 rig-glow"></span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wide">TEMP</span>
+                  </div>
+                </div>
+                <!-- Mini display -->
+                <div class="bg-[#0f1822] px-3 py-1 rounded-full border border-emerald-500/20">
+                  <span class="text-emerald-400 text-[10px] font-mono">312.5 TH/s</span>
+                </div>
+              </div>
+            </div>
             
-            <!-- Fan 2 -->
-            <g transform="translate(250, 150)">
-              <circle cx="0" cy="0" r="40" fill="#0d1624" stroke="#2a3a4a" stroke-width="2"/>
-              <circle cx="0" cy="0" r="34" fill="none" stroke="#1e3a4a" stroke-width="1" stroke-dasharray="3 3"/>
-              <g class="fan-blades">
-                <path d="M0,-30 L8,-8 L30,0 L8,8 L0,30 L-8,8 L-30,0 L-8,-8 Z" fill="#10b981" opacity="0.7"/>
-                <path d="M0,-20 L5,-5 L20,0 L5,5 L0,20 L-5,5 L-20,0 L-5,-5 Z" fill="#34d399" opacity="0.4"/>
-              </g>
-              <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-              <text x="0" y="58" text-anchor="middle" fill="#5e6a78" font-size="10">FAN 2</text>
-            </g>
+            <!-- Hash Boards with realistic PCB look -->
+            <div class="grid grid-cols-3 gap-2">
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30 shadow-inner">
+                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
+                <div class="flex justify-between items-end">
+                  <span class="text-xs text-emerald-400 font-bold font-mono">104 TH/s</span>
+                  <span class="text-[8px] text-gray-500">ASIC</span>
+                </div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1">
+                  <div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div>
+                </div>
+              </div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30 shadow-inner">
+                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
+                <div class="flex justify-between items-end">
+                  <span class="text-xs text-emerald-400 font-bold font-mono">103 TH/s</span>
+                  <span class="text-[8px] text-gray-500">ASIC</span>
+                </div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1">
+                  <div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div>
+                </div>
+              </div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-2 border border-emerald-500/30 shadow-inner">
+                <div class="text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
+                <div class="flex justify-between items-end">
+                  <span class="text-xs text-emerald-400 font-bold font-mono">105 TH/s</span>
+                  <span class="text-[8px] text-gray-500">ASIC</span>
+                </div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1">
+                  <div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div>
+                </div>
+              </div>
+            </div>
             
-            <!-- Fan 3 -->
-            <g transform="translate(390, 150)">
-              <circle cx="0" cy="0" r="40" fill="#0d1624" stroke="#2a3a4a" stroke-width="2"/>
-              <circle cx="0" cy="0" r="34" fill="none" stroke="#1e3a4a" stroke-width="1" stroke-dasharray="3 3"/>
-              <g class="fan-blades">
-                <path d="M0,-30 L8,-8 L30,0 L8,8 L0,30 L-8,8 L-30,0 L-8,-8 Z" fill="#10b981" opacity="0.7"/>
-                <path d="M0,-20 L5,-5 L20,0 L5,5 L0,20 L-5,5 L-20,0 L-5,-5 Z" fill="#34d399" opacity="0.4"/>
-              </g>
-              <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-              <text x="0" y="58" text-anchor="middle" fill="#5e6a78" font-size="10">FAN 3</text>
-            </g>
+            <!-- Bottom I/O Ports -->
+            <div class="flex justify-between items-end mt-4">
+              <div class="flex gap-3">
+                <div class="flex flex-col items-center">
+                  <div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div>
+                  <span class="text-[8px] text-gray-500 mt-0.5">ETH</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center">
+                    <span class="text-[6px] text-emerald-400">⚡</span>
+                  </div>
+                  <span class="text-[8px] text-gray-500 mt-0.5">PWR</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <div class="w-6 h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div>
+                  <span class="text-[8px] text-gray-500 mt-0.5">USB</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-gray-500 block">NEPTUNE AI</span>
+                <span class="text-xs text-emerald-400 font-mono tracking-wider">S21 PRO · 3010W</span>
+              </div>
+            </div>
             
-            <!-- Hash Board Modules (bottom section) -->
-            <rect x="60" y="190" width="100" height="30" rx="6" fill="#0a1018" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="110" y="209" text-anchor="middle" fill="#10b981" font-size="10" font-family="monospace">104 TH/s</text>
-            
-            <rect x="200" y="190" width="100" height="30" rx="6" fill="#0a1018" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="250" y="209" text-anchor="middle" fill="#10b981" font-size="10" font-family="monospace">103 TH/s</text>
-            
-            <rect x="340" y="190" width="100" height="30" rx="6" fill="#0a1018" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="390" y="209" text-anchor="middle" fill="#10b981" font-size="10" font-family="monospace">105 TH/s</text>
-            
-            <!-- Status LEDs -->
-            <circle cx="70" cy="235" r="4" fill="#10b981" class="led-pulse"/>
-            <text x="82" y="239" fill="#5e6a78" font-size="9">PWR</text>
-            
-            <circle cx="130" cy="235" r="4" fill="#10b981" class="led-pulse"/>
-            <text x="142" y="239" fill="#5e6a78" font-size="9">HASH</text>
-            
-            <circle cx="190" cy="235" r="4" fill="#10b981" class="led-pulse"/>
-            <text x="202" y="239" fill="#5e6a78" font-size="9">NET</text>
-            
-            <circle cx="250" cy="235" r="4" fill="#10b981" class="led-pulse"/>
-            <text x="262" y="239" fill="#5e6a78" font-size="9">TEMP</text>
-            
-            <!-- Data flow lines between components -->
-            <path d="M160,150 L200,150" stroke="#10b981" stroke-width="1.5" class="data-line" opacity="0.5"/>
-            <path d="M290,150 L340,150" stroke="#10b981" stroke-width="1.5" class="data-line" opacity="0.5"/>
-            
-            <!-- Brand Badge -->
-            <rect x="340" y="50" width="120" height="24" rx="12" fill="#0f1822" stroke="#10b981" stroke-width="1"/>
-            <text x="400" y="66" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" letter-spacing="1">NEPTUNE AI</text>
-            
-            <!-- Gradients -->
-            <defs>
-              <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1a2533"/>
-                <stop offset="50%" stop-color="#111827"/>
-                <stop offset="100%" stop-color="#0a1018"/>
-              </linearGradient>
-            </defs>
-          </svg>
+            <!-- Screw details -->
+            <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute bottom-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+          </div>
         </div>
         
-        <!-- Hardware Specs List -->
-        <div class="grid grid-cols-4 gap-2 mt-4">
-          <div class="bg-[#0f1822] rounded-lg p-2 text-center">
-            <div class="text-gray-400 text-[10px]">Algorithm</div>
-            <div class="text-emerald-400 text-sm font-mono">SHA-256</div>
-          </div>
-          <div class="bg-[#0f1822] rounded-lg p-2 text-center">
-            <div class="text-gray-400 text-[10px]">Power</div>
-            <div class="text-emerald-400 text-sm font-mono">3010W</div>
-          </div>
-          <div class="bg-[#0f1822] rounded-lg p-2 text-center">
-            <div class="text-gray-400 text-[10px]">Efficiency</div>
-            <div class="text-emerald-400 text-sm font-mono">21.5 J/TH</div>
-          </div>
-          <div class="bg-[#0f1822] rounded-lg p-2 text-center">
-            <div class="text-gray-400 text-[10px]">Cooling</div>
-            <div class="text-emerald-400 text-sm font-mono">Geothermal</div>
-          </div>
-        </div>
+        <p class="text-sm text-gray-400 mt-4 flex items-center gap-1">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+          Real hardware · Geothermal cooled · 99.9% uptime · Direct farm connection
+        </p>
       </div>
       
-      <!-- RIGHT: Rental Info & Stats -->
-      <div class="lg:w-1/2">
-        <h2 class="text-2xl font-bold text-white mb-2">Rent Hash Power</h2>
-        <p class="text-gray-400 mb-6">Connect to our industrial mining farm and earn BTC daily — zero hardware maintenance.</p>
+      <!-- RIGHT: Stats & CTA (unchanged) -->
+      <div class="lg:w-3/5">
+        <div class="mb-4">
+          <h2 class="text-2xl font-bold text-white mb-1">Rent Hash Power</h2>
+          <p class="text-gray-400">Connect to our farm and earn BTC daily — no hardware required.</p>
+        </div>
         
-        <!-- Live Stats -->
         <div class="grid grid-cols-2 gap-4 mb-6">
           <div class="bg-[#0f1822] rounded-xl p-4 border border-[#1f2a3a]">
-            <div class="text-gray-400 text-xs mb-1 flex items-center gap-1">
-              <i data-lucide="server" class="w-3.5 h-3.5"></i> Active Rigs
-            </div>
+            <div class="text-gray-400 text-xs mb-1">Active Rigs</div>
             <div class="text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div>
           </div>
           <div class="bg-[#0f1822] rounded-xl p-4 border border-[#1f2a3a]">
-            <div class="text-gray-400 text-xs mb-1 flex items-center gap-1">
-              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Total Hashrate
-            </div>
+            <div class="text-gray-400 text-xs mb-1">Total Hashrate</div>
             <div class="text-2xl font-bold text-emerald-400">312.5 TH/s</div>
           </div>
         </div>
         
-        <!-- Instant Withdrawal Notice -->
-        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 mb-6">
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4">
           <div class="flex items-center gap-2 text-emerald-400 mb-2">
             <i data-lucide="wallet" class="w-5 h-5"></i>
-            <span class="font-semibold">Instant Wallet Connection</span>
+            <span class="font-semibold">Instant Withdrawals</span>
           </div>
-          <p class="text-sm text-gray-300">Once payment is received, your wallet is linked to our rig farm. Daily earnings sent automatically — withdraw anytime.</p>
-        </div>
-        
-        <!-- How it works -->
-        <div class="flex gap-4 text-sm">
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">1</div>
-            <span>Select unit</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">2</div>
-            <span>Pay</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">3</div>
-            <span>Earn daily</span>
-          </div>
+          <p class="text-sm text-gray-300">Once payment is received, your wallet connects directly to our rig farm. Daily earnings sent automatically.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== PRICING TIERS ===== -->
+  <!-- ===== PRICING TIERS (RENTAL UNITS) ===== -->
   <div class="mb-8">
     <div class="flex items-center gap-3 mb-5">
       <i data-lucide="hard-drive" class="w-6 h-6 text-emerald-400"></i>
@@ -247,7 +274,7 @@
     </div>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Tier 1 -->
+      <!-- $10 Tier -->
       <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition shadow-lg">
         <div class="flex items-center gap-2 mb-2">
           <i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i>
@@ -263,7 +290,8 @@
           <i data-lucide="zap" class="w-4 h-4"></i> Enroll Now
         </button>
       </div>
-      <!-- Tier 2 -->
+      
+      <!-- $50 Tier -->
       <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition shadow-lg">
         <div class="flex items-center gap-2 mb-2">
           <i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i>
@@ -279,7 +307,8 @@
           <i data-lucide="zap" class="w-4 h-4"></i> Enroll Now
         </button>
       </div>
-      <!-- Tier 3 (Popular) -->
+      
+      <!-- $150 Tier (Popular) -->
       <div class="bg-[#111827] border border-emerald-500/30 rounded-2xl p-5 relative shadow-xl shadow-emerald-500/10">
         <div class="absolute -top-3 right-4 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
         <div class="flex items-center gap-2 mb-2">
@@ -296,7 +325,8 @@
           <i data-lucide="zap" class="w-4 h-4"></i> Enroll Now
         </button>
       </div>
-      <!-- Tier 4 -->
+      
+      <!-- $500 Tier -->
       <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition shadow-lg">
         <div class="flex items-center gap-2 mb-2">
           <i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i>
@@ -315,7 +345,7 @@
     </div>
   </div>
 
-  <!-- ===== IMPORTANT NOTICE & TELEGRAM ===== -->
+  <!-- ===== IMPORTANT NOTICE ===== -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
     <div class="md:col-span-2 bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 shadow-xl">
       <div class="flex items-start gap-3">
@@ -343,7 +373,6 @@
   <!-- ===== FOOTER ===== -->
   <div class="text-center text-gray-500 text-sm">
     <p>https://minefarm.netlify.app · Refundable on any purchase · Built by real crypto engineers</p>
-    <p class="mt-2 text-emerald-400/70 text-xs">🚀 Turn the cloud into your personal crypto farm. 🌩️💎</p>
   </div>
 </div>
 
