@@ -19,37 +19,51 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    @keyframes slide-in {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
     .rig-glow { animation: pulse-glow 2s infinite; }
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
+    .toast { animation: slide-in 0.3s ease-out; }
   </style>
 </head>
 <body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-6 md:p-8">
 
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-4 right-4 bg-[#111827] border border-emerald-500/30 rounded-xl p-4 shadow-2xl toast z-50 flex items-center gap-3">
+  <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
+  <div><p class="text-sm font-medium">Recent Deposit</p><p class="text-xs text-gray-400">+0.042 BTC ($2,100) · 2 min ago</p></div>
+  <button onclick="this.parentElement.remove()" class="ml-4 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
+</div>
+
 <div class="max-w-6xl mx-auto">
   
-  <!-- HEADER -->
+  <!-- HEADER: Neptune AI top right -->
   <div class="flex justify-between items-center mb-6">
-    <div class="flex items-center gap-3">
-      <div class="bg-[#1e293b] p-2.5 rounded-xl">
-        <i data-lucide="cloud" class="w-7 h-7 text-emerald-400"></i>
-      </div>
-      <div>
-        <h1 class="text-2xl font-semibold tracking-tight text-white">Neptune AI</h1>
-        <span class="text-xs bg-[#1e2a3a] text-emerald-400 px-3 py-0.5 rounded-full font-medium">MINING</span>
-      </div>
-    </div>
-    <div class="bg-[#1e293b] px-4 py-2 rounded-full flex items-center gap-2">
-      <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i>
-      <span class="text-sm font-medium">MINEFARM TEAM</span>
+    <div class="w-10"></div>
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 font-bold">N</div>
+      <h1 class="text-2xl font-semibold tracking-tight text-white">Neptune AI</h1>
     </div>
   </div>
 
-  <!-- MINING RIG VISUAL + STATS -->
+  <!-- Action Buttons -->
+  <div class="flex gap-4 mb-8">
+    <button onclick="document.getElementById('enroll').scrollIntoView({behavior:'smooth'})" class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-6 py-3 rounded-full text-lg flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+      <i data-lucide="rocket" class="w-5 h-5"></i> Start Mining
+    </button>
+    <button onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})" class="bg-[#1e2a3a] hover:bg-[#243447] text-white font-medium px-6 py-3 rounded-full text-lg flex items-center gap-2 border border-[#2a3a4a]">
+      <i data-lucide="dollar-sign" class="w-5 h-5"></i> View Pricing
+    </button>
+  </div>
+
+  <!-- ===== MINING RIG VISUAL ===== -->
   <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-6 md:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-8 items-center">
       
-      <!-- LEFT: Enhanced Realistic Rig -->
+      <!-- LEFT: Realistic Rig -->
       <div class="lg:w-2/5">
         <div class="flex items-center gap-2 mb-3">
           <i data-lucide="server" class="w-5 h-5 text-emerald-400"></i>
@@ -71,7 +85,6 @@
             
             <!-- Fans -->
             <div class="flex justify-between gap-3 mb-4">
-              <!-- Fan 1 -->
               <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
                 <div class="relative w-14 h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
@@ -86,7 +99,6 @@
                 </div>
                 <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
               </div>
-              <!-- Fan 2 -->
               <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
                 <div class="relative w-14 h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
@@ -101,7 +113,6 @@
                 </div>
                 <span class="text-[10px] text-gray-400 mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
               </div>
-              <!-- Fan 3 -->
               <div class="bg-[#0d131c] rounded-xl p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
                 <div class="relative w-14 h-14 flex items-center justify-center">
                   <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
@@ -162,7 +173,6 @@
               <div class="text-right"><span class="text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
             </div>
             
-            <!-- Screws -->
             <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
             <div class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
             <div class="absolute bottom-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
@@ -194,77 +204,218 @@
     </div>
   </div>
 
-  <!-- PRICING TIERS -->
-  <div class="mb-8">
-    <div class="flex items-center gap-3 mb-5">
-      <i data-lucide="hard-drive" class="w-6 h-6 text-emerald-400"></i>
-      <h3 class="text-xl font-semibold">Select your mining unit</h3>
-      <span class="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full">FAST & EASY</span>
+  <!-- ===== INVESTMENT CALCULATOR (Minimalist Design) ===== -->
+  <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8 shadow-xl">
+    <h3 class="text-xl font-semibold mb-2">Investment Calculator</h3>
+    <p class="text-gray-400 text-sm mb-6">See your estimated profits based on any mining unit.</p>
+    
+    <!-- Investment Amount Slider -->
+    <div class="mb-6">
+      <div class="flex justify-between items-center mb-1">
+        <label class="text-gray-400 text-sm">Investment ($)</label>
+        <span id="amountDisplay" class="text-emerald-400 font-bold text-xl">$5,000</span>
+      </div>
+      <input type="range" id="investSlider" min="10" max="20000" value="5000" step="10" class="w-full accent-emerald-400 h-2 rounded-full">
+      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>$10</span><span>$20,000</span></div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- $10 -->
-      <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition">
-        <div class="flex items-center gap-2 mb-2"><i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i><span class="text-gray-400 text-sm">Starter Rig</span></div>
-        <div class="text-3xl font-bold text-white mb-1">$10</div>
-        <div class="flex items-center gap-2 text-emerald-400 mb-4"><i data-lucide="trending-up" class="w-4 h-4"></i><span class="font-medium">Profits $4 / day</span></div>
-        <div class="text-xs text-gray-500 mb-3">10 TH/s · 24h payout</div>
-        <button class="w-full bg-[#1e2a3a] hover:bg-[#243447] text-white py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i>Enroll Now</button>
+    
+    <!-- Unit Selector -->
+    <div class="mb-6">
+      <label class="block text-gray-400 text-sm mb-2">Mining Unit</label>
+      <select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-lg font-medium">
+        <option value="bronze">Bronze</option>
+        <option value="silver">Silver</option>
+        <option value="gold">Gold</option>
+        <option value="platinum">Platinum</option>
+        <option value="diamond">Diamond</option>
+        <option value="master">Master</option>
+        <option value="grandmaster">Grandmaster</option>
+        <option value="elite">Elite</option>
+        <option value="legend">Legend</option>
+        <option value="mythic">Mythic</option>
+        <option value="divine">Divine</option>
+        <option value="cosmic" selected>Cosmic</option>
+      </select>
+    </div>
+    
+    <!-- Three Column Results -->
+    <div class="grid grid-cols-3 gap-4 text-center">
+      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Daily</p>
+        <p id="dailyUsd" class="text-2xl font-bold text-white">$8.40</p>
+        <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
-      <!-- $50 -->
-      <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition">
-        <div class="flex items-center gap-2 mb-2"><i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i><span class="text-gray-400 text-sm">Basic Rig</span></div>
-        <div class="text-3xl font-bold text-white mb-1">$50</div>
-        <div class="flex items-center gap-2 text-emerald-400 mb-4"><i data-lucide="trending-up" class="w-4 h-4"></i><span class="font-medium">Profits $22 / day</span></div>
-        <div class="text-xs text-gray-500 mb-3">50 TH/s · 24h payout</div>
-        <button class="w-full bg-[#1e2a3a] hover:bg-[#243447] text-white py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i>Enroll Now</button>
+      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Monthly</p>
+        <p id="monthlyUsd" class="text-2xl font-bold text-white">$252</p>
+        <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
-      <!-- $150 Popular -->
-      <div class="bg-[#111827] border border-emerald-500/30 rounded-2xl p-5 relative shadow-xl">
-        <div class="absolute -top-3 right-4 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
-        <div class="flex items-center gap-2 mb-2"><i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i><span class="text-gray-400 text-sm">Advanced Rig</span></div>
-        <div class="text-3xl font-bold text-white mb-1">$150</div>
-        <div class="flex items-center gap-2 text-emerald-400 mb-4"><i data-lucide="trending-up" class="w-4 h-4"></i><span class="font-medium">Profits $60 / day</span></div>
-        <div class="text-xs text-gray-500 mb-3">150 TH/s · Instant payout</div>
-        <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i>Enroll Now</button>
+      <div class="bg-[#0f1822] rounded-2xl p-4 border border-[#1f2a3a]">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Yearly</p>
+        <p id="yearlyUsd" class="text-2xl font-bold text-white">$3,066</p>
+        <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
-      <!-- $500 -->
-      <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5 hover:border-emerald-500/30 transition">
-        <div class="flex items-center gap-2 mb-2"><i data-lucide="cpu" class="w-4 h-4 text-gray-400"></i><span class="text-gray-400 text-sm">Pro Farm</span></div>
-        <div class="text-3xl font-bold text-white mb-1">$500</div>
-        <div class="flex items-center gap-2 text-emerald-400 mb-4"><i data-lucide="trending-up" class="w-4 h-4"></i><span class="font-medium">Profits $150 / day</span></div>
-        <div class="text-xs text-gray-500 mb-3">500 TH/s · Priority payout</div>
-        <button class="w-full bg-[#1e2a3a] hover:bg-[#243447] text-white py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i>Enroll Now</button>
+    </div>
+    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on selected unit's ratio. Actual returns may vary.</p>
+  </div>
+
+  <!-- ===== ENROLL CARD ===== -->
+  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8 shadow-xl">
+    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-emerald-400"></i> Enroll Now</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-gray-400 text-sm mb-1">Email</label>
+        <input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4 focus:outline-none focus:border-emerald-400">
+        <label class="block text-gray-400 text-sm mb-1">BTC Wallet Address</label>
+        <input type="text" placeholder="bc1q..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4 focus:outline-none focus:border-emerald-400">
+        <button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-5 h-5"></i> Order Now</button>
+      </div>
+      <div class="bg-[#0f1822] rounded-xl p-5">
+        <p class="text-gray-400 text-sm">Your Order</p>
+        <p class="text-2xl font-bold text-white" id="orderAmount">$5,000</p>
+        <p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p>
+        <hr class="border-[#2a3a4a] my-4">
+        <p class="text-gray-400 text-xs">Expected Daily Profit</p>
+        <p class="text-lg font-bold text-emerald-400" id="orderDaily">$8.40</p>
       </div>
     </div>
   </div>
 
-  <!-- IMPORTANT NOTICE -->
+  <!-- ===== INFO SECTIONS ===== -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-    <div class="md:col-span-2 bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6">
-      <div class="flex items-start gap-3">
-        <div class="bg-amber-500/10 p-3 rounded-xl"><i data-lucide="shield-alert" class="w-6 h-6 text-amber-400"></i></div>
-        <div>
-          <h4 class="font-semibold text-lg mb-2">Important Notice</h4>
-          <p class="text-gray-300 mb-2">If you experience any difficulties with withdrawal, please contact the group admin.</p>
-          <p class="text-gray-300 mb-3"><span class="text-red-400 font-medium">The admin will NEVER DM you first!</span> Be cautious of scammers.</p>
-          <p class="text-emerald-400 font-semibold">Don't miss out — the earlier you start renting, the more you earn!</p>
-        </div>
-      </div>
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
+      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4>
+      <p class="text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers.</p>
     </div>
-    <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 flex flex-col items-center text-center">
-      <i data-lucide="send" class="w-8 h-8 text-blue-400 mb-3"></i>
-      <span class="text-gray-400 text-sm">Official Telegram</span>
-      <span class="text-2xl font-mono font-bold text-white">@minefarm1</span>
-      <button class="mt-4 bg-[#1e2a3a] hover:bg-[#243447] text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i>Contact Admin</button>
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
+      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4>
+      <p class="text-sm text-gray-300">You will get payouts daily and monthly. Our system automatically transfers mined coins directly to your BTC wallet.</p>
+    </div>
+    <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-5">
+      <h4 class="font-semibold mb-2 flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a BTC Wallet?</h4>
+      <p class="text-sm text-gray-300">If you prefer security, try KYC platforms like Binance or Coinbase. If you prefer anonymity, try non-KYC platforms like ShapeShift or Trezor.</p>
     </div>
   </div>
 
-  <!-- FOOTER (no 404 link) -->
-  <div class="text-center text-gray-500 text-sm">
-    <p>minefarm.netlify.app · Refundable on any purchase · Built by real crypto engineers</p>
+  <!-- ===== HISTORY TRANSACTIONS ===== -->
+  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-6 mb-8">
+    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> History Transactions</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Description</th><th class="text-right">Amount</th><th class="text-right">Status</th></tr></thead>
+        <tbody>
+          <tr class="border-b border-[#1e2a3a]"><td class="py-2">32 min ago</td><td>TLxP5V6i27PeCku...zaRg33J45</td><td class="text-right">52.516137 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+          <tr class="border-b border-[#1e2a3a]"><td class="py-2">32 min ago</td><td>DTFGBzS6Z7TionV...hKujFwgoa</td><td class="text-right">188.9364225 DOGE</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+          <tr class="border-b border-[#1e2a3a]"><td class="py-2">2 hours ago</td><td>TNJpBiMMA3b3Eet...WX9JVJdq5</td><td class="text-right">340 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+          <tr class="border-b border-[#1e2a3a]"><td class="py-2">2 hours ago</td><td>TPLWrd2vDo4NYqd...yBg4Gs5sn</td><td class="text-right">82 TRX</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+          <tr class="border-b border-[#1e2a3a]"><td class="py-2">16 hours ago</td><td>LTjtvYKWDu913zj...TDEHQWeaW</td><td class="text-right">0.10392361 LTC</td><td class="text-right text-emerald-400">SUCCESS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="text-center text-gray-500 text-sm">minefarm.netlify.app · Refundable on any purchase · Built by real crypto engineers</div>
+</div>
+
+<!-- ENROLL MODAL -->
+<div id="enrollModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+  <div class="bg-[#111827] border border-[#2a3a4a] rounded-3xl p-6 max-w-md w-full mx-4">
+    <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white">Galactic Mining Unit</h3><button onclick="closeModal()"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button></div>
+    <p class="text-sm text-gray-400 mb-4">Your profit schedule for <span id="modalTier"></span> Tier</p>
+    <div class="grid grid-cols-3 gap-2 text-center mb-4">
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1D</p><p id="modal1d" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">2D</p><p id="modal2d" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">3D</p><p id="modal3d" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1M</p><p id="modal1m" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">6M</p><p id="modal6m" class="text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-3 rounded-xl"><p class="text-gray-400 text-xs">1Y</p><p id="modal1y" class="text-lg font-bold text-white">$0</p></div>
+    </div>
+    <p class="text-xs text-gray-500 mb-4">Payments are made automatically once a day.</p>
+    <p class="text-gray-400 text-sm">Your Order: <span id="modalOrderAmount" class="text-white font-bold">$0</span></p>
+    <input type="email" placeholder="Email" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white my-3">
+    <input type="text" placeholder="BTC wallet address" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white mb-4">
+    <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-xl">Order Now</button>
   </div>
 </div>
 
-<script>lucide.createIcons();</script>
+<script>
+  // Realistic mining profitability: ~0.00000012 BTC per day per $1 invested (approx 0.04% daily yield)
+  const BTC_PRICE = 70000; // $70k/BTC
+  const YIELD_PER_DOLLAR_PER_DAY_BTC = 0.00000012; // BTC per $1 per day
+  
+  const tierMultiplier = {
+    bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10
+  };
+
+  const slider = document.getElementById('investSlider');
+  const amountDisplay = document.getElementById('amountDisplay');
+  const tierSelect = document.getElementById('tierSelect');
+  const dailyUsd = document.getElementById('dailyUsd');
+  const monthlyUsd = document.getElementById('monthlyUsd');
+  const yearlyUsd = document.getElementById('yearlyUsd');
+  const orderAmount = document.getElementById('orderAmount');
+  const selectedTierDisplay = document.getElementById('selectedTierDisplay');
+  const orderDaily = document.getElementById('orderDaily');
+
+  function calculateReturns(amount, tier) {
+    const multiplier = tierMultiplier[tier] || 1;
+    const dailyBtcValue = amount * YIELD_PER_DOLLAR_PER_DAY_BTC * multiplier;
+    const dailyUsdValue = dailyBtcValue * BTC_PRICE;
+    return { dailyUsd: dailyUsdValue };
+  }
+
+  function formatK(value) {
+    if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'k';
+    return '$' + Math.round(value);
+  }
+
+  function updateUI() {
+    const amount = parseFloat(slider.value);
+    const tier = tierSelect.value;
+    amountDisplay.textContent = '$' + amount.toLocaleString();
+    const { dailyUsd: dUsd } = calculateReturns(amount, tier);
+    const monthly = dUsd * 30;
+    const yearly = dUsd * 365;
+    
+    dailyUsd.textContent = formatK(dUsd);
+    monthlyUsd.textContent = formatK(monthly);
+    yearlyUsd.textContent = formatK(yearly);
+    
+    orderAmount.textContent = '$' + amount.toLocaleString();
+    selectedTierDisplay.textContent = tierSelect.options[tierSelect.selectedIndex].text;
+    orderDaily.textContent = '$' + dUsd.toFixed(2);
+  }
+
+  slider.addEventListener('input', updateUI);
+  tierSelect.addEventListener('change', updateUI);
+  updateUI();
+
+  // Modal functions
+  function openModal(amount, tier) {
+    const multiplier = tierMultiplier[tier] || 1;
+    const dailyBtc = amount * YIELD_PER_DOLLAR_PER_DAY_BTC * multiplier;
+    const dailyUsd = dailyBtc * BTC_PRICE;
+    document.getElementById('modalTier').textContent = tierSelect.options[tierSelect.selectedIndex].text;
+    document.getElementById('modal1d').textContent = '$' + Math.round(dailyUsd);
+    document.getElementById('modal2d').textContent = '$' + Math.round(dailyUsd * 2);
+    document.getElementById('modal3d').textContent = '$' + Math.round(dailyUsd * 3);
+    document.getElementById('modal1m').textContent = '$' + Math.round(dailyUsd * 30);
+    document.getElementById('modal6m').textContent = '$' + Math.round(dailyUsd * 180);
+    document.getElementById('modal1y').textContent = '$' + Math.round(dailyUsd * 365);
+    document.getElementById('modalOrderAmount').textContent = '$' + amount.toLocaleString();
+    document.getElementById('enrollModal').classList.remove('hidden');
+  }
+  function closeModal() { document.getElementById('enrollModal').classList.add('hidden'); }
+
+  document.getElementById('orderBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const amount = parseFloat(slider.value);
+    const tier = tierSelect.value;
+    openModal(amount, tier);
+  });
+
+  lucide.createIcons();
+</script>
 </body>
 </html>
