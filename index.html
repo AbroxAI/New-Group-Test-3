@@ -220,10 +220,10 @@
     <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5 sm:col-span-2 lg:col-span-1"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a USDT Wallet?</h4><p class="text-xs md:text-sm text-gray-300">Secure KYC platforms like Binance or Coinbase (ERC20/TRC20). For non-KYC, use TrustWallet, TronLink, or Exodus.</p></div>
   </div>
 
-  <!-- HISTORY TRANSACTIONS -->
+  <!-- HISTORY TRANSACTIONS (ONLY USDT) -->
   <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8">
-    <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions</h3>
-    <div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div>
+    <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions (USDT)</h3>
+    <div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div>
   </div>
 
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
@@ -252,7 +252,6 @@
 
 <script>
   // --- USDT MINING LOGIC (50 USDT with Cosmic = 35 USDT/day) ---
-  // Desired: 50 * baseRate * 10 = 35  => baseRate = 35 / (500) = 0.07
   const DAILY_YIELD_RATE = 0.07;   // per USDT per multiplier unit (Bronze = 1)
   
   const tierMultiplier = {
@@ -300,7 +299,7 @@
   tierSelect.addEventListener('change', updateUI);
   updateUI();
 
-  // --- Toast Notifications (realistic USDT earnings) ---
+  // --- Toast Notifications (USDT earnings) ---
   const toast = document.getElementById('toast');
   const toastName = document.getElementById('toastName');
   const toastAmount = document.getElementById('toastAmount');
@@ -318,27 +317,19 @@
   setTimeout(showRandomToast, 3000);
   setInterval(showRandomToast, 12000);
 
-  // --- History Transactions ---
+  // --- History Transactions (ONLY USDT) ---
   const tbody = document.getElementById('transactionBody');
-  function generateRandomTx() {
+  
+  function generateRandomUSDTTransaction() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let addr = ''; for (let i=0;i<8;i++) addr += chars[Math.floor(Math.random()*chars.length)];
-    addr = addr.slice(0,4)+'...'+addr.slice(-4);
-    const r = Math.random();
-    let amountRaw;
-    if (r < 0.7) {
-      amountRaw = (Math.random() * 320 + 12).toFixed(2) + ' USDT';
-    } else {
-      const coins = ['ETH', 'TRX', 'DOGE', 'LTC'];
-      const coin = coins[Math.floor(Math.random() * coins.length)];
-      if (coin === 'ETH') amountRaw = (Math.random() * 1.2).toFixed(4) + ' ETH';
-      else if (coin === 'TRX') amountRaw = Math.floor(Math.random() * 400 + 25) + ' TRX';
-      else if (coin === 'DOGE') amountRaw = Math.floor(Math.random() * 1200 + 80) + ' DOGE';
-      else amountRaw = (Math.random() * 0.4).toFixed(4) + ' LTC';
-    }
+    let addr = '';
+    for (let i = 0; i < 8; i++) addr += chars[Math.floor(Math.random() * chars.length)];
+    addr = addr.slice(0,4) + '...' + addr.slice(-4);
+    const amount = (Math.random() * 320 + 12).toFixed(2);
     const time = Math.floor(Math.random() * 60) + 1;
-    return { time: `${time} min ago`, addr, amount: amountRaw, status: 'SUCCESS' };
+    return { time: `${time} min ago`, addr, amount: amount + ' USDT', status: 'SUCCESS' };
   }
+  
   function addTransaction(tx) {
     const row = document.createElement('tr');
     row.className = 'border-b border-[#1e2a3a]';
@@ -346,16 +337,20 @@
     tbody.appendChild(row);
     if (tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
   }
+  
+  // Initial all-USDT transactions
   const initialTxs = [
     { time: '12 min ago', addr: 'TXpM5...k2J', amount: '124.75 USDT', status: 'SUCCESS' },
-    { time: '32 min ago', addr: 'TLxP5...J45', amount: '52.51 TRX', status: 'SUCCESS' },
-    { time: '45 min ago', addr: '0xABcd...Ef89', amount: '87.30 USDT', status: 'SUCCESS' },
-    { time: '2 hours ago', addr: 'DTFGB...goa', amount: '189.93 DOGE', status: 'SUCCESS' },
-    { time: '3 hours ago', addr: 'TNJpB...dq5', amount: '340 TRX', status: 'SUCCESS' },
-    { time: '5 hours ago', addr: 'TSeCr...5sn', amount: '210.45 USDT', status: 'SUCCESS' },
+    { time: '25 min ago', addr: 'TRvL9...aB3', amount: '87.30 USDT', status: 'SUCCESS' },
+    { time: '38 min ago', addr: '0xABcd...Ef89', amount: '210.45 USDT', status: 'SUCCESS' },
+    { time: '2 hours ago', addr: 'TSeCr...5sn', amount: '56.20 USDT', status: 'SUCCESS' },
+    { time: '3 hours ago', addr: 'TFgH7...mN2', amount: '312.80 USDT', status: 'SUCCESS' },
+    { time: '5 hours ago', addr: 'TWpqR...9vX', amount: '95.15 USDT', status: 'SUCCESS' },
   ];
   initialTxs.forEach(tx => addTransaction(tx));
-  setInterval(() => addTransaction(generateRandomTx()), 15000);
+  
+  // Add a new USDT transaction every 15 seconds
+  setInterval(() => addTransaction(generateRandomUSDTTransaction()), 15000);
 
   // Modal logic
   function openModal(amount, tier) {
