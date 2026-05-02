@@ -27,7 +27,6 @@
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
     .toast { animation: slide-in 0.3s ease-out; }
-    .card-title { word-break: break-word; }
   </style>
 </head>
 <body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-4 md:p-6 lg:p-8">
@@ -152,7 +151,7 @@
     </div>
   </div>
 
-  <!-- ===== INVESTMENT CALCULATOR (50 → 100,000 USDT) with 8 USDT/day for 50 USDT on Cosmic ===== -->
+  <!-- ===== INVESTMENT CALCULATOR (50 → 100,000 USDT) with 50 USDT -> 35 USDT/day at Cosmic ===== -->
   <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
     <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator · USDT Mining</h3>
     <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
@@ -185,11 +184,11 @@
     </div>
     
     <div class="grid grid-cols-3 gap-3 md:gap-4 text-center">
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">8.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">240 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">2,920 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">35.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">1,050 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">12,775 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
     </div>
-    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on selected unit's ratio. For 50 USDT with Cosmic tier = 8 USDT/day.</p>
+    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 35 USDT/day. Higher tiers scale accordingly.</p>
   </div>
 
   <!-- ===== ENROLL CARD ===== -->
@@ -209,7 +208,7 @@
         <p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p>
         <hr class="border-[#2a3a4a] my-3 md:my-4">
         <p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p>
-        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">8.00 USDT</p>
+        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">35.00 USDT</p>
       </div>
     </div>
   </div>
@@ -252,11 +251,9 @@
 </div>
 
 <script>
-  // --- USDT MINING LOGIC (designed so that 50 USDT with Cosmic = 8 USDT/day) ---
-  // Cosmic multiplier = 10. Desired daily = 8 USDT.
-  // Equation: 50 USDT * baseRate * 10 = 8  => baseRate = 8 / (50*10) = 0.016
-  // Thus base yield per USDT per multiplier unit = 0.016 (1.6% daily on max tier, scaled linearly)
-  const DAILY_YIELD_RATE = 0.016;   // for multiplier = 1 (Bronze), each USDT yields 0.016 USDT per day
+  // --- USDT MINING LOGIC (50 USDT with Cosmic = 35 USDT/day) ---
+  // Desired: 50 * baseRate * 10 = 35  => baseRate = 35 / (500) = 0.07
+  const DAILY_YIELD_RATE = 0.07;   // per USDT per multiplier unit (Bronze = 1)
   
   const tierMultiplier = {
     bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10
@@ -279,7 +276,7 @@
 
   function formatUSDT(value) {
     if (value >= 1000) return (value / 1000).toFixed(1) + 'k USDT';
-    return Math.round(value * 100) / 100 + ' USDT';
+    return value.toFixed(2) + ' USDT';
   }
   
   function updateUI() {
@@ -328,13 +325,12 @@
     let addr = ''; for (let i=0;i<8;i++) addr += chars[Math.floor(Math.random()*chars.length)];
     addr = addr.slice(0,4)+'...'+addr.slice(-4);
     const r = Math.random();
-    let amountRaw, coin;
+    let amountRaw;
     if (r < 0.7) {
-      coin = 'USDT';
       amountRaw = (Math.random() * 320 + 12).toFixed(2) + ' USDT';
     } else {
       const coins = ['ETH', 'TRX', 'DOGE', 'LTC'];
-      coin = coins[Math.floor(Math.random() * coins.length)];
+      const coin = coins[Math.floor(Math.random() * coins.length)];
       if (coin === 'ETH') amountRaw = (Math.random() * 1.2).toFixed(4) + ' ETH';
       else if (coin === 'TRX') amountRaw = Math.floor(Math.random() * 400 + 25) + ' TRX';
       else if (coin === 'DOGE') amountRaw = Math.floor(Math.random() * 1200 + 80) + ' DOGE';
