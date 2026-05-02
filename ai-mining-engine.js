@@ -1,6 +1,6 @@
 // ====================== AI PERSONA ENGINE v16 (MINING ADAPTED) ======================
 // Humanlike conversations about USDT mining, hash rates, rigs, daily earnings.
-// Reads media manifest from window.MEDIA_MANIFEST (loaded via media-manifest.js)
+// Uses window.MEDIA_MANIFEST (loaded via media-manifest.js) for media assets.
 // ===================================================================================
 
 (function(){
@@ -97,7 +97,7 @@
     thoughtful: { archetype: 'analytical', experience: 'intermediate', intent: 'community' }
   };
 
-  // ----- 150+ Personas (full list) -----
+  // ----- 150+ Personas (same list – unchanged) -----
   const customPersonas = [
     { name: "oladapo ogunsakin", gender: "men", country: "Nigeria", isFallback: false },
     { name: "narciso panganiban", gender: "men", country: "Mexico", isFallback: false },
