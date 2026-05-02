@@ -1,7 +1,7 @@
 // ====================== AI PERSONA ENGINE v16 (MINING ADAPTED) ======================
 // Humanlike conversations about USDT mining, hash rates, rigs, daily earnings.
-// Uses window.MEDIA_MANIFEST for persona media.
-// ====================================================================================
+// Reads media manifest from window.MEDIA_MANIFEST (loaded via media-manifest.js)
+// ===================================================================================
 
 (function(){
   "use strict";
@@ -97,7 +97,7 @@
     thoughtful: { archetype: 'analytical', experience: 'intermediate', intent: 'community' }
   };
 
-  // ----- 150+ Personas (full list – same as before) -----
+  // ----- 150+ Personas (full list) -----
   const customPersonas = [
     { name: "oladapo ogunsakin", gender: "men", country: "Nigeria", isFallback: false },
     { name: "narciso panganiban", gender: "men", country: "Mexico", isFallback: false },
@@ -315,7 +315,7 @@
     });
   }
 
-  // ----- MINING PHRASE BANKS -----
+  // ----- MINING PHRASE BANKS (no trading) -----
   const globalPhraseBank = {
     question: [
       "how much USDT per day with Bronze tier?", "what's the minimum investment?", "does the Cosmic tier really give 22 USDT/day?",
@@ -431,7 +431,7 @@
     Mexico: ["órale", "ándale", "qué padre", "wey", "neta"]
   };
 
-  // Populate message banks
+  // Populate message banks for each persona
   personas.forEach(p => {
     const bank = { ...globalPhraseBank };
     if (regionalPhrases[p.country]) {
@@ -447,7 +447,7 @@
     p.messageBank = bank;
   });
 
-  // ----- Media queue using external manifest -----
+  // ----- Media queue using external manifest (window.MEDIA_MANIFEST) -----
   const personaMediaQueue = new Map();
   const recentlyUsed = new Map();
   const personaLastMediaTime = new Map();
@@ -543,7 +543,7 @@
   function getTypingDelay(p, len){ return Math.min(randomBetween(p.typingSpeed[0], p.typingSpeed[1]) * len, 7000); }
   function showTyping(p, typingType = 'text'){ if(chatAPI.showTypingForPersona) chatAPI.showTypingForPersona(p, typingType); }
   function hideTyping(){ if(chatAPI.hideTyping) chatAPI.hideTyping(); }
-  function isGeneralChatActive() { return window.__activeChatRoom === 'community' && chatAPI.isChatRoomActive?.(); }
+  function isGeneralChatActive() { return window.__activeChatRoom === 'general' && chatAPI.isChatRoomActive?.(); }
 
   function getLastReplyTarget(excludePersonaId = null) {
     const target = [...recentMessages].reverse().find(m => m.text && m.personaId !== excludePersonaId);
@@ -700,7 +700,7 @@
         return;
       }
     }
-    const text = `⛏️ Mining Update: ${Math.floor(Math.random() * 200 + 50)} USDT mined in the last hour across all rigs. 🚀`;
+    const text = `⛏️ Mining Update: ${Math.floor(Math.random() * 200 + 50)} USDT earned in the last hour across all rigs. 🚀`;
     const now = new Date(); const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     if(chatAPI.addSystemMessage) chatAPI.addSystemMessage({ text, time: timeStr });
   }
