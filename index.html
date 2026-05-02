@@ -34,7 +34,7 @@
 <!-- Toast Notification (USDT earnings) -->
 <div id="toast" class="fixed top-4 right-4 bg-[#111827] border border-emerald-500/30 rounded-xl p-4 shadow-2xl toast z-50 flex items-center gap-3 hidden">
   <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
-  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+42.50 USDT</p></div>
+  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+22.50 USDT</p></div>
   <button onclick="hideToast()" class="ml-4 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
@@ -59,7 +59,7 @@
     </button>
   </div>
 
-  <!-- ===== MINING RIG VISUAL (unchanged) ===== -->
+  <!-- ===== MINING RIG VISUAL ===== -->
   <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
       <div class="lg:w-2/5 w-full">
@@ -151,7 +151,7 @@
     </div>
   </div>
 
-  <!-- ===== INVESTMENT CALCULATOR (50 → 100,000 USDT) with 50 USDT -> 35 USDT/day at Cosmic ===== -->
+  <!-- ===== INVESTMENT CALCULATOR (50 → 100,000 USDT) with 50 USDT -> 22 USDT/day at Cosmic ===== -->
   <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
     <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator · USDT Mining</h3>
     <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
@@ -184,11 +184,11 @@
     </div>
     
     <div class="grid grid-cols-3 gap-3 md:gap-4 text-center">
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">35.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">1,050 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
-      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">12,775 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
+      <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div>
     </div>
-    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 35 USDT/day. Higher tiers scale accordingly.</p>
+    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 22 USDT/day. Other tiers scale proportionally.</p>
   </div>
 
   <!-- ===== ENROLL CARD ===== -->
@@ -208,7 +208,7 @@
         <p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p>
         <hr class="border-[#2a3a4a] my-3 md:my-4">
         <p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p>
-        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">35.00 USDT</p>
+        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p>
       </div>
     </div>
   </div>
@@ -251,8 +251,9 @@
 </div>
 
 <script>
-  // --- USDT MINING LOGIC (50 USDT with Cosmic = 35 USDT/day) ---
-  const DAILY_YIELD_RATE = 0.07;   // per USDT per multiplier unit (Bronze = 1)
+  // --- USDT MINING LOGIC (50 USDT with Cosmic = 22 USDT/day) ---
+  // 22 = 50 * rate * 10 => rate = 22 / 500 = 0.044
+  const DAILY_YIELD_RATE = 0.044;
   
   const tierMultiplier = {
     bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10
@@ -307,7 +308,7 @@
   
   function showRandomToast() {
     const name = names[Math.floor(Math.random() * names.length)];
-    const usdtEarned = (Math.random() * 85 + 12).toFixed(2);
+    const usdtEarned = (Math.random() * 45 + 5).toFixed(2); // realistic range
     toastName.textContent = name;
     toastAmount.textContent = `+${usdtEarned} USDT`;
     toast.classList.remove('hidden');
@@ -325,7 +326,7 @@
     let addr = '';
     for (let i = 0; i < 8; i++) addr += chars[Math.floor(Math.random() * chars.length)];
     addr = addr.slice(0,4) + '...' + addr.slice(-4);
-    const amount = (Math.random() * 320 + 12).toFixed(2);
+    const amount = (Math.random() * 120 + 10).toFixed(2);
     const time = Math.floor(Math.random() * 60) + 1;
     return { time: `${time} min ago`, addr, amount: amount + ' USDT', status: 'SUCCESS' };
   }
@@ -340,16 +341,15 @@
   
   // Initial all-USDT transactions
   const initialTxs = [
-    { time: '12 min ago', addr: 'TXpM5...k2J', amount: '124.75 USDT', status: 'SUCCESS' },
-    { time: '25 min ago', addr: 'TRvL9...aB3', amount: '87.30 USDT', status: 'SUCCESS' },
-    { time: '38 min ago', addr: '0xABcd...Ef89', amount: '210.45 USDT', status: 'SUCCESS' },
-    { time: '2 hours ago', addr: 'TSeCr...5sn', amount: '56.20 USDT', status: 'SUCCESS' },
-    { time: '3 hours ago', addr: 'TFgH7...mN2', amount: '312.80 USDT', status: 'SUCCESS' },
-    { time: '5 hours ago', addr: 'TWpqR...9vX', amount: '95.15 USDT', status: 'SUCCESS' },
+    { time: '12 min ago', addr: 'TXpM5...k2J', amount: '48.20 USDT', status: 'SUCCESS' },
+    { time: '25 min ago', addr: 'TRvL9...aB3', amount: '22.75 USDT', status: 'SUCCESS' },
+    { time: '38 min ago', addr: '0xABcd...Ef89', amount: '91.30 USDT', status: 'SUCCESS' },
+    { time: '2 hours ago', addr: 'TSeCr...5sn', amount: '35.60 USDT', status: 'SUCCESS' },
+    { time: '3 hours ago', addr: 'TFgH7...mN2', amount: '112.40 USDT', status: 'SUCCESS' },
+    { time: '5 hours ago', addr: 'TWpqR...9vX', amount: '67.85 USDT', status: 'SUCCESS' },
   ];
   initialTxs.forEach(tx => addTransaction(tx));
   
-  // Add a new USDT transaction every 15 seconds
   setInterval(() => addTransaction(generateRandomUSDTTransaction()), 15000);
 
   // Modal logic
