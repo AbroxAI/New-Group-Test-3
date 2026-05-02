@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neptune AI · Mining Rig Rental</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Neptune AI · USDT Mining Rig Rental</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -32,10 +32,10 @@
 </head>
 <body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-4 md:p-6 lg:p-8">
 
-<!-- Toast Notification -->
+<!-- Toast Notification (USDT earnings) -->
 <div id="toast" class="fixed top-4 right-4 bg-[#111827] border border-emerald-500/30 rounded-xl p-4 shadow-2xl toast z-50 flex items-center gap-3 hidden">
   <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
-  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+0.042 BTC ($2,100)</p></div>
+  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+42.50 USDT</p></div>
   <button onclick="hideToast()" class="ml-4 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
@@ -53,10 +53,10 @@
   <!-- Action Buttons -->
   <div class="flex gap-4 mb-8">
     <button onclick="document.getElementById('enroll').scrollIntoView({behavior:'smooth'})" class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-6 py-3 rounded-full text-lg flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-      <i data-lucide="rocket" class="w-5 h-5"></i> Start Mining
+      <i data-lucide="rocket" class="w-5 h-5"></i> Start Mining USDT
     </button>
     <button onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})" class="bg-[#1e2a3a] hover:bg-[#243447] text-white font-medium px-6 py-3 rounded-full text-lg flex items-center gap-2 border border-[#2a3a4a]">
-      <i data-lucide="dollar-sign" class="w-5 h-5"></i> View Pricing
+      <i data-lucide="dollar-sign" class="w-5 h-5"></i> View Pricing (USDT)
     </button>
   </div>
 
@@ -190,34 +190,34 @@
       <!-- RIGHT: Stats -->
       <div class="lg:w-3/5 w-full">
         <div class="mb-4">
-          <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power</h2>
-          <p class="text-sm md:text-base text-gray-400">Connect to our farm and earn BTC daily — no hardware required.</p>
+          <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2>
+          <p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p>
         </div>
         <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
           <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div>
           <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div>
         </div>
         <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4">
-          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals</span></div>
-          <p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly to our rig farm. Daily earnings sent automatically.</p>
+          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div>
+          <p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== INVESTMENT CALCULATOR ===== -->
+  <!-- ===== INVESTMENT CALCULATOR (50 → 100,000 USDT) ===== -->
   <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
-    <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator</h3>
-    <p class="text-gray-400 text-xs md:text-sm mb-6">See your estimated profits based on any mining unit.</p>
+    <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator · USDT Mining</h3>
+    <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
     
-    <!-- Investment Amount Slider -->
+    <!-- Investment Amount Slider (Range 50 to 100,000 USDT) -->
     <div class="mb-6">
       <div class="flex justify-between items-center mb-1">
-        <label class="text-gray-400 text-xs md:text-sm">Investment ($)</label>
-        <span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">$5,000</span>
+        <label class="text-gray-400 text-xs md:text-sm">Investment (USDT)</label>
+        <span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">5,000 USDT</span>
       </div>
-      <input type="range" id="investSlider" min="10" max="20000" value="5000" step="10" class="w-full accent-emerald-400 h-2 rounded-full">
-      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>$10</span><span>$20,000</span></div>
+      <input type="range" id="investSlider" min="50" max="100000" value="5000" step="10" class="w-full accent-emerald-400 h-2 rounded-full">
+      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>50 USDT</span><span>100,000 USDT</span></div>
     </div>
     
     <!-- Unit Selector -->
@@ -239,113 +239,112 @@
       </select>
     </div>
     
-    <!-- Three Column Results -->
+    <!-- Three Column Results (USDT values) -->
     <div class="grid grid-cols-3 gap-3 md:gap-4 text-center">
       <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily</p>
-        <p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">$8.40</p>
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p>
+        <p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">8.40 USDT</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
       <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly</p>
-        <p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">$252</p>
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p>
+        <p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">252 USDT</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
       <div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]">
-        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly</p>
-        <p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">$3,066</p>
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p>
+        <p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">3,066 USDT</p>
         <p class="text-xs text-emerald-400 mt-1">est.</p>
       </div>
     </div>
     <p class="text-[10px] text-gray-500 mt-4 text-center">Based on selected unit's ratio. Actual returns may vary.</p>
   </div>
 
-  <!-- ===== ENROLL CARD ===== -->
+  <!-- ===== ENROLL CARD (USDT wallet) ===== -->
   <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
     <h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       <div>
         <label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label>
         <input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 focus:outline-none focus:border-emerald-400 text-sm">
-        <label class="block text-gray-400 text-xs md:text-sm mb-1">BTC Wallet Address</label>
-        <input type="text" placeholder="bc1q..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 focus:outline-none focus:border-emerald-400 text-sm">
-        <button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order Now</button>
+        <label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label>
+        <input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 focus:outline-none focus:border-emerald-400 text-sm">
+        <button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button>
       </div>
       <div class="bg-[#0f1822] rounded-xl p-4 md:p-5">
         <p class="text-gray-400 text-xs md:text-sm">Your Order</p>
-        <p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">$5,000</p>
+        <p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">5,000 USDT</p>
         <p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p>
         <hr class="border-[#2a3a4a] my-3 md:my-4">
-        <p class="text-gray-400 text-xs">Expected Daily Profit</p>
-        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">$8.40</p>
+        <p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p>
+        <p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">8.40 USDT</p>
       </div>
     </div>
   </div>
 
-  <!-- ===== INFO SECTIONS ===== -->
+  <!-- ===== INFO SECTIONS (updated to USDT context) ===== -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8">
     <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5">
       <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4>
-      <p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers.</p>
+      <p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers focused on USDT mining infrastructure.</p>
     </div>
     <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5">
       <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4>
-      <p class="text-xs md:text-sm text-gray-300">You will get payouts daily and monthly. Our system automatically transfers mined coins directly to your BTC wallet.</p>
+      <p class="text-xs md:text-sm text-gray-300">Daily & monthly USDT payouts. Our system automatically transfers mined USDT directly to your wallet.</p>
     </div>
     <div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5 sm:col-span-2 lg:col-span-1">
-      <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a BTC Wallet?</h4>
-      <p class="text-xs md:text-sm text-gray-300">If you prefer security, try KYC platforms like Binance or Coinbase. If you prefer anonymity, try non-KYC platforms like ShapeShift or Trezor.</p>
+      <h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a USDT Wallet?</h4>
+      <p class="text-xs md:text-sm text-gray-300">Secure KYC platforms like Binance or Coinbase (ERC20/TRC20). For non-KYC, use TrustWallet, TronLink, or Exodus.</p>
     </div>
   </div>
 
-  <!-- ===== HISTORY TRANSACTIONS ===== -->
+  <!-- ===== HISTORY TRANSACTIONS (USDT & crypto mix) ===== -->
   <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8">
     <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions</h3>
     <div class="overflow-x-auto">
       <table class="w-full text-xs md:text-sm">
         <thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount</th><th class="text-right">Status</th></tr></thead>
-        <tbody id="transactionBody">
-          <!-- Transactions will be injected here by JS -->
-        </tbody>
+        <tbody id="transactionBody"></tbody>
       </table>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · Built by real crypto engineers</div>
+  <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
 </div>
 
-<!-- ENROLL MODAL -->
+<!-- ENROLL MODAL (USDT) -->
 <div id="enrollModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-4">
   <div class="bg-[#111827] border border-[#2a3a4a] rounded-3xl p-5 md:p-6 max-w-md w-full">
     <div class="flex justify-between items-center mb-4"><h3 class="text-lg md:text-xl font-bold text-white" id="modalTitle">Cosmic Mining Unit</h3><button onclick="closeModal()"><i data-lucide="x" class="w-5 h-5 md:w-6 md:h-6 text-gray-400"></i></button></div>
-    <p class="text-xs md:text-sm text-gray-400 mb-4">Your profit schedule for <span id="modalTier"></span> Tier</p>
+    <p class="text-xs md:text-sm text-gray-400 mb-4">Your profit schedule for <span id="modalTier"></span> Tier (USDT)</p>
     <div class="grid grid-cols-3 gap-2 text-center mb-4">
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1D</p><p id="modal1d" class="text-base md:text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">2D</p><p id="modal2d" class="text-base md:text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">3D</p><p id="modal3d" class="text-base md:text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1M</p><p id="modal1m" class="text-base md:text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">6M</p><p id="modal6m" class="text-base md:text-lg font-bold text-white">$0</p></div>
-      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1Y</p><p id="modal1y" class="text-base md:text-lg font-bold text-white">$0</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1D</p><p id="modal1d" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">2D</p><p id="modal2d" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">3D</p><p id="modal3d" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1M</p><p id="modal1m" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">6M</p><p id="modal6m" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
+      <div class="bg-[#0f1822] p-2 md:p-3 rounded-xl"><p class="text-gray-400 text-[10px] md:text-xs">1Y</p><p id="modal1y" class="text-base md:text-lg font-bold text-white">0 USDT</p></div>
     </div>
-    <p class="text-[10px] md:text-xs text-gray-500 mb-4">Payments are made automatically once a day.</p>
-    <p class="text-gray-400 text-xs md:text-sm">Your Order: <span id="modalOrderAmount" class="text-white font-bold">$0</span></p>
+    <p class="text-[10px] md:text-xs text-gray-500 mb-4">Payments made automatically once a day (USDT).</p>
+    <p class="text-gray-400 text-xs md:text-sm">Your Order: <span id="modalOrderAmount" class="text-white font-bold">0 USDT</span></p>
     <input type="email" placeholder="Email" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white my-3 text-sm">
-    <input type="text" placeholder="BTC wallet address" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 text-sm">
+    <input type="text" placeholder="USDT wallet address (TRC20/ERC20)" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4 text-sm">
     <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl text-sm md:text-base">Order Now</button>
   </div>
 </div>
 
 <script>
-  // Realistic mining profitability
-  const BTC_PRICE = 70000;
-  const YIELD_PER_DOLLAR_PER_DAY_BTC = 0.00000012;
+  // --- USDT MINING LOGIC ---
+  // Base daily yield: 0.000168 USDT per 1 USDT invested per multiplier factor of 1.
+  // Example: 5000 USDT * 0.000168 * cosmic(10) = 8.40 USDT/day
+  const DAILY_YIELD_RATE = 0.000168;   // per USDT, per multiplier unit
   
   const tierMultiplier = {
     bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10
   };
 
-  // DOM elements
+  // DOM references
   const slider = document.getElementById('investSlider');
   const amountDisplay = document.getElementById('amountDisplay');
   const tierSelect = document.getElementById('tierSelect');
@@ -356,40 +355,44 @@
   const selectedTierDisplay = document.getElementById('selectedTierDisplay');
   const orderDaily = document.getElementById('orderDaily');
 
-  function calculateReturns(amount, tier) {
+  function calculateDailyUSDT(amount, tier) {
     const multiplier = tierMultiplier[tier] || 1;
-    const dailyBtcValue = amount * YIELD_PER_DOLLAR_PER_DAY_BTC * multiplier;
-    const dailyUsdValue = dailyBtcValue * BTC_PRICE;
-    return { dailyUsd: dailyUsdValue };
+    return amount * DAILY_YIELD_RATE * multiplier;
   }
 
-  function formatK(value) {
-    if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'k';
-    return '$' + Math.round(value);
+  function formatCurrency(value) {
+    if (value >= 1000) {
+      return (value / 1000).toFixed(1) + 'k USDT';
+    }
+    return Math.round(value).toLocaleString() + ' USDT';
+  }
+  
+  function formatPlainUSDT(value) {
+    return value.toFixed(2) + ' USDT';
   }
 
   function updateUI() {
     const amount = parseFloat(slider.value);
     const tier = tierSelect.value;
-    amountDisplay.textContent = '$' + amount.toLocaleString();
-    const { dailyUsd: dUsd } = calculateReturns(amount, tier);
-    const monthly = dUsd * 30;
-    const yearly = dUsd * 365;
+    amountDisplay.textContent = amount.toLocaleString() + ' USDT';
+    const daily = calculateDailyUSDT(amount, tier);
+    const monthly = daily * 30;
+    const yearly = daily * 365;
     
-    dailyUsd.textContent = formatK(dUsd);
-    monthlyUsd.textContent = formatK(monthly);
-    yearlyUsd.textContent = formatK(yearly);
+    dailyUsd.textContent = formatCurrency(daily);
+    monthlyUsd.textContent = formatCurrency(monthly);
+    yearlyUsd.textContent = formatCurrency(yearly);
     
-    orderAmount.textContent = '$' + amount.toLocaleString();
+    orderAmount.textContent = amount.toLocaleString() + ' USDT';
     selectedTierDisplay.textContent = tierSelect.options[tierSelect.selectedIndex].text;
-    orderDaily.textContent = '$' + dUsd.toFixed(2);
+    orderDaily.textContent = daily.toFixed(2) + ' USDT';
   }
 
   slider.addEventListener('input', updateUI);
   tierSelect.addEventListener('change', updateUI);
   updateUI();
 
-  // Toast notification
+  // --- Toast Notifications (USDT earnings) ---
   const toast = document.getElementById('toast');
   const toastName = document.getElementById('toastName');
   const toastAmount = document.getElementById('toastAmount');
@@ -398,10 +401,9 @@
   
   function showRandomToast() {
     const name = names[Math.floor(Math.random() * names.length)];
-    const btcAmount = (Math.random() * 0.1 + 0.01).toFixed(4);
-    const usdAmount = (btcAmount * BTC_PRICE).toFixed(0);
+    const usdtEarned = (Math.random() * 85 + 12).toFixed(2);
     toastName.textContent = name;
-    toastAmount.textContent = `+${btcAmount} BTC ($${Number(usdAmount).toLocaleString()})`;
+    toastAmount.textContent = `+${usdtEarned} USDT`;
     toast.classList.remove('hidden');
     setTimeout(() => {
       if (toast) toast.classList.add('hidden');
@@ -410,11 +412,10 @@
   
   window.hideToast = () => toast.classList.add('hidden');
   
-  // Show first toast after 3s, then every 12s
   setTimeout(showRandomToast, 3000);
   setInterval(showRandomToast, 12000);
 
-  // History transactions
+  // --- History Transactions (mix of USDT & other crypto) ---
   const tbody = document.getElementById('transactionBody');
   
   function generateRandomTx() {
@@ -422,16 +423,23 @@
     let addr = '';
     for (let i = 0; i < 8; i++) addr += chars[Math.floor(Math.random() * chars.length)];
     addr = addr.slice(0,4) + '...' + addr.slice(-4);
-    const coins = ['BTC', 'ETH', 'TRX', 'DOGE', 'LTC'];
-    const coin = coins[Math.floor(Math.random() * coins.length)];
-    let amount;
-    if (coin === 'BTC') amount = (Math.random() * 0.1).toFixed(6);
-    else if (coin === 'ETH') amount = (Math.random() * 2).toFixed(4);
-    else if (coin === 'TRX') amount = Math.floor(Math.random() * 500 + 10);
-    else if (coin === 'DOGE') amount = Math.floor(Math.random() * 1000 + 50);
-    else amount = (Math.random() * 0.5).toFixed(4);
+    // 70% chance to show USDT, 30% other popular coins for realism
+    const r = Math.random();
+    let amountRaw, coin;
+    if (r < 0.7) {
+      coin = 'USDT';
+      amountRaw = (Math.random() * 320 + 12).toFixed(2);
+      amountRaw = Number(amountRaw).toLocaleString() + ' USDT';
+    } else {
+      const coins = ['ETH', 'TRX', 'DOGE', 'LTC'];
+      coin = coins[Math.floor(Math.random() * coins.length)];
+      if (coin === 'ETH') amountRaw = (Math.random() * 1.2).toFixed(4) + ' ETH';
+      else if (coin === 'TRX') amountRaw = Math.floor(Math.random() * 400 + 25) + ' TRX';
+      else if (coin === 'DOGE') amountRaw = Math.floor(Math.random() * 1200 + 80) + ' DOGE';
+      else amountRaw = (Math.random() * 0.4).toFixed(4) + ' LTC';
+    }
     const time = Math.floor(Math.random() * 60) + 1;
-    return { time: `${time} min ago`, addr, amount: `${amount} ${coin}`, status: 'SUCCESS' };
+    return { time: `${time} min ago`, addr, amount: amountRaw, status: 'SUCCESS' };
   }
   
   function addTransaction(tx) {
@@ -439,37 +447,36 @@
     row.className = 'border-b border-[#1e2a3a]';
     row.innerHTML = `<td class="py-2">${tx.time}</td><td class="py-2">${tx.addr}</td><td class="py-2 text-right">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
     tbody.appendChild(row);
-    if (tbody.children.length > 10) tbody.removeChild(tbody.children[0]);
+    if (tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
   }
   
-  // Initial transactions
+  // Initial realistic transactions (USDT first)
   const initialTxs = [
-    { time: '32 min ago', addr: 'TLxP5...J45', amount: '52.516137 TRX', status: 'SUCCESS' },
-    { time: '32 min ago', addr: 'DTFGB...goa', amount: '188.9364225 DOGE', status: 'SUCCESS' },
-    { time: '2 hours ago', addr: 'TNJpB...dq5', amount: '340 TRX', status: 'SUCCESS' },
-    { time: '2 hours ago', addr: 'TPLWr...5sn', amount: '82 TRX', status: 'SUCCESS' },
-    { time: '16 hours ago', addr: 'LTjtv...eaW', amount: '0.10392361 LTC', status: 'SUCCESS' },
+    { time: '12 min ago', addr: 'TXpM5...k2J', amount: '124.75 USDT', status: 'SUCCESS' },
+    { time: '32 min ago', addr: 'TLxP5...J45', amount: '52.51 TRX', status: 'SUCCESS' },
+    { time: '45 min ago', addr: '0xABcd...Ef89', amount: '87.30 USDT', status: 'SUCCESS' },
+    { time: '2 hours ago', addr: 'DTFGB...goa', amount: '189.93 DOGE', status: 'SUCCESS' },
+    { time: '3 hours ago', addr: 'TNJpB...dq5', amount: '340 TRX', status: 'SUCCESS' },
+    { time: '5 hours ago', addr: 'TSeCr...5sn', amount: '210.45 USDT', status: 'SUCCESS' },
   ];
   initialTxs.forEach(tx => addTransaction(tx));
   
-  // Add new transaction every 15 seconds
   setInterval(() => addTransaction(generateRandomTx()), 15000);
 
-  // Modal functions
+  // Modal logic (updated to USDT)
   function openModal(amount, tier) {
+    const daily = calculateDailyUSDT(amount, tier);
     const multiplier = tierMultiplier[tier] || 1;
-    const dailyBtc = amount * YIELD_PER_DOLLAR_PER_DAY_BTC * multiplier;
-    const dailyUsd = dailyBtc * BTC_PRICE;
     const tierName = tierSelect.options[tierSelect.selectedIndex].text;
     document.getElementById('modalTitle').textContent = tierName + ' Mining Unit';
     document.getElementById('modalTier').textContent = tierName;
-    document.getElementById('modal1d').textContent = '$' + Math.round(dailyUsd);
-    document.getElementById('modal2d').textContent = '$' + Math.round(dailyUsd * 2);
-    document.getElementById('modal3d').textContent = '$' + Math.round(dailyUsd * 3);
-    document.getElementById('modal1m').textContent = '$' + Math.round(dailyUsd * 30);
-    document.getElementById('modal6m').textContent = '$' + Math.round(dailyUsd * 180);
-    document.getElementById('modal1y').textContent = '$' + Math.round(dailyUsd * 365);
-    document.getElementById('modalOrderAmount').textContent = '$' + amount.toLocaleString();
+    document.getElementById('modal1d').textContent = daily.toFixed(2) + ' USDT';
+    document.getElementById('modal2d').textContent = (daily * 2).toFixed(2) + ' USDT';
+    document.getElementById('modal3d').textContent = (daily * 3).toFixed(2) + ' USDT';
+    document.getElementById('modal1m').textContent = (daily * 30).toFixed(2) + ' USDT';
+    document.getElementById('modal6m').textContent = (daily * 180).toFixed(2) + ' USDT';
+    document.getElementById('modal1y').textContent = (daily * 365).toFixed(2) + ' USDT';
+    document.getElementById('modalOrderAmount').textContent = amount.toLocaleString() + ' USDT';
     document.getElementById('enrollModal').classList.remove('hidden');
   }
   window.closeModal = () => document.getElementById('enrollModal').classList.add('hidden');
@@ -481,6 +488,7 @@
     openModal(amount, tier);
   });
 
+  // Re-initialize Lucide icons
   lucide.createIcons();
 </script>
 </body>
