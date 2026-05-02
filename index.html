@@ -55,7 +55,7 @@
     .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
     .float-btn.support:hover { background: #2563eb; }
 
-    /* Chat drawer - fix z-index and height */
+    /* Chat drawer */
     .chat-drawer {
       position: fixed;
       top: 0;
@@ -130,7 +130,7 @@
       0%, 100% { transform: scaleY(1); }
       50% { transform: scaleY(1.8); }
     }
-    /* Mining profile modal - fix text overflow */
+    /* Mining profile modal */
     .mining-profile-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -206,10 +206,10 @@
     </button>
   </div>
 
-  <!-- ===== MINING RIG VISUAL (ORIGINAL WORKING VERSION) ===== -->
+  <!-- ===== MINING RIG VISUAL (fully restored) ===== -->
   <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
-      <!-- LEFT: Realistic Rig -->
+      <!-- LEFT: Rig -->
       <div class="lg:w-2/5 w-full">
         <div class="flex items-center gap-2 mb-3">
           <i data-lucide="server" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
@@ -218,92 +218,20 @@
         <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
           <div class="metal-gradient rounded-xl p-3 md:p-4 border border-[#3a4a5a] shadow-inner relative">
-            <div class="flex gap-1.5 mb-4">
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-            </div>
+            <div class="flex gap-1.5 mb-4"><div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div></div>
             <div class="flex justify-between gap-2 md:gap-3 mb-4">
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
-              </div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
-              </div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
-              </div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div><div class="absolute inset-0 flex items-center justify-center opacity-30"><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10"><i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 1 · 4200 RPM</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div><div class="absolute inset-0 flex items-center justify-center opacity-30"><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10"><i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 2 · 4200 RPM</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div><div class="absolute inset-0 flex items-center justify-center opacity-30"><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div><div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10"><i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 3 · 4200 RPM</span></div>
             </div>
-            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border border-[#1e2a3a]">
-              <div class="flex flex-wrap justify-between items-center gap-2">
-                <div class="flex gap-3 md:gap-5">
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">PWR</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">HASH</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">NET</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">TEMP</span></div>
-                </div>
-                <div class="bg-[#0f1822] px-2 md:px-3 py-1 rounded-full border border-emerald-500/20">
-                  <span class="text-emerald-400 text-[8px] md:text-[10px] font-mono">312.5 TH/s</span>
-                </div>
-              </div>
-            </div>
+            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border border-[#1e2a3a]"><div class="flex flex-wrap justify-between items-center gap-2"><div class="flex gap-3 md:gap-5"><div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">PWR</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">HASH</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">NET</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">TEMP</span></div></div><div class="bg-[#0f1822] px-2 md:px-3 py-1 rounded-full border border-emerald-500/20"><span class="text-emerald-400 text-[8px] md:text-[10px] font-mono">312.5 TH/s</span></div></div></div>
             <div class="grid grid-cols-3 gap-1.5 md:gap-2">
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30"><div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div><div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div></div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30"><div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div><div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div></div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30"><div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div><div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div></div>
             </div>
             <div class="flex justify-between items-end mt-3 md:mt-4">
-              <div class="flex gap-2 md:gap-3">
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">ETH</span></div>
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[5px] md:text-[6px] text-emerald-400">⚡</span></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">PWR</span></div>
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">USB</span></div>
-              </div>
+              <div class="flex gap-2 md:gap-3"><div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">ETH</span></div><div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[5px] md:text-[6px] text-emerald-400">⚡</span></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">PWR</span></div><div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">USB</span></div></div>
               <div class="text-right"><span class="text-[8px] md:text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] md:text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
             </div>
             <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
@@ -312,25 +240,13 @@
             <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
           </div>
         </div>
-        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1">
-          <i data-lucide="check-circle" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-400"></i>
-          Real hardware · Geothermal cooled · 99.9% uptime
-        </p>
+        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-400"></i>Real hardware · Geothermal cooled · 99.9% uptime</p>
       </div>
       <!-- RIGHT: Stats -->
       <div class="lg:w-3/5 w-full">
-        <div class="mb-4">
-          <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2>
-          <p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p>
-        </div>
-        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
-          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div>
-          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div>
-        </div>
-        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4">
-          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div>
-          <p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p>
-        </div>
+        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
       </div>
     </div>
   </div>
@@ -371,7 +287,7 @@
   <div id="chatContainer" class="chat-container"></div>
 </div>
 
-<!-- MINING PROFILE MODAL (improved) -->
+<!-- MINING PROFILE MODAL -->
 <div id="miningProfileModal" class="mining-profile-modal">
   <div class="profile-card">
     <div class="w-16 h-16 rounded-full bg-emerald-500/20 mx-auto flex items-center justify-center text-2xl mb-3">⛏️</div>
@@ -461,7 +377,7 @@
   document.getElementById('scrollToPricing').addEventListener('click', () => document.getElementById('calculator').scrollIntoView({behavior:'smooth'}));
   document.getElementById('orderBtn').addEventListener('click', (e) => { e.preventDefault(); alert('Order demo – integrate payment gateway.'); });
 
-  // ========== CHAT INTEGRATION ==========
+  // ========== CHAT INTEGRATION (UI only – engine loads externally) ==========
   let chatInitialized = false;
   let currentChatRoom = 'community';
   let memberCount = 3418;
@@ -614,6 +530,7 @@
       voiceBtn.style.display = hasContent ? 'none' : 'flex';
     }
 
+    // Incoming message builder (used by AI engine)
     function buildIncomingMessage(msgData, shouldSave = true) {
       const row = document.createElement('div');
       row.className = 'flex items-start gap-2 mb-3';
@@ -639,9 +556,6 @@
       const nameSpan = row.querySelector('.text-emerald-300');
       if (avatar && msgData.senderName !== 'Neptune Bot') avatar.addEventListener('click', () => showMiningProfile(msgData.senderName));
       if (nameSpan) nameSpan.addEventListener('click', () => showMiningProfile(msgData.senderName));
-      if (msgData.mediaUrl && (msgData.mediaType === 'image' || msgData.mediaType === 'video')) {
-        row.querySelector('img, video')?.addEventListener('click', (e) => { e.stopPropagation(); alert('Preview: ' + msgData.mediaUrl); });
-      }
       return row;
     }
 
@@ -663,9 +577,11 @@
       messagesContainer.appendChild(div);
       scrollIfNeeded();
     }
+
     function hideTyping() { const el = document.getElementById('typingIndicator'); if(el) el.remove(); }
     function isChatRoomActive() { return true; }
 
+    // Expose chatAPI for external engine
     window.chatAPI = {
       addIncomingMessage: buildIncomingMessage,
       addSystemMessage: addSystemMessage,
@@ -706,11 +622,12 @@
     emojiBtn.addEventListener('click', () => { chatInput.value += '😊'; updateSendBtn(); chatInput.focus(); });
     cancelReplyBtn.addEventListener('click', () => { replyingTo = null; replyBar.classList.add('hidden'); });
 
+    // Welcome message
     buildIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to the official Neptune AI community! Ask anything about USDT mining or share your daily profits.' });
     lucide.createIcons();
   }
 
-  // show mining profile (with formatted numbers)
+  // Mining profile modal
   function showMiningProfile(userName) {
     const amount = parseFloat(slider.value);
     const tier = tierSelect.value;
@@ -758,11 +675,6 @@
     drawer.classList.add('open');
     window.__activeChatRoom = room;
     window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: room } }));
-    if (room === 'community' && typeof window.startSimulation === 'function') {
-      window.startSimulation();
-    } else if (room === 'support' && typeof window.stopSimulation === 'function') {
-      window.stopSimulation();
-    }
   }
   communityBtn.onclick = () => openChat('community');
   supportBtn.onclick = () => openChat('support');
@@ -770,17 +682,12 @@
     drawer.classList.remove('open');
     window.__activeChatRoom = null;
     window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: null } }));
-    if (typeof window.stopSimulation === 'function') window.stopSimulation();
   };
 </script>
 
-<!-- AI Persona Engine placeholder – replace with full v16 engine -->
-<script>
-  console.log("AI Persona Engine v16 ready (full version would be here)");
-  window.startSimulation = () => console.log("Community chat active – AI personas will start talking about USDT mining");
-  window.stopSimulation = () => console.log("AI personas paused");
-  window.AIPersonaSimulator = { isActive: () => false };
-</script>
+<!-- External AI engine and manifest (must be present in the same folder) -->
+<script src="media-manifest.js"></script>
+<script src="ai-mining-engine.js"></script>
 
 <script>
   lucide.createIcons();
