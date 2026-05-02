@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Neptune AI · Mine & Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* All styles (including fix for transaction history text) */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0b0f17;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    
+    @keyframes pulse-glow {
+      0%,100% { opacity:1; box-shadow:0 0 5px #10b981,0 0 10px #10b981; }
+      50% { opacity:0.5; box-shadow:0 0 2px #10b981; }
+    }
+    @keyframes fan-spin {
+      from { transform:rotate(0deg); }
+      to { transform:rotate(360deg); }
+    }
+    .rig-glow { animation: pulse-glow 2s infinite; }
+    .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
+    .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
+
+    /* Floating chat buttons */
+    .float-chat {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .float-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: #10b981;
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      color: white;
+    }
+    .float-btn:hover { transform: scale(1.08); background: #059669; }
+    .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
+    .float-btn.support:hover { background: #2563eb; }
+
+    /* Chat drawer */
+    .chat-room-shell {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 460px;
+      background: #0a0f17;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      border-left: 1px solid #1f2a3a;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    }
+    .chat-room-shell.is-open { transform: translateX(0); }
+
+    .room-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #1e2a3a;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #0e1522;
+      flex-shrink: 0;
+    }
+    .room-header .back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #1a2536; border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .room-info { flex: 1; }
+    .room-info h2 { font-size: 18px; font-weight: 700; color: #fff; }
+    .room-info .room-sub {
+      font-size: 13px; color: #8b9bb5; margin-top: 4px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .room-members, .room-online { display: flex; align-items: center; gap: 4px; }
+    .online-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+
+    .system-banner {
+      background: #1e2a3a;
+      color: #cbd5e1;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      border-bottom: 1px solid #2a3a4e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .reply-preview-bar {
+      background: #1a2536;
+      border-left: 4px solid #10b981;
+      padding: 10px 16px;
+      margin: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .reply-preview-content { flex:1; }
+    .reply-preview-label { font-size: 12px; color: #10b981; font-weight: 600; }
+    .reply-preview-text { font-size: 13px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .reply-preview-close { background: none; border: none; color: #8b9bb5; cursor: pointer; font-size: 18px; }
+
+    .chat-feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-date-sticker {
+      width: max-content;
+      margin: 6px auto 2px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #1a2536;
+      color: #a0bbd8;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .chat-msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      max-width: 100%;
+    }
+    .chat-msg-row.incoming { justify-content: flex-start; }
+    .chat-msg-row.outgoing { justify-content: flex-end; margin-left: auto; }
+    .chat-avatar-bubble {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #1e4f7a; border: 1px solid #2a3a4e;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .chat-bubble {
+      --bg: #1a2536;
+      max-width: 75%;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.45;
+      word-break: break-word;
+      border-radius: 18px;
+      background: var(--bg);
+      color: #e2e8f0;
+      border: 1px solid #2a3a4e;
+    }
+    .chat-bubble.outgoing {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    .chat-bubble-time {
+      font-size: 10px;
+      opacity: 0.6;
+      margin-top: 4px;
+      text-align: right;
+    }
+    .typing-bubble span {
+      width: 6px; height: 6px; background: #9aa3b2; border-radius: 50%;
+      display: inline-block; margin: 0 2px;
+      animation: typingBounce 1.3s infinite;
+    }
+    .typing-bubble span:nth-child(2) { animation-delay:.2s; }
+    .typing-bubble span:nth-child(3) { animation-delay:.4s; }
+    @keyframes typingBounce {
+      0%,80%,100% { transform: scale(0.6); opacity:.5; }
+      40% { transform: scale(1); opacity:1; }
+    }
+    .chat-image, .chat-video {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 12px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    .chat-audio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      background: #0e1522;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+    .unread-pill {
+      position: absolute;
+      bottom: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 55;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-composer {
+      padding: 10px 12px;
+      border-top: 1px solid #1e2a3a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #0e1522;
+      flex-shrink: 0;
+    }
+    .composer-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #1a2536; border: none; color: #8b9bb5;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .composer-input-wrapper { flex: 1; }
+    .composer-input {
+      width: 100%; background: #1a2536; border: 1px solid #2a3a4e;
+      border-radius: 30px; padding: 12px 16px; color: #fff; outline: none;
+    }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%; background: #10b981;
+      border: none; color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .mic-btn { background: #10b981 !important; color: black; }
+    .hidden { display: none !important; }
+    .recording-indicator {
+      display: flex; align-items: center; gap: 12px; margin: 8px 16px;
+      background: #1e1e2e; padding: 8px 16px; border-radius: 40px; flex-shrink: 0;
+    }
+    .wave-bar {
+      width: 3px; height: 12px; background: #10b981; border-radius: 2px;
+      animation: wave 1.2s infinite;
+    }
+    @keyframes wave { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
+
+    /* Profile modal */
+    .profile-modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
+      z-index: 300; display: flex; align-items: center; justify-content: center;
+      visibility: hidden; opacity: 0; transition: 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .profile-modal-overlay.active { visibility: visible; opacity: 1; }
+    .profile-modal-container {
+      background: #1a2536; max-width: 340px; width: 85%; border-radius: 28px;
+      padding: 24px 20px; text-align: center; border: 1px solid #2a3a4e;
+    }
+    .profile-avatar {
+      width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
+      background: #0e1522; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: 2px solid #10b981;
+    }
+    .profile-name { font-size: 20px; font-weight: 800; color: #fff; }
+    .profile-stats { background: #0e1522; border-radius: 20px; padding: 12px; margin-top: 8px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a3a4e; font-size: 13px; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: #8b9bb5; }
+    .stat-value { font-weight: 700; color: #e2e8f0; }
+    .profile-message-btn {
+      background: #10b981; color: black; border: none; border-radius: 40px;
+      padding: 12px; font-weight: 700; width: 100%; margin-top: 16px;
+      cursor: pointer;
+    }
+    .toast-notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 150;
+      background: #111827;
+      border-left: 4px solid #10b981;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* FIX: Transaction history text color */
+    #transactionBody td, #transactionBody th {
+      color: #e2e8f0 !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast-notification hidden">
+  <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
+  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+22.50 USDT</p></div>
+  <button onclick="hideToast()" class="ml-2 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
+</div>
+
+<!-- MAIN MINING DASHBOARD (full, unchanged) -->
+<div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div class="w-10"></div>
+    <div class="flex items-center gap-2">
+      <img src="assets/logo.png" alt="Neptune AI" class="w-8 h-8 rounded-lg object-cover">
+      <h1 class="text-2xl font-semibold tracking-tight text-white">Neptune AI</h1>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex gap-4 mb-8">
+    <button id="scrollToCalc" class="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-6 py-3 rounded-full text-lg flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+      <i data-lucide="rocket" class="w-5 h-5"></i> Start Mining USDT
+    </button>
+    <button id="scrollToPricing" class="bg-[#1e2a3a] hover:bg-[#243447] text-white font-medium px-6 py-3 rounded-full text-lg flex items-center gap-2 border border-[#2a3a4a]">
+      <i data-lucide="dollar-sign" class="w-5 h-5"></i> View Pricing (USDT)
+    </button>
+  </div>
+
+  <!-- ===== MINING RIG VISUAL (FULLY RESTORED) ===== -->
+  <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
+      <!-- LEFT: Realistic Rig -->
+      <div class="lg:w-2/5 w-full">
+        <div class="flex items-center gap-2 mb-3">
+          <i data-lucide="server" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
+          <h3 class="font-semibold text-base md:text-lg truncate">Neptune S21 Pro · ASIC Miner</h3>
+        </div>
+        <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
+          <div class="metal-gradient rounded-xl p-3 md:p-4 border border-[#3a4a5a] shadow-inner relative">
+            <div class="flex gap-1.5 mb-4"><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div></div>
+            <div class="flex justify-between gap-2 md:gap-3 mb-4">
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
+            </div>
+            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border"><div class="flex flex-wrap justify-between items-center gap-2"><div class="flex gap-3 md:gap-5"><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">PWR</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">HASH</span></div></div><div class="bg-[#0f1822] px-2 py-1 rounded-full border border-emerald-500/20"><span class="text-emerald-400 text-[8px] font-mono">312.5 TH/s</span></div></div></div>
+            <div class="grid grid-cols-3 gap-1.5 md:gap-2"><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 1</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">104 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 2</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">103 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 3</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">105 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div></div></div>
+            <div class="flex justify-between items-end mt-3"><div class="flex gap-2"><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div></div><div class="text-right"><span class="text-[8px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] text-emerald-400 font-mono">S21 PRO · 3010W</span></div></div>
+          </div>
+        </div>
+        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Real hardware · Geothermal cooled · 99.9% uptime</p>
+      </div>
+      <!-- RIGHT: Stats -->
+      <div class="lg:w-3/5 w-full">
+        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4"><div class="bg-[#0f1822] rounded-xl p-3 border"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl font-bold text-white">47 <span class="text-sm text-gray-400">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 border"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVESTMENT CALCULATOR -->
+  <div id="calculator" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl">
+    <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator · USDT Mining</h3>
+    <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
+    <div class="mb-6"><div class="flex justify-between items-center mb-1"><label class="text-gray-400 text-xs md:text-sm">Investment (USDT)</label><span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">50 USDT</span></div><input type="range" id="investSlider" min="50" max="100000" value="50" step="10" class="w-full accent-emerald-400 h-2 rounded-full"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>50 USDT</span><span>100,000 USDT</span></div></div>
+    <div class="mb-6"><label class="block text-gray-400 text-xs md:text-sm mb-2">Mining Unit</label><select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-base md:text-lg font-medium"><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="platinum">Platinum</option><option value="diamond">Diamond</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option><option value="legend">Legend</option><option value="mythic">Mythic</option><option value="divine">Divine</option><option value="cosmic" selected>Cosmic</option></select></div>
+    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center"><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div></div>
+    <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 22 USDT/day. Other tiers scale proportionally.</p>
+  </div>
+
+  <!-- ENROLL CARD -->
+  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
+
+  <!-- INFO SECTIONS (abbreviated but intact) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2 items-center"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs text-gray-300">Blockchain developers focused on USDT mining infrastructure.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs text-gray-300">Daily & monthly USDT payouts to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> USDT Wallet?</h4><p class="text-xs text-gray-300">Use Binance, TrustWallet, or TronLink (TRC20/ERC20).</p></div></div>
+
+  <!-- HISTORY TRANSACTIONS (fixed text color) -->
+  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 flex gap-2"><i data-lucide="history" class="w-4 h-4 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
+  <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
+</div>
+
+<!-- FLOATING CHAT BUTTONS -->
+<div class="float-chat">
+  <div class="float-btn support" id="supportChatBtn"><i data-lucide="headphones" class="w-6 h-6"></i></div>
+  <div class="float-btn" id="communityChatBtn"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
+</div>
+
+<!-- CHAT ROOM SHELL (working) -->
+<div class="chat-room-shell" id="chatRoomShell">
+  <div class="room-header">
+    <button class="back-btn" id="closeChatBtn"><i data-lucide="arrow-left"></i></button>
+    <div class="room-info">
+      <h2>Neptune Community Chat</h2>
+      <div class="room-sub"><span class="room-members"><i data-lucide="users"></i> 3,418 members</span><span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">247 online</span></span></div>
+    </div>
+  </div>
+  <div class="system-banner"><i data-lucide="alert-circle"></i> ⚠️ Admins never DM first. Be cautious of scammers. Always message the admin directly through the group.</div>
+  <div id="replyPreviewBar" class="reply-preview-bar hidden"><div class="reply-preview-content"><div class="reply-preview-label">Replying to <span id="replyTargetName"></span></div><div class="reply-preview-text" id="replyTargetText"></div></div><button class="reply-preview-close" id="cancelReplyBtn">✕</button></div>
+  <div class="chat-feed" id="chatMessagesContainer"><div class="chat-date-sticker" id="chatDateSticker"></div></div>
+  <div class="unread-pill" id="unreadPill"><span>↓</span> <span id="unreadCount">1 new message</span></div>
+  <div class="chat-composer">
+    <button class="composer-btn" id="emojiBtn"><i data-lucide="smile"></i></button>
+    <button class="composer-btn" id="mediaBtn"><i data-lucide="image"></i></button>
+    <div class="composer-input-wrapper"><input type="text" class="composer-input" placeholder="Message..." id="chatInput"></div>
+    <button class="composer-btn mic-btn" id="voiceBtn"><i data-lucide="mic"></i></button>
+    <button class="send-btn hidden" id="sendBtn"><i data-lucide="send"></i></button>
+  </div>
+  <div id="recordingIndicator" class="recording-indicator hidden"><div id="waveformContainer"></div><span>Recording...</span><button id="stopRecordingBtn">■</button></div>
+  <input type="file" id="imageUploadInput" accept="image/*,video/*,audio/*" style="display:none;">
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-container" id="profileModalContent"></div></div>
+
+<script>
+  // ========== MINING CALCULATOR & TRANSACTIONS ==========
+  const DAILY_YIELD_RATE = 0.044;
+  const tierMultiplier = { bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10 };
+  const slider = document.getElementById('investSlider');
+  const amountDisplay = document.getElementById('amountDisplay');
+  const tierSelect = document.getElementById('tierSelect');
+  const dailyUsd = document.getElementById('dailyUsd');
+  const monthlyUsd = document.getElementById('monthlyUsd');
+  const yearlyUsd = document.getElementById('yearlyUsd');
+  const orderAmount = document.getElementById('orderAmount');
+  const selectedTierDisplay = document.getElementById('selectedTierDisplay');
+  const orderDaily = document.getElementById('orderDaily');
+
+  function calculateDailyUSDT(amount, tier) { return amount * DAILY_YIELD_RATE * (tierMultiplier[tier] || 1); }
+  function formatUSDT(value) { if (value >= 1000) return (value/1000).toFixed(1)+'k USDT'; return value.toFixed(2)+' USDT'; }
+  function updateUI() {
+    const amount = parseFloat(slider.value);
+    const tier = tierSelect.value;
+    amountDisplay.textContent = amount.toLocaleString() + ' USDT';
+    const daily = calculateDailyUSDT(amount, tier);
+    dailyUsd.textContent = formatUSDT(daily);
+    monthlyUsd.textContent = formatUSDT(daily * 30);
+    yearlyUsd.textContent = formatUSDT(daily * 365);
+    orderAmount.textContent = amount.toLocaleString() + ' USDT';
+    selectedTierDisplay.textContent = tierSelect.options[tierSelect.selectedIndex].text;
+    orderDaily.textContent = daily.toFixed(2) + ' USDT';
+  }
+  slider.addEventListener('input', updateUI);
+  tierSelect.addEventListener('change', updateUI);
+  updateUI();
+
+  const tbody = document.getElementById('transactionBody');
+  function generateRandomUSDTTransaction() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let addr = ''; for(let i=0;i<8;i++) addr += chars[Math.floor(Math.random()*chars.length)];
+    addr = addr.slice(0,4)+'...'+addr.slice(-4);
+    return { time: Math.floor(Math.random()*60)+1+' min ago', addr, amount: (Math.random()*120+10).toFixed(2)+' USDT', status: 'SUCCESS' };
+  }
+  function addTransaction(tx) {
+    const row = document.createElement('tr'); row.className = 'border-b border-[#1e2a3a]';
+    row.innerHTML = `<td class="py-2 text-white">${tx.time}</td><td class="py-2 text-white">${tx.addr}</td><td class="py-2 text-right text-white">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
+    tbody.appendChild(row);
+    if(tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
+  }
+  const initialTxs = [{ time:'12 min ago', addr:'TXpM5...k2J', amount:'48.20 USDT', status:'SUCCESS' },{ time:'25 min ago', addr:'TRvL9...aB3', amount:'22.75 USDT', status:'SUCCESS' },{ time:'38 min ago', addr:'0xABcd...Ef89', amount:'91.30 USDT', status:'SUCCESS' },{ time:'2 hours ago', addr:'TSeCr...5sn', amount:'35.60 USDT', status:'SUCCESS' },{ time:'3 hours ago', addr:'TFgH7...mN2', amount:'112.40 USDT', status:'SUCCESS' },{ time:'5 hours ago', addr:'TWpqR...9vX', amount:'67.85 USDT', status:'SUCCESS' }];
+  initialTxs.forEach(tx => addTransaction(tx));
+  setInterval(() => addTransaction(generateRandomUSDTTransaction()), 15000);
+
+  document.getElementById('scrollToCalc').addEventListener('click', () => document.getElementById('calculator').scrollIntoView({behavior:'smooth'}));
+  document.getElementById('scrollToPricing').addEventListener('click', () => document.getElementById('calculator').scrollIntoView({behavior:'smooth'}));
+  document.getElementById('orderBtn').addEventListener('click', (e) => { e.preventDefault(); alert('Order demo – integrate payment gateway.'); });
+
+  // ========== TOAST ==========
+  const toastEl = document.getElementById('toast');
+  const toastName = document.getElementById('toastName');
+  const toastAmount = document.getElementById('toastAmount');
+  const names = ['Michael R.', 'Sarah K.', 'David L.', 'Emma W.', 'James B.', 'Lisa M.', 'Robert T.', 'Jennifer P.'];
+  function showRandomToast() {
+    const name = names[Math.floor(Math.random() * names.length)];
+    const usdtEarned = (Math.random() * 45 + 5).toFixed(2);
+    toastName.innerText = name;
+    toastAmount.innerText = `+${usdtEarned} USDT`;
+    toastEl.classList.remove('hidden');
+    setTimeout(() => toastEl.classList.add('hidden'), 5000);
+  }
+  window.hideToast = () => toastEl.classList.add('hidden');
+  setTimeout(showRandomToast, 5000);
+  setInterval(showRandomToast, 25000);
+
+  // ========== CHAT CORE (WITH MINIMAL AI ENGINE EMBEDDED) ==========
+  (function() {
+    lucide.createIcons();
+    document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
+
+    const chatShell = document.getElementById('chatRoomShell');
+    const msgContainer = document.getElementById('chatMessagesContainer');
+    const unreadPill = document.getElementById('unreadPill');
+    const unreadCountSpan = document.getElementById('unreadCount');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const voiceBtn = document.getElementById('voiceBtn');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const mediaBtn = document.getElementById('mediaBtn');
+    const replyBar = document.getElementById('replyPreviewBar');
+    const replyTargetName = document.getElementById('replyTargetName');
+    const replyTargetText = document.getElementById('replyTargetText');
+    const cancelReplyBtn = document.getElementById('cancelReplyBtn');
+    const recordingIndicator = document.getElementById('recordingIndicator');
+    const waveformContainer = document.getElementById('waveformContainer');
+    const stopRecordingBtn = document.getElementById('stopRecordingBtn');
+    const imageInput = document.getElementById('imageUploadInput');
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    const onlineSpan = document.getElementById('onlineCountSpan');
+
+    let unread = 0, isAtBottom = true;
+    let replyingTo = null;
+    let pendingMedia = null;
+    let mediaRecorder = null, isRecording = false, audioStream = null;
+
+    function getTime() { return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+    function scrollIfNeeded() {
+      if (isAtBottom) msgContainer.scrollTop = msgContainer.scrollHeight;
+      else { unread++; unreadCountSpan.innerText = unread===1?'1 new message':`${unread} new messages`; unreadPill.style.display='flex'; }
+    }
+    function scrollToBottom() { msgContainer.scrollTop = msgContainer.scrollHeight; unread=0; unreadPill.style.display='none'; isAtBottom=true; }
+    unreadPill.onclick = scrollToBottom;
+    msgContainer.addEventListener('scroll', () => {
+      const near = msgContainer.scrollHeight - msgContainer.scrollTop - msgContainer.clientHeight < 80;
+      if (near) { unread=0; unreadPill.style.display='none'; isAtBottom=true; }
+      else isAtBottom=false;
+    });
+
+    function updateComposer() {
+      const has = chatInput.value.trim().length > 0 || pendingMedia;
+      voiceBtn.classList.toggle('hidden', has);
+      sendBtn.classList.toggle('hidden', !has);
+    }
+    chatInput.addEventListener('input', updateComposer);
+    updateComposer();
+
+    function setReplyTarget(name, text) {
+      replyingTo = { name, text };
+      replyTargetName.innerText = name;
+      replyTargetText.innerText = text.length>40? text.substring(0,40)+'…':text;
+      replyBar.classList.remove('hidden');
+    }
+    cancelReplyBtn.onclick = () => { replyBar.classList.add('hidden'); replyingTo = null; };
+
+    mediaBtn.onclick = () => imageInput.click();
+    imageInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          pendingMedia = { type: file.type.startsWith('image/')?'image':(file.type.startsWith('video/')?'video':'audio'), url: ev.target.result };
+          updateComposer();
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    emojiBtn.onclick = () => { chatInput.value += '😊'; updateComposer(); };
+
+    voiceBtn.addEventListener('click', async () => {
+      if (isRecording) return;
+      try {
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(audioStream);
+        let chunks = [];
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, {type: 'audio/webm'});
+          pendingMedia = { type: 'audio', url: URL.createObjectURL(blob) };
+          recordingIndicator.classList.add('hidden');
+          isRecording = false;
+          audioStream.getTracks().forEach(t=>t.stop());
+          updateComposer();
+        };
+        mediaRecorder.start(); isRecording = true;
+        recordingIndicator.classList.remove('hidden');
+        waveformContainer.innerHTML = Array.from({length:7},()=>'<div class="wave-bar"></div>').join('');
+      } catch(e) { alert('Microphone access denied'); }
+    });
+    stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
+
+    function buildIncomingMessage(msgData) {
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row incoming';
+      const avatarHtml = msgData.senderAvatar ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover;"></div>` : `<div class="chat-avatar-bubble">${msgData.senderName.charAt(0)}</div>`;
+      let content = '';
+      if (msgData.replyTo) content += `<div class="reply-preview" style="padding:8px; margin-bottom:8px; border-left:3px solid #10b981;"><div style="font-size:11px;">↳ ${msgData.replyTo.senderName}</div><div style="font-size:12px;">${msgData.replyTo.text}</div></div>`;
+      if (msgData.text) content += `<div>${escapeHtml(msgData.text)}</div>`;
+      if (msgData.mediaUrl) {
+        if (msgData.mediaType === 'image') content += `<img src="${msgData.mediaUrl}" class="chat-image">`;
+        else if (msgData.mediaType === 'video') content += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
+        else if (msgData.mediaType === 'audio') content += `<div class="chat-audio"><audio src="${msgData.mediaUrl}" controls></audio></div>`;
+      }
+      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;display:block;cursor:pointer;">${escapeHtml(msgData.senderName)}</span>${content}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+      // Profile click
+      const avatarDiv = row.querySelector('.chat-avatar-bubble');
+      const nameSpan = row.querySelector('.chat-sender-name');
+      avatarDiv.addEventListener('click', () => showMiningProfileModal(msgData));
+      nameSpan.addEventListener('click', () => showMiningProfileModal(msgData));
+      return row;
+    }
+
+    function addSystemMessage(msgData) {
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row incoming';
+      row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div><div class="chat-bubble incoming" style="background:#1e3a5f;">${msgData.text}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+    }
+
+    window.chatAPI = {
+      addIncomingMessage: buildIncomingMessage,
+      addSystemMessage: addSystemMessage,
+      showTypingForPersona: (persona) => {
+        const existing = document.getElementById('typingIndicator');
+        if (existing) existing.remove();
+        const row = document.createElement('div');
+        row.id = 'typingIndicator';
+        row.className = 'chat-msg-row incoming';
+        row.innerHTML = `<div class="chat-avatar-bubble">${persona.name.charAt(0)}</div><div class="chat-bubble incoming"><div class="typing-bubble"><span></span><span></span><span></span></div></div>`;
+        msgContainer.appendChild(row);
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+      },
+      hideTyping: () => { const el = document.getElementById('typingIndicator'); if(el) el.remove(); },
+      isChatRoomActive: () => chatShell.classList.contains('is-open')
+    };
+
+    function sendUserMessage() {
+      let text = chatInput.value.trim();
+      if (!text && !pendingMedia) return;
+      const time = getTime();
+      let media = null;
+      if (pendingMedia) media = pendingMedia;
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row outgoing';
+      let content = '';
+      if (text) content += `<div>${escapeHtml(text)}</div>`;
+      if (media) {
+        if (media.type === 'image') content = `<img src="${media.url}" class="chat-image"><br>${content}`;
+        else if (media.type === 'video') content = `<video src="${media.url}" class="chat-video" controls></video><br>${content}`;
+        else if (media.type === 'audio') content = `<div class="chat-audio"><audio src="${media.url}" controls></audio></div><br>${content}`;
+      }
+      row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks sent">✓</span></div></div>`;
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+      chatInput.value = '';
+      pendingMedia = null;
+      updateComposer();
+      if (window.onUserMessage) window.onUserMessage({ senderName: 'You', text: text || 'Media' });
+    }
+    sendBtn.addEventListener('click', sendUserMessage);
+    chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendUserMessage(); });
+
+    // Welcome message
+    buildIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
+
+    // Open/close chat
+    function openChat() {
+      chatShell.classList.add('is-open');
+      window.__activeChatRoom = 'general';
+      window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: 'general' } }));
+      setTimeout(scrollToBottom, 100);
+    }
+    function closeChat() {
+      chatShell.classList.remove('is-open');
+      window.__activeChatRoom = null;
+      window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: null } }));
+      if (window.chatAPI.hideTyping) window.chatAPI.hideTyping();
+    }
+    document.getElementById('communityChatBtn').onclick = openChat;
+    document.getElementById('supportChatBtn').onclick = openChat;
+    closeChatBtn.onclick = closeChat;
+
+    // Simulate online count
+    let online = Math.floor(Math.random() * (247-62+1)) + 62;
+    onlineSpan.innerText = online + ' online';
+    setInterval(() => {
+      online = Math.floor(Math.random() * (247-62+1)) + 62;
+      onlineSpan.innerText = online + ' online';
+    }, 25000);
+  })();
+
+  // Mining profile modal
+  function showMiningProfileModal(personaData) {
+    const amount = parseFloat(slider.value);
+    const tier = tierSelect.value;
+    const daily = calculateDailyUSDT(amount, tier);
+    const totalEarned = (daily * (Math.floor(Math.random() * 30) + 1)).toFixed(2);
+    const durationDays = Math.floor(Math.random() * 60) + 1;
+    const hoursToPayout = Math.floor(Math.random() * 12) + 1;
+    const modalContent = document.getElementById('profileModalContent');
+    modalContent.innerHTML = `
+      <div class="profile-avatar">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
+      <div class="profile-name">${escapeHtml(personaData.senderName)}</div>
+      <div class="profile-stats">
+        <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${amount.toLocaleString()} USDT</span></div>
+        <div class="stat-row"><span class="stat-label">Daily Profit</span><span class="stat-value">${daily.toFixed(2)} USDT</span></div>
+        <div class="stat-row"><span class="stat-label">Total Earned</span><span class="stat-value">${parseFloat(totalEarned).toLocaleString()} USDT</span></div>
+        <div class="stat-row"><span class="stat-label">Hashrate</span><span class="stat-value">312.5 TH/s</span></div>
+        <div class="stat-row"><span class="stat-label">Mining Unit</span><span class="stat-value">${tierSelect.options[tierSelect.selectedIndex].text}</span></div>
+        <div class="stat-row"><span class="stat-label">Mining Duration</span><span class="stat-value">${durationDays} days</span></div>
+        <div class="stat-row"><span class="stat-label">Next Payout</span><span class="stat-value">in ${hoursToPayout} hours</span></div>
+      </div>
+      <button class="profile-message-btn" id="closeProfileModalBtn">Close</button>
+    `;
+    document.getElementById('profileModal').classList.add('active');
+    document.getElementById('closeProfileModalBtn').onclick = () => document.getElementById('profileModal').classList.remove('active');
+  }
+  window.showMiningProfileModal = showMiningProfileModal;
+
+  // Simple AI engine simulation (makes chat feel alive)
+  setTimeout(() => {
+    if (window.chatAPI && document.getElementById('chatRoomShell').classList.contains('is-open')) {
+      const messages = [
+        "Just mined 44 USDT on Platinum tier! 🔥",
+        "Anyone else using Cosmic tier? 22 USDT/day is real.",
+        "My S21 Pro has been running 24/7 – no downtime.",
+        "What's your daily profit goal?",
+        "The calculator is accurate. 50 USDT gives exactly 22 USDT/day."
+      ];
+      let i = 0;
+      const interval = setInterval(() => {
+        if (!document.getElementById('chatRoomShell').classList.contains('is-open')) return clearInterval(interval);
+        if (i >= messages.length) i = 0;
+        window.chatAPI.addIncomingMessage({ senderName: 'Miner_' + Math.floor(Math.random()*100), text: messages[i++], time: new Date().toLocaleTimeString() });
+      }, 15000);
+    }
+  }, 2000);
+
+  lucide.createIcons();
+</script>
+</body>
+</html>
