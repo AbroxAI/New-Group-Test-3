@@ -19,9 +19,14 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    @keyframes slide-in {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
     .rig-glow { animation: pulse-glow 2s infinite; }
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
+    .toast { animation: slide-in 0.3s ease-out; }
 
     /* Floating chat buttons */
     .float-chat {
@@ -50,7 +55,7 @@
     .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
     .float-btn.support:hover { background: #2563eb; }
 
-    /* Chat drawer */
+    /* Chat drawer - fix z-index and height */
     .chat-drawer {
       position: fixed;
       top: 0;
@@ -95,6 +100,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      background: #111827;
     }
     /* Typing animation */
     .typing-bubble span {
@@ -124,7 +130,7 @@
       0%, 100% { transform: scaleY(1); }
       50% { transform: scaleY(1.8); }
     }
-    /* Mining profile modal */
+    /* Mining profile modal - fix text overflow */
     .mining-profile-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -147,11 +153,39 @@
       padding: 24px;
       text-align: center;
     }
+    .profile-card .stat-value {
+      word-break: break-word;
+      white-space: normal;
+      max-width: 140px;
+    }
+    /* Toast notification */
+    .toast-notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 150;
+      background: #111827;
+      border-left: 4px solid #10b981;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(8px);
+    }
   </style>
 </head>
 <body class="bg-[#0b0f17] text-gray-200 font-sans antialiased p-4 md:p-6 lg:p-8">
 
-<!-- MAIN MINING DASHBOARD (fully restored rig) -->
+<!-- Toast Notification -->
+<div id="toast" class="toast-notification hidden">
+  <div class="bg-emerald-500/20 p-2 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
+  <div><p class="text-sm font-medium" id="toastName">Michael R.</p><p class="text-xs text-gray-400" id="toastAmount">+22.50 USDT</p></div>
+  <button onclick="hideToast()" class="ml-2 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
+</div>
+
+<!-- MAIN MINING DASHBOARD -->
 <div class="max-w-7xl mx-auto">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
@@ -328,7 +362,7 @@
   <div class="float-btn" id="communityChatBtn"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
 </div>
 
-<!-- CHAT DRAWER (reused for both community & support, but content changes) -->
+<!-- CHAT DRAWER -->
 <div id="chatDrawer" class="chat-drawer">
   <div class="drawer-header">
     <div class="drawer-title"><i id="drawerIcon" data-lucide="message-circle" class="w-5 h-5"></i><span id="drawerTitle">Community Chat</span></div>
@@ -344,19 +378,36 @@
     <h3 id="profileName" class="text-xl font-bold text-white">Miner</h3>
     <div class="text-sm text-emerald-400 mt-1" id="profileTier">Cosmic Tier</div>
     <div class="bg-[#0f1822] rounded-xl p-3 mt-4 text-left space-y-2">
-      <div class="flex justify-between"><span class="text-gray-400">Investment</span><span class="text-white font-semibold" id="profileInvestment">50 USDT</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Daily Profit</span><span class="text-emerald-400 font-semibold" id="profileDaily">22 USDT</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Total Earned (est.)</span><span class="text-white font-semibold" id="profileTotalEarned">0 USDT</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Active Hashrate</span><span class="text-white font-semibold">312.5 TH/s</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Mining Unit</span><span class="text-white font-semibold" id="profileUnitName">Cosmic</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Mining Duration</span><span class="text-white font-semibold" id="profileDuration">12 days</span></div>
-      <div class="flex justify-between"><span class="text-gray-400">Next Payout</span><span class="text-emerald-400 font-semibold" id="profileNextPayout">in 4 hours</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Investment</span><span class="text-white font-semibold stat-value" id="profileInvestment">50 USDT</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Daily Profit</span><span class="text-emerald-400 font-semibold stat-value" id="profileDaily">22 USDT</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Total Earned (est.)</span><span class="text-white font-semibold stat-value" id="profileTotalEarned">0 USDT</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Active Hashrate</span><span class="text-white font-semibold stat-value">312.5 TH/s</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Mining Unit</span><span class="text-white font-semibold stat-value" id="profileUnitName">Cosmic</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Mining Duration</span><span class="text-white font-semibold stat-value" id="profileDuration">12 days</span></div>
+      <div class="flex justify-between items-center"><span class="text-gray-400">Next Payout</span><span class="text-emerald-400 font-semibold stat-value" id="profileNextPayout">in 4 hours</span></div>
     </div>
     <button id="closeProfileBtn" class="mt-4 w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 py-2 rounded-xl transition">Close</button>
   </div>
 </div>
 
 <script>
+  // ========== TOAST NOTIFICATION ==========
+  const toastEl = document.getElementById('toast');
+  const toastName = document.getElementById('toastName');
+  const toastAmount = document.getElementById('toastAmount');
+  const names = ['Michael R.', 'Sarah K.', 'David L.', 'Emma W.', 'James B.', 'Lisa M.', 'Robert T.', 'Jennifer P.'];
+  function showRandomToast() {
+    const name = names[Math.floor(Math.random() * names.length)];
+    const usdtEarned = (Math.random() * 45 + 5).toFixed(2);
+    toastName.innerText = name;
+    toastAmount.innerText = `+${usdtEarned} USDT`;
+    toastEl.classList.remove('hidden');
+    setTimeout(() => toastEl.classList.add('hidden'), 5000);
+  }
+  window.hideToast = () => toastEl.classList.add('hidden');
+  setTimeout(showRandomToast, 5000);
+  setInterval(showRandomToast, 25000);
+
   // ========== MINING CALCULATOR ==========
   const DAILY_YIELD_RATE = 0.044;
   const tierMultiplier = { bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10 };
@@ -428,8 +479,7 @@
     chatInitialized = true;
     const container = document.getElementById('chatContainer');
     container.innerHTML = `
-      <div class="flex-1 flex flex-col h-full bg-[#111827]">
-        <!-- Header that changes based on room -->
+      <div class="flex-1 flex flex-col h-full">
         <div id="chatHeaderPlaceholder"></div>
         <div id="adminBanner" class="py-2 px-3 text-xs text-gray-300 border-b border-[#1f2a3a] bg-[#0f1822] flex items-center gap-2">
           <i data-lucide="alert-triangle" class="w-3 h-3 text-amber-400"></i>
@@ -590,7 +640,7 @@
       if (avatar && msgData.senderName !== 'Neptune Bot') avatar.addEventListener('click', () => showMiningProfile(msgData.senderName));
       if (nameSpan) nameSpan.addEventListener('click', () => showMiningProfile(msgData.senderName));
       if (msgData.mediaUrl && (msgData.mediaType === 'image' || msgData.mediaType === 'video')) {
-        row.querySelector('img, video')?.addEventListener('click', (e) => { e.stopPropagation(); window.showLightbox?.(msgData.mediaUrl, msgData.mediaType); });
+        row.querySelector('img, video')?.addEventListener('click', (e) => { e.stopPropagation(); alert('Preview: ' + msgData.mediaUrl); });
       }
       return row;
     }
@@ -660,7 +710,7 @@
     lucide.createIcons();
   }
 
-  // Improved mining profile modal
+  // show mining profile (with formatted numbers)
   function showMiningProfile(userName) {
     const amount = parseFloat(slider.value);
     const tier = tierSelect.value;
@@ -670,9 +720,9 @@
     const hoursToPayout = Math.floor(Math.random() * 12) + 1;
     document.getElementById('profileName').innerText = userName || 'Miner';
     document.getElementById('profileTier').innerText = tierSelect.options[tierSelect.selectedIndex].text + ' Tier';
-    document.getElementById('profileInvestment').innerText = amount + ' USDT';
+    document.getElementById('profileInvestment').innerText = amount.toLocaleString() + ' USDT';
     document.getElementById('profileDaily').innerText = daily.toFixed(2) + ' USDT';
-    document.getElementById('profileTotalEarned').innerText = totalEarned + ' USDT';
+    document.getElementById('profileTotalEarned').innerText = parseFloat(totalEarned).toLocaleString() + ' USDT';
     document.getElementById('profileUnitName').innerText = tierSelect.options[tierSelect.selectedIndex].text;
     document.getElementById('profileDuration').innerText = durationDays + ' days';
     document.getElementById('profileNextPayout').innerText = `in ${hoursToPayout} ${hoursToPayout === 1 ? 'hour' : 'hours'}`;
@@ -685,7 +735,7 @@
   const drawer = document.getElementById('chatDrawer');
   const communityBtn = document.getElementById('communityChatBtn');
   const supportBtn = document.getElementById('supportChatBtn');
-  const closeDrawer = document.getElementById('closeDrawerBtn');
+  const closeDrawerBtn = document.getElementById('closeDrawerBtn');
   const drawerTitle = document.getElementById('drawerTitle');
   const drawerIcon = document.getElementById('drawerIcon');
 
@@ -716,7 +766,7 @@
   }
   communityBtn.onclick = () => openChat('community');
   supportBtn.onclick = () => openChat('support');
-  closeDrawer.onclick = () => {
+  closeDrawerBtn.onclick = () => {
     drawer.classList.remove('open');
     window.__activeChatRoom = null;
     window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: null } }));
