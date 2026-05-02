@@ -7,18 +7,40 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* ========== FULL MINING RIG STYLES (ORIGINAL) ========== */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    /* ========== GLOBAL DARK THEME (FIX) ========== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0b0f17;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    /* Ensure all default text is white */
+    p, span, div, h1, h2, h3, h4, li, td, th, label, input, select, button {
+      color: #e2e8f0;
+    }
+    /* Buttons and inputs keep their own colors */
+    button, input, select {
+      color: inherit;
+    }
+    /* Fix transaction table */
+    #transactionBody td, #transactionBody th {
+      color: #e2e8f0 !important;
+    }
+    /* Toast notification white text fix */
+    .toast-notification p, .toast-notification span {
+      color: #e2e8f0 !important;
+    }
+    .toast-notification .text-emerald-400 {
+      color: #34d399 !important;
+    }
     
     @keyframes pulse-glow {
-      0%, 100% { opacity: 1; box-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
-      50% { opacity: 0.5; box-shadow: 0 0 2px #10b981; }
+      0%,100% { opacity:1; box-shadow:0 0 5px #10b981,0 0 10px #10b981; }
+      50% { opacity:0.5; box-shadow:0 0 2px #10b981; }
     }
     @keyframes fan-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from { transform:rotate(0deg); }
+      to { transform:rotate(360deg); }
     }
     .rig-glow { animation: pulse-glow 2s infinite; }
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
@@ -264,7 +286,7 @@
     }
     @keyframes wave { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
 
-    /* Profile modal (mining stats) */
+    /* Profile modal */
     .profile-modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
       z-index: 300; display: flex; align-items: center; justify-content: center;
@@ -309,10 +331,12 @@
       gap: 12px;
       backdrop-filter: blur(8px);
     }
-
-    /* Fix transaction history text color */
-    #transactionBody td, #transactionBody th {
+    /* Force white text in toast */
+    .toast-notification, .toast-notification * {
       color: #e2e8f0 !important;
+    }
+    .toast-notification .text-emerald-400 {
+      color: #34d399 !important;
     }
   </style>
 </head>
@@ -325,14 +349,14 @@
   <button onclick="hideToast()" class="ml-2 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
-<!-- MAIN MINING DASHBOARD (FULL ORIGINAL RIG) -->
+<!-- MAIN MINING DASHBOARD (FULL RIG) -->
 <div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <div class="w-10"></div>
     <div class="flex items-center gap-2">
       <img src="assets/logo.png" alt="Neptune AI" class="w-8 h-8 rounded-lg object-cover">
-      <h1 class="text-2xl font-semibold tracking-tight text-white">Neptune AI</h1>
+      <h1 class="text-2xl font-semibold tracking-tight">Neptune AI</h1>
     </div>
   </div>
 
@@ -349,7 +373,7 @@
   <!-- ===== MINING RIG VISUAL (FULL ORIGINAL) ===== -->
   <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
-      <!-- LEFT: Realistic Rig (original detailed) -->
+      <!-- LEFT: Realistic Rig -->
       <div class="lg:w-2/5 w-full">
         <div class="flex items-center gap-2 mb-3">
           <i data-lucide="server" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
@@ -456,8 +480,8 @@
       </div>
       <!-- RIGHT: Stats -->
       <div class="lg:w-3/5 w-full">
-        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
-        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
+        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
         <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
       </div>
     </div>
@@ -468,18 +492,18 @@
     <h3 class="text-lg md:text-xl font-semibold mb-2">Investment Calculator · USDT Mining</h3>
     <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
     <div class="mb-6"><div class="flex justify-between items-center mb-1"><label class="text-gray-400 text-xs md:text-sm">Investment (USDT)</label><span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">50 USDT</span></div><input type="range" id="investSlider" min="50" max="100000" value="50" step="10" class="w-full accent-emerald-400 h-2 rounded-full"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>50 USDT</span><span>100,000 USDT</span></div></div>
-    <div class="mb-6"><label class="block text-gray-400 text-xs md:text-sm mb-2">Mining Unit</label><select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-base md:text-lg font-medium"><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="platinum">Platinum</option><option value="diamond">Diamond</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option><option value="legend">Legend</option><option value="mythic">Mythic</option><option value="divine">Divine</option><option value="cosmic" selected>Cosmic</option></select></div>
-    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center"><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div></div>
+    <div class="mb-6"><label class="block text-gray-400 text-xs md:text-sm mb-2">Mining Unit</label><select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 focus:outline-none focus:border-emerald-400 text-base md:text-lg font-medium"><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="platinum">Platinum</option><option value="diamond">Diamond</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option><option value="legend">Legend</option><option value="mythic">Mythic</option><option value="divine">Divine</option><option value="cosmic" selected>Cosmic</option></select></div>
+    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center"><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div></div>
     <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 22 USDT/day. Other tiers scale proportionally.</p>
   </div>
 
   <!-- ENROLL CARD -->
-  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
+  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
 
   <!-- INFO SECTIONS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers focused on USDT mining infrastructure.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs md:text-sm text-gray-300">Daily & monthly USDT payouts to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> USDT Wallet?</h4><p class="text-xs md:text-sm text-gray-300">Use Binance, TrustWallet, or TronLink (TRC20/ERC20).</p></div></div>
 
-  <!-- HISTORY TRANSACTIONS (fixed white text) -->
+  <!-- HISTORY TRANSACTIONS (white text fixed) -->
   <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
 </div>
@@ -490,15 +514,13 @@
   <div class="float-btn" id="communityChatBtn"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
 </div>
 
-<!-- CHAT ROOM SHELL (dynamic header – changes for community vs support) -->
+<!-- CHAT ROOM SHELL -->
 <div class="chat-room-shell" id="chatRoomShell">
   <div class="room-header">
     <button class="back-btn" id="closeChatBtn"><i data-lucide="arrow-left"></i></button>
     <div class="room-info" id="roomInfo">
       <h2 id="chatRoomTitle">Neptune Community Chat</h2>
-      <div class="room-sub" id="roomSub">
-        <!-- content will be set based on chat type -->
-      </div>
+      <div class="room-sub" id="roomSub"></div>
     </div>
   </div>
   <div class="system-banner"><i data-lucide="alert-circle"></i> ⚠️ Admins never DM first. Be cautious of scammers. Always message the admin directly through the group.</div>
@@ -516,7 +538,7 @@
   <input type="file" id="imageUploadInput" accept="image/*,video/*,audio/*" style="display:none;">
 </div>
 
-<!-- PROFILE MODAL (MINING STATS) -->
+<!-- PROFILE MODAL -->
 <div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-container" id="profileModalContent"></div></div>
 
 <script>
@@ -560,7 +582,7 @@
   }
   function addTransaction(tx) {
     const row = document.createElement('tr'); row.className = 'border-b border-[#1e2a3a]';
-    row.innerHTML = `<td class="py-2 text-white">${tx.time}</td><td class="py-2 text-white">${tx.addr}</td><td class="py-2 text-right text-white">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
+    row.innerHTML = `<td class="py-2">${tx.time}</td><td class="py-2">${tx.addr}</td><td class="py-2 text-right">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
     tbody.appendChild(row);
     if(tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
   }
@@ -589,7 +611,7 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (WITH DYNAMIC HEADER FOR COMMUNITY VS SUPPORT) ==========
+  // ========== CHAT CORE (WITH EXTERNAL ENGINE SUPPORT) ==========
   (function() {
     lucide.createIcons();
     document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
@@ -619,9 +641,8 @@
     let replyingTo = null;
     let pendingMedia = null;
     let mediaRecorder = null, isRecording = false, audioStream = null;
-    let currentRoom = 'community';  // 'community' or 'support'
+    let currentRoom = 'community';
 
-    // Helper to set header based on room type
     function setChatHeader(room) {
       if (room === 'community') {
         chatRoomTitle.innerText = 'Neptune Community Chat';
@@ -629,7 +650,6 @@
           <span class="room-members"><i data-lucide="users" style="width:14px;height:14px;"></i> 3,418 members</span>
           <span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">247 online</span></span>
         `;
-        // start online count simulation
         startOnlineSimulation();
       } else {
         chatRoomTitle.innerText = 'Neptune Support Chat';
@@ -646,7 +666,7 @@
       if (onlineSpan) onlineSpan.innerText = online + ' online';
       onlineInterval = setInterval(() => {
         online = Math.floor(Math.random() * (247-62+1)) + 62;
-        if (onlineSpan && document.getElementById('chatRoomShell').classList.contains('is-open') && currentRoom === 'community') {
+        if (onlineSpan && chatShell.classList.contains('is-open') && currentRoom === 'community') {
           onlineSpan.innerText = online + ' online';
         }
       }, 25000);
@@ -718,7 +738,6 @@
     });
     stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
 
-    // ---- CHAT API (for external engine) ----
     window.chatAPI = {
       addIncomingMessage: (msgData) => {
         const row = document.createElement('div');
@@ -735,7 +754,6 @@
         row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;display:block;cursor:pointer;">${escapeHtml(msgData.senderName)}</span>${content}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
         msgContainer.appendChild(row);
         scrollIfNeeded();
-        // click to show profile
         const avatarDiv = row.querySelector('.chat-avatar-bubble');
         const nameSpan = row.querySelector('.chat-sender-name');
         avatarDiv.addEventListener('click', () => showMiningProfileModal(msgData));
@@ -788,10 +806,8 @@
     sendBtn.addEventListener('click', sendUserMessage);
     chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendUserMessage(); });
 
-    // Welcome message
     window.chatAPI.addIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
 
-    // Open/close chat
     function openChat(room) {
       currentRoom = room;
       setChatHeader(room);
@@ -812,7 +828,6 @@
     closeChatBtn.onclick = closeChat;
   })();
 
-  // Mining profile modal
   function showMiningProfileModal(personaData) {
     const amount = parseFloat(slider.value);
     const tier = tierSelect.value;
@@ -844,7 +859,7 @@
   lucide.createIcons();
 </script>
 
-<!-- EXTERNAL ENGINE AND MANIFEST (these files must exist) -->
+<!-- EXTERNAL ENGINE AND MANIFEST (must exist in same folder) -->
 <script src="media-manifest.js"></script>
 <script src="ai-mining-engine.js"></script>
 
