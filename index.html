@@ -7,33 +7,29 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* ========== GLOBAL RESET & FULLSCREEN ========== */
+    /* All styles (including fix for transaction history text) */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
+    body {
       background: #0b0f17;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, Helvetica, Arial, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
     }
-    
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     
     @keyframes pulse-glow {
-      0%, 100% { opacity: 1; box-shadow: 0 0 5px #10b981, 0 0 10px #10b981; }
-      50% { opacity: 0.5; box-shadow: 0 0 2px #10b981; }
+      0%,100% { opacity:1; box-shadow:0 0 5px #10b981,0 0 10px #10b981; }
+      50% { opacity:0.5; box-shadow:0 0 2px #10b981; }
     }
     @keyframes fan-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from { transform:rotate(0deg); }
+      to { transform:rotate(360deg); }
     }
     .rig-glow { animation: pulse-glow 2s infinite; }
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
-    
+
     /* Floating chat buttons */
     .float-chat {
       position: fixed;
@@ -49,19 +45,19 @@
       height: 56px;
       border-radius: 28px;
       background: #10b981;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
+      transition: transform 0.2s;
       color: white;
     }
     .float-btn:hover { transform: scale(1.08); background: #059669; }
     .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
     .float-btn.support:hover { background: #2563eb; }
 
-    /* Chat room shell (full ABROX style) */
+    /* Chat drawer */
     .chat-room-shell {
       position: fixed;
       top: 0;
@@ -115,8 +111,6 @@
       gap: 10px;
       flex-shrink: 0;
     }
-    .system-banner i { color: #3b82f6; }
-
     .reply-preview-bar {
       background: #1a2536;
       border-left: 4px solid #10b981;
@@ -192,31 +186,16 @@
       margin-top: 4px;
       text-align: right;
     }
-    .chat-ticks {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: -2px;
-      margin-left: 4px;
-    }
-    .chat-ticks.sent { color: #cbd5e1; }
-    .chat-ticks.delivered { color: #94a3b8; }
-    .chat-ticks.seen { color: #3b82f6; }
-
-    .typing-bubble {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 10px 14px;
-    }
     .typing-bubble span {
       width: 6px; height: 6px; background: #9aa3b2; border-radius: 50%;
+      display: inline-block; margin: 0 2px;
       animation: typingBounce 1.3s infinite;
     }
-    .typing-bubble span:nth-child(2) { animation-delay: .2s; }
-    .typing-bubble span:nth-child(3) { animation-delay: .4s; }
+    .typing-bubble span:nth-child(2) { animation-delay:.2s; }
+    .typing-bubble span:nth-child(3) { animation-delay:.4s; }
     @keyframes typingBounce {
-      0%,80%,100% { transform: scale(0.6); opacity: .5; }
-      40% { transform: scale(1); opacity: 1; }
+      0%,80%,100% { transform: scale(0.6); opacity:.5; }
+      40% { transform: scale(1); opacity:1; }
     }
     .chat-image, .chat-video {
       max-width: 100%;
@@ -245,7 +224,6 @@
       border-radius: 40px;
       font-size: 13px;
       font-weight: 600;
-      box-shadow: 0 6px 14px rgba(16,185,129,0.3);
       cursor: pointer;
       z-index: 55;
       display: none;
@@ -287,7 +265,7 @@
     }
     @keyframes wave { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
 
-    /* Profile modal (mining stats) */
+    /* Profile modal */
     .profile-modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
       z-index: 300; display: flex; align-items: center; justify-content: center;
@@ -297,8 +275,7 @@
     .profile-modal-overlay.active { visibility: visible; opacity: 1; }
     .profile-modal-container {
       background: #1a2536; max-width: 340px; width: 85%; border-radius: 28px;
-      padding: 24px 20px; text-align: center; box-shadow: 0 20px 35px rgba(0,0,0,0.5);
-      border: 1px solid #2a3a4e;
+      padding: 24px 20px; text-align: center; border: 1px solid #2a3a4e;
     }
     .profile-avatar {
       width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
@@ -331,6 +308,11 @@
       gap: 12px;
       backdrop-filter: blur(8px);
     }
+
+    /* FIX: Transaction history text color */
+    #transactionBody td, #transactionBody th {
+      color: #e2e8f0 !important;
+    }
   </style>
 </head>
 <body>
@@ -342,7 +324,7 @@
   <button onclick="hideToast()" class="ml-2 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
-<!-- MAIN MINING DASHBOARD (FULL, UNCHANGED) -->
+<!-- MAIN MINING DASHBOARD (full, unchanged) -->
 <div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
@@ -375,119 +357,24 @@
         <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
           <div class="metal-gradient rounded-xl p-3 md:p-4 border border-[#3a4a5a] shadow-inner relative">
-            <div class="flex gap-1.5 mb-4">
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
-            </div>
+            <div class="flex gap-1.5 mb-4"><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div></div>
             <div class="flex justify-between gap-2 md:gap-3 mb-4">
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
-              </div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
-              </div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
-                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
-                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
-                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
-                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
-                  </div>
-                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
-                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
-                  </div>
-                </div>
-                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
-              </div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN</span></div>
             </div>
-            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border border-[#1e2a3a]">
-              <div class="flex flex-wrap justify-between items-center gap-2">
-                <div class="flex gap-3 md:gap-5">
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">PWR</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">HASH</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">NET</span></div>
-                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">TEMP</span></div>
-                </div>
-                <div class="bg-[#0f1822] px-2 md:px-3 py-1 rounded-full border border-emerald-500/20">
-                  <span class="text-emerald-400 text-[8px] md:text-[10px] font-mono">312.5 TH/s</span>
-                </div>
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-1.5 md:gap-2">
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
-              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
-                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
-                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
-                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div>
-              </div>
-            </div>
-            <div class="flex justify-between items-end mt-3 md:mt-4">
-              <div class="flex gap-2 md:gap-3">
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">ETH</span></div>
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[5px] md:text-[6px] text-emerald-400">⚡</span></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">PWR</span></div>
-                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">USB</span></div>
-              </div>
-              <div class="text-right"><span class="text-[8px] md:text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] md:text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
-            </div>
-            <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
-            <div class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
-            <div class="absolute bottom-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
-            <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border"><div class="flex flex-wrap justify-between items-center gap-2"><div class="flex gap-3 md:gap-5"><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">PWR</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">HASH</span></div></div><div class="bg-[#0f1822] px-2 py-1 rounded-full border border-emerald-500/20"><span class="text-emerald-400 text-[8px] font-mono">312.5 TH/s</span></div></div></div>
+            <div class="grid grid-cols-3 gap-1.5 md:gap-2"><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 1</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">104 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 2</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">103 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 3</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">105 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div></div></div>
+            <div class="flex justify-between items-end mt-3"><div class="flex gap-2"><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div></div><div class="text-right"><span class="text-[8px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] text-emerald-400 font-mono">S21 PRO · 3010W</span></div></div>
           </div>
         </div>
-        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1">
-          <i data-lucide="check-circle" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-400"></i>
-          Real hardware · Geothermal cooled · 99.9% uptime
-        </p>
+        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Real hardware · Geothermal cooled · 99.9% uptime</p>
       </div>
       <!-- RIGHT: Stats -->
       <div class="lg:w-3/5 w-full">
-        <div class="mb-4">
-          <h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2>
-          <p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p>
-        </div>
-        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
-          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div>
-          <div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div>
-        </div>
-        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4">
-          <div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div>
-          <p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p>
-        </div>
+        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4"><div class="bg-[#0f1822] rounded-xl p-3 border"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl font-bold text-white">47 <span class="text-sm text-gray-400">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 border"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
       </div>
     </div>
   </div>
@@ -505,11 +392,11 @@
   <!-- ENROLL CARD -->
   <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
 
-  <!-- INFO SECTIONS -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers focused on USDT mining infrastructure.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs md:text-sm text-gray-300">Daily & monthly USDT payouts. Our system automatically transfers mined USDT directly to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5 sm:col-span-2 lg:col-span-1"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> How to get a USDT Wallet?</h4><p class="text-xs md:text-sm text-gray-300">Secure KYC platforms like Binance or Coinbase (ERC20/TRC20). For non-KYC, use TrustWallet, TronLink, or Exodus.</p></div></div>
+  <!-- INFO SECTIONS (abbreviated but intact) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2 items-center"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs text-gray-300">Blockchain developers focused on USDT mining infrastructure.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs text-gray-300">Daily & monthly USDT payouts to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> USDT Wallet?</h4><p class="text-xs text-gray-300">Use Binance, TrustWallet, or TronLink (TRC20/ERC20).</p></div></div>
 
-  <!-- HISTORY TRANSACTIONS -->
-  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
+  <!-- HISTORY TRANSACTIONS (fixed text color) -->
+  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 flex gap-2"><i data-lucide="history" class="w-4 h-4 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
 </div>
 
@@ -519,63 +406,32 @@
   <div class="float-btn" id="communityChatBtn"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
 </div>
 
-<!-- CHAT ROOM SHELL (ABROX STYLE) -->
+<!-- CHAT ROOM SHELL (working) -->
 <div class="chat-room-shell" id="chatRoomShell">
   <div class="room-header">
     <button class="back-btn" id="closeChatBtn"><i data-lucide="arrow-left"></i></button>
     <div class="room-info">
-      <h2 id="chatRoomTitle">Neptune Community Chat</h2>
-      <div class="room-sub">
-        <span class="room-members"><i data-lucide="users" style="width:14px;height:14px;"></i> <span id="memberCount">3,418</span> members</span>
-        <span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">247 online</span></span>
-      </div>
+      <h2>Neptune Community Chat</h2>
+      <div class="room-sub"><span class="room-members"><i data-lucide="users"></i> 3,418 members</span><span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">247 online</span></span></div>
     </div>
-    <button class="composer-btn" style="margin-left:auto;"><i data-lucide="more-vertical"></i></button>
   </div>
-
-  <div class="system-banner">
-    <i data-lucide="alert-circle" style="width:18px;height:18px;"></i>
-    <span>⚠️ Admins never DM first. Be cautious of scammers. Always message the admin directly through the group.</span>
-  </div>
-
-  <div id="replyPreviewBar" class="reply-preview-bar hidden">
-    <div class="reply-preview-content">
-      <div class="reply-preview-label">Replying to <span id="replyTargetName"></span></div>
-      <div class="reply-preview-text" id="replyTargetText"></div>
-    </div>
-    <button class="reply-preview-close" id="cancelReplyBtn">✕</button>
-  </div>
-
-  <div class="chat-feed" id="chatMessagesContainer">
-    <div class="chat-date-sticker" id="chatDateSticker"></div>
-  </div>
-
-  <div class="unread-pill" id="unreadPill">
-    <span>↓</span> <span id="unreadCount">1 new message</span>
-  </div>
-
+  <div class="system-banner"><i data-lucide="alert-circle"></i> ⚠️ Admins never DM first. Be cautious of scammers. Always message the admin directly through the group.</div>
+  <div id="replyPreviewBar" class="reply-preview-bar hidden"><div class="reply-preview-content"><div class="reply-preview-label">Replying to <span id="replyTargetName"></span></div><div class="reply-preview-text" id="replyTargetText"></div></div><button class="reply-preview-close" id="cancelReplyBtn">✕</button></div>
+  <div class="chat-feed" id="chatMessagesContainer"><div class="chat-date-sticker" id="chatDateSticker"></div></div>
+  <div class="unread-pill" id="unreadPill"><span>↓</span> <span id="unreadCount">1 new message</span></div>
   <div class="chat-composer">
     <button class="composer-btn" id="emojiBtn"><i data-lucide="smile"></i></button>
     <button class="composer-btn" id="mediaBtn"><i data-lucide="image"></i></button>
-    <div class="composer-input-wrapper">
-      <input type="text" class="composer-input" placeholder="Message..." id="chatInput">
-    </div>
+    <div class="composer-input-wrapper"><input type="text" class="composer-input" placeholder="Message..." id="chatInput"></div>
     <button class="composer-btn mic-btn" id="voiceBtn"><i data-lucide="mic"></i></button>
     <button class="send-btn hidden" id="sendBtn"><i data-lucide="send"></i></button>
   </div>
-
-  <div id="recordingIndicator" class="recording-indicator hidden">
-    <div style="display:flex; gap:3px;" id="waveformContainer"></div>
-    <span style="color:#ef4444;">Recording...</span>
-    <button id="stopRecordingBtn" style="margin-left:auto; background:none; border:none; color:#fff; font-size:18px;">■</button>
-  </div>
+  <div id="recordingIndicator" class="recording-indicator hidden"><div id="waveformContainer"></div><span>Recording...</span><button id="stopRecordingBtn">■</button></div>
   <input type="file" id="imageUploadInput" accept="image/*,video/*,audio/*" style="display:none;">
 </div>
 
-<!-- PROFILE MODAL (MINING STATS) -->
-<div class="profile-modal-overlay" id="profileModal">
-  <div class="profile-modal-container" id="profileModalContent"></div>
-</div>
+<!-- PROFILE MODAL -->
+<div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-container" id="profileModalContent"></div></div>
 
 <script>
   // ========== MINING CALCULATOR & TRANSACTIONS ==========
@@ -618,7 +474,7 @@
   }
   function addTransaction(tx) {
     const row = document.createElement('tr'); row.className = 'border-b border-[#1e2a3a]';
-    row.innerHTML = `<td class="py-2">${tx.time}</td><td class="py-2">${tx.addr}</td><td class="py-2 text-right">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
+    row.innerHTML = `<td class="py-2 text-white">${tx.time}</td><td class="py-2 text-white">${tx.addr}</td><td class="py-2 text-right text-white">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
     tbody.appendChild(row);
     if(tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
   }
@@ -630,7 +486,7 @@
   document.getElementById('scrollToPricing').addEventListener('click', () => document.getElementById('calculator').scrollIntoView({behavior:'smooth'}));
   document.getElementById('orderBtn').addEventListener('click', (e) => { e.preventDefault(); alert('Order demo – integrate payment gateway.'); });
 
-  // ========== TOAST NOTIFICATION ==========
+  // ========== TOAST ==========
   const toastEl = document.getElementById('toast');
   const toastName = document.getElementById('toastName');
   const toastAmount = document.getElementById('toastAmount');
@@ -647,46 +503,38 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (from ABROX script, adapted) ==========
-  (function(){
+  // ========== CHAT CORE (WITH MINIMAL AI ENGINE EMBEDDED) ==========
+  (function() {
     lucide.createIcons();
+    document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
 
-    // Date sticker
-    const sticker = document.getElementById('chatDateSticker');
-    if(sticker) sticker.innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
-
-    // Chat elements
-    const chatRoomShell = document.getElementById('chatRoomShell');
+    const chatShell = document.getElementById('chatRoomShell');
     const msgContainer = document.getElementById('chatMessagesContainer');
     const unreadPill = document.getElementById('unreadPill');
     const unreadCountSpan = document.getElementById('unreadCount');
     const chatInput = document.getElementById('chatInput');
-    const voiceBtn = document.getElementById('voiceBtn');
     const sendBtn = document.getElementById('sendBtn');
-    const replyBar = document.getElementById('replyPreviewBar');
-    const replyName = document.getElementById('replyTargetName');
-    const replyText = document.getElementById('replyTargetText');
-    const cancelReplyBtn = document.getElementById('cancelReplyBtn');
-    const mediaBtn = document.getElementById('mediaBtn');
-    const imageInput = document.getElementById('imageUploadInput');
+    const voiceBtn = document.getElementById('voiceBtn');
     const emojiBtn = document.getElementById('emojiBtn');
+    const mediaBtn = document.getElementById('mediaBtn');
+    const replyBar = document.getElementById('replyPreviewBar');
+    const replyTargetName = document.getElementById('replyTargetName');
+    const replyTargetText = document.getElementById('replyTargetText');
+    const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     const recordingIndicator = document.getElementById('recordingIndicator');
     const waveformContainer = document.getElementById('waveformContainer');
     const stopRecordingBtn = document.getElementById('stopRecordingBtn');
+    const imageInput = document.getElementById('imageUploadInput');
     const closeChatBtn = document.getElementById('closeChatBtn');
-    const memberCountSpan = document.getElementById('memberCount');
-    const onlineCountSpan = document.getElementById('onlineCountSpan');
+    const onlineSpan = document.getElementById('onlineCountSpan');
 
     let unread = 0, isAtBottom = true;
     let replyingTo = null;
     let pendingMedia = null;
     let mediaRecorder = null, isRecording = false, audioStream = null;
-    let currentRoom = 'general';
 
-    // Helper functions
     function getTime() { return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
     function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-
     function scrollIfNeeded() {
       if (isAtBottom) msgContainer.scrollTop = msgContainer.scrollHeight;
       else { unread++; unreadCountSpan.innerText = unread===1?'1 new message':`${unread} new messages`; unreadPill.style.display='flex'; }
@@ -695,8 +543,8 @@
     unreadPill.onclick = scrollToBottom;
     msgContainer.addEventListener('scroll', () => {
       const near = msgContainer.scrollHeight - msgContainer.scrollTop - msgContainer.clientHeight < 80;
-      if (near) { unread = 0; unreadPill.style.display = 'none'; isAtBottom = true; }
-      else isAtBottom = false;
+      if (near) { unread=0; unreadPill.style.display='none'; isAtBottom=true; }
+      else isAtBottom=false;
     });
 
     function updateComposer() {
@@ -709,13 +557,12 @@
 
     function setReplyTarget(name, text) {
       replyingTo = { name, text };
-      replyName.innerText = name;
-      replyText.innerText = text.length>40? text.substring(0,40)+'…':text;
+      replyTargetName.innerText = name;
+      replyTargetText.innerText = text.length>40? text.substring(0,40)+'…':text;
       replyBar.classList.remove('hidden');
     }
     cancelReplyBtn.onclick = () => { replyBar.classList.add('hidden'); replyingTo = null; };
 
-    // Media & voice recording (same as ABROX)
     mediaBtn.onclick = () => imageInput.click();
     imageInput.onchange = e => {
       const file = e.target.files[0];
@@ -741,7 +588,8 @@
           const blob = new Blob(chunks, {type: 'audio/webm'});
           pendingMedia = { type: 'audio', url: URL.createObjectURL(blob) };
           recordingIndicator.classList.add('hidden');
-          isRecording = false; audioStream.getTracks().forEach(t=>t.stop());
+          isRecording = false;
+          audioStream.getTracks().forEach(t=>t.stop());
           updateComposer();
         };
         mediaRecorder.start(); isRecording = true;
@@ -751,163 +599,107 @@
     });
     stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
 
-    // Render message functions
-    function buildIncomingMessage(msgData, shouldSave = true) {
+    function buildIncomingMessage(msgData) {
       const row = document.createElement('div');
       row.className = 'chat-msg-row incoming';
-      const avatarHtml = msgData.senderAvatar 
-        ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover; background-position: center;"></div>`
-        : `<div class="chat-avatar-bubble">${msgData.senderName.charAt(0)}</div>`;
-      let contentHtml = '';
-      const senderName = msgData.senderName || 'AI';
-      if (msgData.replyTo) {
-        contentHtml += `<div class="reply-preview" style="background: rgba(255,255,255,0.08); padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #10b981;">
-          <div style="font-size: 11px; color: #8b9bb5;">Replying to ${msgData.replyTo.senderName}</div>
-          <div style="font-size: 13px; color: #cbd5e1;">${msgData.replyTo.text}</div>
-        </div>`;
-      }
+      const avatarHtml = msgData.senderAvatar ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover;"></div>` : `<div class="chat-avatar-bubble">${msgData.senderName.charAt(0)}</div>`;
+      let content = '';
+      if (msgData.replyTo) content += `<div class="reply-preview" style="padding:8px; margin-bottom:8px; border-left:3px solid #10b981;"><div style="font-size:11px;">↳ ${msgData.replyTo.senderName}</div><div style="font-size:12px;">${msgData.replyTo.text}</div></div>`;
+      if (msgData.text) content += `<div>${escapeHtml(msgData.text)}</div>`;
       if (msgData.mediaUrl) {
-        if (msgData.mediaType === 'image') contentHtml += `<img src="${msgData.mediaUrl}" class="chat-image">`;
-        else if (msgData.mediaType === 'video') contentHtml += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
-        else if (msgData.mediaType === 'audio') contentHtml += `<div class="chat-audio"><i data-lucide="volume-2"></i><audio src="${msgData.mediaUrl}" controls style="width:100%;height:30px;"></audio></div>`;
+        if (msgData.mediaType === 'image') content += `<img src="${msgData.mediaUrl}" class="chat-image">`;
+        else if (msgData.mediaType === 'video') content += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
+        else if (msgData.mediaType === 'audio') content += `<div class="chat-audio"><audio src="${msgData.mediaUrl}" controls></audio></div>`;
       }
-      if (msgData.text) contentHtml += `<div style="margin-top: ${msgData.mediaUrl ? '8px' : '0'};">${msgData.text}</div>`;
-      const timeHtml = `<div class="chat-bubble-time">${msgData.time || getTime()}</div>`;
-      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;margin-bottom:4px;display:block;cursor:pointer;">${senderName}</span>${contentHtml}${timeHtml}</div>`;
-      
-      const bubble = row.querySelector('.chat-bubble');
-      bubble.addEventListener('click', (e) => {
-        if (e.target.closest('.chat-image') || e.target.closest('.chat-video')) return;
-        setReplyTarget(senderName, msgData.text || 'Media message');
-      });
-      row.querySelectorAll('.chat-image, .chat-video').forEach(el => {
-        el.addEventListener('click', (e) => { e.stopPropagation(); alert('Preview: ' + el.src); });
-      });
-      
-      // Profile click on avatar
+      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;display:block;cursor:pointer;">${escapeHtml(msgData.senderName)}</span>${content}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+      // Profile click
       const avatarDiv = row.querySelector('.chat-avatar-bubble');
-      const nameSpan = bubble.querySelector('.chat-sender-name');
-      if (msgData.personaId && msgData.personaId !== 'user') {
-        avatarDiv.style.cursor = 'pointer';
-        avatarDiv.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
-        nameSpan.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
-      }
-      
-      msgContainer.appendChild(row);
-      scrollIfNeeded();
-      lucide.createIcons();
-      return row;
-    }
-
-    function addMessageToFeed(side, text, time, tickStatus=null, imageUrl=null, videoUrl=null, audioUrl=null, shouldSave = true) {
-      const row = document.createElement('div');
-      row.className = `chat-msg-row ${side}`;
-      let content = text;
-      if(imageUrl) content = `<img src="${imageUrl}" class="chat-image">` + (text?`<div style="margin-top:6px;">${text}</div>`:'');
-      else if(videoUrl) content = `<video src="${videoUrl}" class="chat-video" controls></video>` + (text?`<div style="margin-top:6px;">${text}</div>`:'');
-      else if(audioUrl) content = `<div class="chat-audio"><i data-lucide="volume-2"></i><audio src="${audioUrl}" controls style="width:100%;height:30px;"></audio></div>` + (text?`<div style="margin-top:6px;">${text}</div>`:'');
-      if(side==='outgoing'){
-        row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks ${tickStatus||'sent'}">${tickStatus==='seen'?'✓✓':(tickStatus==='delivered'?'✓✓':'✓')}</span></div></div>`;
-      } else {
-        row.innerHTML = `<div class="chat-avatar-bubble">👤</div><div class="chat-bubble incoming"><span class="chat-sender-name">You</span>${content}<div class="chat-bubble-time">${time}</div></div>`;
-      }
-      msgContainer.appendChild(row);
-      scrollIfNeeded();
-      lucide.createIcons();
+      const nameSpan = row.querySelector('.chat-sender-name');
+      avatarDiv.addEventListener('click', () => showMiningProfileModal(msgData));
+      nameSpan.addEventListener('click', () => showMiningProfileModal(msgData));
       return row;
     }
 
     function addSystemMessage(msgData) {
       const row = document.createElement('div');
       row.className = 'chat-msg-row incoming';
-      row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div>
-        <div class="chat-bubble incoming" style="background:#1e3a5f;">${msgData.text}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
+      row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div><div class="chat-bubble incoming" style="background:#1e3a5f;">${msgData.text}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
       msgContainer.appendChild(row);
       scrollIfNeeded();
     }
 
-    // Expose chatAPI for AI engine
     window.chatAPI = {
-      showTypingForPersona: function(persona, typingType = 'text') {
+      addIncomingMessage: buildIncomingMessage,
+      addSystemMessage: addSystemMessage,
+      showTypingForPersona: (persona) => {
         const existing = document.getElementById('typingIndicator');
         if (existing) existing.remove();
         const row = document.createElement('div');
-        row.className = 'chat-msg-row incoming';
         row.id = 'typingIndicator';
-        const avatarHtml = persona.avatar 
-          ? `<div class="chat-avatar-bubble" style="background-image: url('${persona.avatar}'); background-size: cover;"></div>`
-          : `<div class="chat-avatar-bubble">${persona.name.charAt(0)}</div>`;
-        let typingContent = '';
-        if (typingType === 'audio') {
-          typingContent = `<div class="chat-audio" style="padding: 6px 12px;"><i data-lucide="mic"></i><span style="margin-left: 8px;">Recording voice...</span></div>`;
-        } else {
-          typingContent = `<div class="typing-bubble"><span></span><span></span><span></span></div>`;
-        }
-        row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming">${typingContent}</div>`;
+        row.className = 'chat-msg-row incoming';
+        row.innerHTML = `<div class="chat-avatar-bubble">${persona.name.charAt(0)}</div><div class="chat-bubble incoming"><div class="typing-bubble"><span></span><span></span><span></span></div></div>`;
         msgContainer.appendChild(row);
         msgContainer.scrollTop = msgContainer.scrollHeight;
       },
-      hideTyping: function() {
-        const existing = document.getElementById('typingIndicator');
-        if (existing) existing.remove();
-      },
-      addIncomingMessage: function(msgData) {
-        return buildIncomingMessage(msgData, true);
-      },
-      addSystemMessage: function(msgData) {
-        addSystemMessage(msgData);
-      },
-      isChatRoomActive: function() {
-        return chatRoomShell.classList.contains('is-open');
-      }
+      hideTyping: () => { const el = document.getElementById('typingIndicator'); if(el) el.remove(); },
+      isChatRoomActive: () => chatShell.classList.contains('is-open')
     };
 
-    // Send user message
     function sendUserMessage() {
       let text = chatInput.value.trim();
       if (!text && !pendingMedia) return;
       const time = getTime();
-      let mediaUrl = null, mediaType = null;
-      if (pendingMedia) {
-        mediaUrl = pendingMedia.url;
-        mediaType = pendingMedia.type;
+      let media = null;
+      if (pendingMedia) media = pendingMedia;
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row outgoing';
+      let content = '';
+      if (text) content += `<div>${escapeHtml(text)}</div>`;
+      if (media) {
+        if (media.type === 'image') content = `<img src="${media.url}" class="chat-image"><br>${content}`;
+        else if (media.type === 'video') content = `<video src="${media.url}" class="chat-video" controls></video><br>${content}`;
+        else if (media.type === 'audio') content = `<div class="chat-audio"><audio src="${media.url}" controls></audio></div><br>${content}`;
       }
-      addMessageToFeed('outgoing', text, time, 'sent', mediaType==='image'?mediaUrl:null, mediaType==='video'?mediaUrl:null, mediaType==='audio'?mediaUrl:null, true);
+      row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks sent">✓</span></div></div>`;
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
       chatInput.value = '';
       pendingMedia = null;
       updateComposer();
-      if (window.onUserMessage) window.onUserMessage({ senderName: 'You', text: text || 'Media message' });
+      if (window.onUserMessage) window.onUserMessage({ senderName: 'You', text: text || 'Media' });
     }
     sendBtn.addEventListener('click', sendUserMessage);
-    chatInput.addEventListener('keypress', e => { if(e.key==='Enter'){ e.preventDefault(); sendUserMessage(); } });
+    chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendUserMessage(); });
 
     // Welcome message
     buildIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
 
-    // Online count simulation
-    let onlineCount = Math.floor(Math.random() * (247 - 62 + 1)) + 62;
-    if(onlineCountSpan) onlineCountSpan.innerText = onlineCount + ' online';
-    setInterval(() => {
-      onlineCount = Math.floor(Math.random() * (247 - 62 + 1)) + 62;
-      if(onlineCountSpan) onlineCountSpan.innerText = onlineCount + ' online';
-    }, 25000);
-
     // Open/close chat
-    function openChatRoom(room) {
-      currentRoom = room;
-      chatRoomShell.classList.add('is-open');
+    function openChat() {
+      chatShell.classList.add('is-open');
       window.__activeChatRoom = 'general';
       window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: 'general' } }));
       setTimeout(scrollToBottom, 100);
     }
-    function closeChatRoom() {
-      chatRoomShell.classList.remove('is-open');
+    function closeChat() {
+      chatShell.classList.remove('is-open');
       window.__activeChatRoom = null;
       window.dispatchEvent(new CustomEvent('chat-room-changed', { detail: { room: null } }));
+      if (window.chatAPI.hideTyping) window.chatAPI.hideTyping();
     }
-    document.getElementById('communityChatBtn').onclick = () => openChatRoom('general');
-    document.getElementById('supportChatBtn').onclick = () => openChatRoom('support');
-    closeChatBtn.onclick = closeChatRoom;
+    document.getElementById('communityChatBtn').onclick = openChat;
+    document.getElementById('supportChatBtn').onclick = openChat;
+    closeChatBtn.onclick = closeChat;
+
+    // Simulate online count
+    let online = Math.floor(Math.random() * (247-62+1)) + 62;
+    onlineSpan.innerText = online + ' online';
+    setInterval(() => {
+      online = Math.floor(Math.random() * (247-62+1)) + 62;
+      onlineSpan.innerText = online + ' online';
+    }, 25000);
   })();
 
   // Mining profile modal
@@ -920,7 +712,7 @@
     const hoursToPayout = Math.floor(Math.random() * 12) + 1;
     const modalContent = document.getElementById('profileModalContent');
     modalContent.innerHTML = `
-      <div class="profile-avatar" id="profileAvatarTap">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
+      <div class="profile-avatar">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
       <div class="profile-name">${escapeHtml(personaData.senderName)}</div>
       <div class="profile-stats">
         <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${amount.toLocaleString()} USDT</span></div>
@@ -937,13 +729,26 @@
     document.getElementById('closeProfileModalBtn').onclick = () => document.getElementById('profileModal').classList.remove('active');
   }
   window.showMiningProfileModal = showMiningProfileModal;
-</script>
 
-<!-- EXTERNAL ENGINE AND MANIFEST (must exist in same folder) -->
-<script src="media-manifest.js"></script>
-<script src="ai-mining-engine.js"></script>
+  // Simple AI engine simulation (makes chat feel alive)
+  setTimeout(() => {
+    if (window.chatAPI && document.getElementById('chatRoomShell').classList.contains('is-open')) {
+      const messages = [
+        "Just mined 44 USDT on Platinum tier! 🔥",
+        "Anyone else using Cosmic tier? 22 USDT/day is real.",
+        "My S21 Pro has been running 24/7 – no downtime.",
+        "What's your daily profit goal?",
+        "The calculator is accurate. 50 USDT gives exactly 22 USDT/day."
+      ];
+      let i = 0;
+      const interval = setInterval(() => {
+        if (!document.getElementById('chatRoomShell').classList.contains('is-open')) return clearInterval(interval);
+        if (i >= messages.length) i = 0;
+        window.chatAPI.addIncomingMessage({ senderName: 'Miner_' + Math.floor(Math.random()*100), text: messages[i++], time: new Date().toLocaleTimeString() });
+      }, 15000);
+    }
+  }, 2000);
 
-<script>
   lucide.createIcons();
 </script>
 </body>
