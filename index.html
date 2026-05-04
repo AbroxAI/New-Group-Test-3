@@ -30,7 +30,7 @@
     .fan { animation: fan-spin 0.8s linear infinite; transform-origin: center; }
     .metal-gradient { background: linear-gradient(145deg, #1e2a3a 0%, #0f1822 40%, #1a2533 100%); }
 
-    /* Floating chat buttons (replaces ABROX bottom nav) */
+    /* Floating chat buttons */
     .float-chat {
       position: fixed;
       bottom: 24px;
@@ -57,7 +57,7 @@
     .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
     .float-btn.support:hover { background: #2563eb; }
 
-    /* Chat room shell (exactly as in ABROX, positioned fixed) */
+    /* Chat drawer */
     .chat-room-shell {
       position: fixed;
       top: 0;
@@ -298,8 +298,6 @@
       padding: 12px; font-weight: 700; width: 100%; margin-top: 16px;
       cursor: pointer;
     }
-
-    /* Toast notification */
     .toast-notification {
       position: fixed;
       top: 80px;
@@ -321,8 +319,7 @@
     .toast-notification .text-emerald-400 {
       color: #34d399 !important;
     }
-
-    /* Mining dashboard specific */
+    /* Fix transaction history text */
     #transactionBody td, #transactionBody th {
       color: #e2e8f0 !important;
     }
@@ -337,14 +334,14 @@
   <button onclick="hideToast()" class="ml-2 text-gray-500 hover:text-gray-300"><i data-lucide="x" class="w-4 h-4"></i></button>
 </div>
 
-<!-- ==================== FULL MINING DASHBOARD ==================== -->
+<!-- MAIN MINING DASHBOARD (FULL ORIGINAL RIG) -->
 <div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <div class="w-10"></div>
     <div class="flex items-center gap-2">
       <img src="assets/logo.png" alt="Neptune AI" class="w-8 h-8 rounded-lg object-cover">
-      <h1 class="text-2xl font-semibold tracking-tight">Neptune AI</h1>
+      <h1 class="text-2xl font-semibold tracking-tight text-white">Neptune AI</h1>
     </div>
   </div>
 
@@ -361,7 +358,7 @@
   <!-- ===== MINING RIG VISUAL (FULL ORIGINAL) ===== -->
   <div class="bg-gradient-to-br from-[#0f1a24] to-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 lg:p-8 mb-8 shadow-xl">
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
-      <!-- LEFT: Rig -->
+      <!-- LEFT: Realistic Rig -->
       <div class="lg:w-2/5 w-full">
         <div class="flex items-center gap-2 mb-3">
           <i data-lucide="server" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
@@ -370,24 +367,107 @@
         <div class="bg-[#0a0f16] border-2 border-[#2a3a4a] rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/10 to-transparent pointer-events-none"></div>
           <div class="metal-gradient rounded-xl p-3 md:p-4 border border-[#3a4a5a] shadow-inner relative">
-            <div class="flex gap-1.5 mb-4"><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div><div class="h-2 w-full bg-[#0a1018] rounded-full border"></div></div>
-            <div class="flex justify-between gap-2 md:gap-3 mb-4">
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN 1 · 4200 RPM</span></div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN 2 · 4200 RPM</span></div>
-              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border shadow-lg"><div class="relative w-12 h-12 md:w-14 md:h-14"><div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div><div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400"><i data-lucide="fan"></i></div></div><span class="text-[8px] md:text-[10px] text-gray-400">FAN 3 · 4200 RPM</span></div>
+            <div class="flex gap-1.5 mb-4">
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
+              <div class="h-2 w-full bg-[#0a1018] rounded-full border border-[#2a3a4a]"></div>
             </div>
-            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border"><div class="flex flex-wrap justify-between items-center gap-2"><div class="flex gap-3 md:gap-5"><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">PWR</span></div><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] text-gray-400">HASH</span></div></div><div class="bg-[#0f1822] px-2 py-1 rounded-full border border-emerald-500/20"><span class="text-emerald-400 text-[8px] font-mono">312.5 TH/s</span></div></div></div>
-            <div class="grid grid-cols-3 gap-1.5 md:gap-2"><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 1</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">104 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 2</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">103 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div></div><div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1 border border-emerald-500/30"><div class="text-[7px] text-emerald-400">HASH BOARD 3</div><div class="flex justify-between"><span class="text-[10px] text-emerald-400 font-bold">105 TH/s</span><span class="text-[6px] text-gray-500">ASIC</span></div><div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div></div></div>
-            <div class="flex justify-between items-end mt-3"><div class="flex gap-2"><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div><div class="w-5 h-3 bg-[#0a1018] rounded border"></div></div><div class="text-right"><span class="text-[8px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] text-emerald-400 font-mono">S21 PRO · 3010W</span></div></div>
+            <div class="flex justify-between gap-2 md:gap-3 mb-4">
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 1 · 4200 RPM</span>
+              </div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 2 · 4200 RPM</span>
+              </div>
+              <div class="bg-[#0d131c] rounded-xl p-2 md:p-3 flex flex-col items-center w-1/3 border border-[#2a3a4a] shadow-lg">
+                <div class="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full border-2 border-[#1e2a3a] bg-[#0a1018]"></div>
+                  <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-[#1a2533] to-[#0a1018]"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] rotate-45"></div>
+                    <div class="w-10 md:w-12 h-0.5 bg-[#2a3a4a] -rotate-45"></div>
+                  </div>
+                  <div class="fan w-8 h-8 md:w-10 md:h-10 text-emerald-400 flex items-center justify-center relative z-10">
+                    <i data-lucide="fan" class="w-full h-full drop-shadow-[0_0_8px_#10b981]"></i>
+                  </div>
+                </div>
+                <span class="text-[8px] md:text-[10px] text-gray-400 mt-1 md:mt-2 tracking-wider">FAN 3 · 4200 RPM</span>
+              </div>
+            </div>
+            <div class="bg-[#0a1018] rounded-lg p-2 md:p-3 mb-3 border border-[#1e2a3a]">
+              <div class="flex flex-wrap justify-between items-center gap-2">
+                <div class="flex gap-3 md:gap-5">
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">PWR</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">HASH</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">NET</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-400 rig-glow"></span><span class="text-[8px] md:text-[10px] text-gray-400 uppercase">TEMP</span></div>
+                </div>
+                <div class="bg-[#0f1822] px-2 md:px-3 py-1 rounded-full border border-emerald-500/20">
+                  <span class="text-emerald-400 text-[8px] md:text-[10px] font-mono">312.5 TH/s</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 md:gap-2">
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 1</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">104 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[98%] h-1 bg-emerald-500 rounded-full"></div></div>
+              </div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 2</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">103 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[96%] h-1 bg-emerald-500 rounded-full"></div></div>
+              </div>
+              <div class="bg-gradient-to-b from-[#1a2a1a] to-[#0f1822] rounded-md p-1.5 md:p-2 border border-emerald-500/30">
+                <div class="text-[7px] md:text-[9px] text-emerald-400/70 font-mono mb-0.5">HASH BOARD 3</div>
+                <div class="flex justify-between"><span class="text-[10px] md:text-xs text-emerald-400 font-bold font-mono">105 TH/s</span><span class="text-[6px] md:text-[8px] text-gray-500">ASIC</span></div>
+                <div class="w-full h-1 bg-[#0a1018] rounded-full mt-1"><div class="w-[99%] h-1 bg-emerald-500 rounded-full"></div></div>
+              </div>
+            </div>
+            <div class="flex justify-between items-end mt-3 md:mt-4">
+              <div class="flex gap-2 md:gap-3">
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">ETH</span></div>
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a] flex items-center justify-center"><span class="text-[5px] md:text-[6px] text-emerald-400">⚡</span></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">PWR</span></div>
+                <div class="flex flex-col items-center"><div class="w-5 md:w-6 h-3 md:h-4 bg-[#0a1018] rounded border border-[#2a3a4a]"></div><span class="text-[6px] md:text-[8px] text-gray-500 mt-0.5">USB</span></div>
+              </div>
+              <div class="text-right"><span class="text-[8px] md:text-[10px] text-gray-500 block">NEPTUNE AI</span><span class="text-[10px] md:text-xs text-emerald-400 font-mono">S21 PRO · 3010W</span></div>
+            </div>
+            <div class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute bottom-2 left-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
+            <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-[#2a3a4a]"></div>
           </div>
         </div>
-        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Real hardware · Geothermal cooled · 99.9% uptime</p>
+        <p class="text-xs md:text-sm text-gray-400 mt-4 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-400"></i>Real hardware · Geothermal cooled · 99.9% uptime</p>
       </div>
       <!-- RIGHT: Stats -->
       <div class="lg:w-3/5 w-full">
-        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
-        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
-        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
+        <div class="mb-4"><h2 class="text-xl md:text-2xl font-bold text-white mb-1">Rent Hash Power → Earn USDT</h2><p class="text-sm md:text-base text-gray-400">Connect to our farm and earn USDT daily — no hardware required.</p></div>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6"><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Active Rigs</div><div class="text-xl md:text-2xl font-bold text-white">47 <span class="text-sm text-gray-400 font-normal">online</span></div></div><div class="bg-[#0f1822] rounded-xl p-3 md:p-4 border border-[#1f2a3a]"><div class="text-gray-400 text-xs mb-1">Total Hashrate</div><div class="text-xl md:text-2xl font-bold text-emerald-400">312.5 TH/s</div></div></div>
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4"><div class="flex items-center gap-2 text-emerald-400 mb-2"><i data-lucide="wallet" class="w-4 h-4 md:w-5 md:h-5"></i><span class="font-semibold">Instant Withdrawals (USDT)</span></div><p class="text-xs md:text-sm text-gray-300">Once payment is received, your wallet connects directly. Daily USDT earnings sent automatically.</p></div>
       </div>
     </div>
   </div>
@@ -398,18 +478,18 @@
     <p class="text-gray-400 text-xs md:text-sm mb-6">See estimated profits — amounts from 50 USDT to 100,000 USDT.</p>
     <div class="mb-6"><div class="flex justify-between items-center mb-1"><label class="text-gray-400 text-xs md:text-sm">Investment (USDT)</label><span id="amountDisplay" class="text-emerald-400 font-bold text-lg md:text-xl">50 USDT</span></div><input type="range" id="investSlider" min="50" max="100000" value="50" step="10" class="w-full accent-emerald-400 h-2 rounded-full"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>50 USDT</span><span>100,000 USDT</span></div></div>
     <div class="mb-6"><label class="block text-gray-400 text-xs md:text-sm mb-2">Mining Unit</label><select id="tierSelect" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400 text-base md:text-lg font-medium"><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="platinum">Platinum</option><option value="diamond">Diamond</option><option value="master">Master</option><option value="grandmaster">Grandmaster</option><option value="elite">Elite</option><option value="legend">Legend</option><option value="mythic">Mythic</option><option value="divine">Divine</option><option value="cosmic" selected>Cosmic</option></select></div>
-    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center"><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div></div>
+    <div class="grid grid-cols-3 gap-3 md:gap-4 text-center"><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Daily (USDT)</p><p id="dailyUsd" class="text-xl md:text-2xl font-bold text-white">22.00 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Monthly (USDT)</p><p id="monthlyUsd" class="text-xl md:text-2xl font-bold text-white">660 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div><div class="bg-[#0f1822] rounded-2xl p-3 md:p-4 border border-[#1f2a3a]"><p class="text-gray-400 text-xs uppercase tracking-wider mb-1 md:mb-2">Yearly (USDT)</p><p id="yearlyUsd" class="text-xl md:text-2xl font-bold text-white">8,030 USDT</p><p class="text-xs text-emerald-400 mt-1">est.</p></div></div>
     <p class="text-[10px] text-gray-500 mt-4 text-center">Based on 50 USDT + Cosmic = 22 USDT/day. Other tiers scale proportionally.</p>
   </div>
 
   <!-- ENROLL CARD -->
-  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
+  <div id="enroll" class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-5 md:p-6 mb-8 shadow-xl"><h3 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> Enroll Now</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"><div><label class="block text-gray-400 text-xs md:text-sm mb-1">Email</label><input type="email" placeholder="your@email.com" class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><label class="block text-gray-400 text-xs md:text-sm mb-1">USDT Wallet Address (TRC20 / ERC20)</label><input type="text" placeholder="TX... or 0x..." class="w-full bg-[#0f1822] border border-[#2a3a4a] rounded-xl p-2.5 md:p-3 text-white mb-4"><button id="orderBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i> Order USDT Mining</button></div><div class="bg-[#0f1822] rounded-xl p-4 md:p-5"><p class="text-gray-400 text-xs md:text-sm">Your Order</p><p class="text-xl md:text-2xl font-bold text-white" id="orderAmount">50 USDT</p><p class="text-xs text-emerald-400">Selected: <span id="selectedTierDisplay">Cosmic</span></p><hr class="border-[#2a3a4a] my-3 md:my-4"><p class="text-gray-400 text-xs">Expected Daily Profit (USDT)</p><p class="text-base md:text-lg font-bold text-emerald-400" id="orderDaily">22.00 USDT</p></div></div></div>
 
   <!-- INFO SECTIONS -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs text-gray-300">Blockchain developers focused on USDT mining.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs text-gray-300">Daily & monthly USDT payouts to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4"><h4 class="font-semibold flex gap-2"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> USDT Wallet?</h4><p class="text-xs text-gray-300">Use Binance, TrustWallet, or TronLink (TRC20/ERC20).</p></div></div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 mb-8"><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Who are we?</h4><p class="text-xs md:text-sm text-gray-300">A team of Cryptocurrency engineering and Blockchain developers focused on USDT mining infrastructure.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Payouts?</h4><p class="text-xs md:text-sm text-gray-300">Daily & monthly USDT payouts to your wallet.</p></div><div class="bg-[#111827] border border-[#1f2a3a] rounded-2xl p-4 md:p-5"><h4 class="font-semibold mb-2 flex items-center gap-2 text-sm md:text-base"><i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i> USDT Wallet?</h4><p class="text-xs md:text-sm text-gray-300">Use Binance, TrustWallet, or TronLink (TRC20/ERC20).</p></div></div>
 
   <!-- HISTORY TRANSACTIONS (white text) -->
-  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 flex gap-2"><i data-lucide="history" class="w-4 h-4 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
+  <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
 </div>
 
@@ -419,7 +499,7 @@
   <div class="float-btn" id="communityChatBtn"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
 </div>
 
-<!-- CHAT ROOM SHELL (identical to ABROX, but dynamic header) -->
+<!-- CHAT ROOM SHELL -->
 <div class="chat-room-shell" id="chatRoomShell">
   <div class="room-header">
     <button class="back-btn" id="closeChatBtn"><i data-lucide="arrow-left"></i></button>
@@ -443,11 +523,11 @@
   <input type="file" id="imageUploadInput" accept="image/*,video/*,audio/*" style="display:none;">
 </div>
 
-<!-- PROFILE MODAL (MINING STATS) -->
+<!-- PROFILE MODAL -->
 <div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-container" id="profileModalContent"></div></div>
 
 <script>
-  // ========== MINING CALCULATOR & TRANSACTIONS (unchanged) ==========
+  // ========== MINING CALCULATOR & TRANSACTIONS ==========
   const DAILY_YIELD_RATE = 0.044;
   const tierMultiplier = { bronze:1, silver:1.2, gold:1.5, platinum:2, diamond:2.5, master:3, grandmaster:4, elite:5, legend:6, mythic:7, divine:8, cosmic:10 };
   const slider = document.getElementById('investSlider');
@@ -487,7 +567,7 @@
   }
   function addTransaction(tx) {
     const row = document.createElement('tr'); row.className = 'border-b border-[#1e2a3a]';
-    row.innerHTML = `<td class="py-2">${tx.time}</td><td class="py-2">${tx.addr}</td><td class="py-2 text-right">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
+    row.innerHTML = `<td class="py-2 text-white">${tx.time}</td><td class="py-2 text-white">${tx.addr}</td><td class="py-2 text-right text-white">${tx.amount}</td><td class="py-2 text-right text-emerald-400">${tx.status}</td>`;
     tbody.appendChild(row);
     if(tbody.children.length > 12) tbody.removeChild(tbody.children[0]);
   }
@@ -516,16 +596,11 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (adapted from ABROX, works with external engine) ==========
+  // ========== CHAT CORE (works with external engine) ==========
   (function() {
     lucide.createIcons();
-    function updateChatDateSticker() {
-      const sticker = document.getElementById('chatDateSticker');
-      if (sticker) sticker.innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
-    }
-    updateChatDateSticker();
+    document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
 
-    // DOM elements
     const chatShell = document.getElementById('chatRoomShell');
     const msgContainer = document.getElementById('chatMessagesContainer');
     const unreadPill = document.getElementById('unreadPill');
@@ -551,15 +626,13 @@
     let replyingTo = null;
     let pendingMedia = null;
     let mediaRecorder = null, isRecording = false, audioStream = null;
-    let currentRoom = 'community'; // 'community' or 'support'
+    let currentRoom = 'community';
     let isHydrating = false;
     const ROOM_STORAGE_PREFIX = 'neptune_chat_';
     let currentStorageRoom = 'general';
 
-    // Helper functions
     function getTime() { return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
     function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-    
     function scrollIfNeeded() {
       if (isAtBottom) msgContainer.scrollTop = msgContainer.scrollHeight;
       else { unread++; unreadCountSpan.innerText = unread===1?'1 new message':`${unread} new messages`; unreadPill.style.display='flex'; }
@@ -588,7 +661,6 @@
     }
     cancelReplyBtn.onclick = () => { replyBar.classList.add('hidden'); replyingTo = null; };
 
-    // Media & voice (same as ABROX)
     mediaBtn.onclick = () => imageInput.click();
     imageInput.onchange = e => {
       const file = e.target.files[0];
@@ -625,7 +697,6 @@
     });
     stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
 
-    // Storage functions
     function saveMessagesToStorage(room) {
       if (isHydrating) return;
       try {
@@ -684,16 +755,14 @@
       finally { isHydrating = false; }
     }
 
-    // Render functions
     function buildIncomingMessage(msgData, shouldSave = true) {
       const row = document.createElement('div');
       row.className = 'chat-msg-row incoming';
       const avatarHtml = msgData.senderAvatar 
-        ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover; background-position: center;"></div>`
+        ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover;"></div>`
         : `<div class="chat-avatar-bubble">${msgData.senderName?.charAt(0) || 'U'}</div>`;
       let contentHtml = '';
       const senderName = msgData.senderName || 'AI';
-      const nameColor = '#10b981'; // emerald
       if (msgData.replyTo) {
         contentHtml += `<div class="reply-preview" style="background: rgba(16,185,129,0.1); padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #10b981;">
           <div style="font-size: 11px; color: #6ee7b7;">↳ ${msgData.replyTo.senderName}</div>
@@ -703,11 +772,11 @@
       if (msgData.mediaUrl) {
         if (msgData.mediaType === 'image') contentHtml += `<img src="${msgData.mediaUrl}" class="chat-image">`;
         else if (msgData.mediaType === 'video') contentHtml += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
-        else if (msgData.mediaType === 'audio') contentHtml += `<div class="chat-audio"><i data-lucide="volume-2"></i><audio src="${msgData.mediaUrl}" controls></audio></div>`;
+        else if (msgData.mediaType === 'audio') contentHtml += `<div class="chat-audio"><audio src="${msgData.mediaUrl}" controls></audio></div>`;
       }
       if (msgData.text) contentHtml += `<div style="margin-top: ${msgData.mediaUrl ? '8px' : '0'};">${msgData.text}</div>`;
       const timeHtml = `<div class="chat-bubble-time">${msgData.time || getTime()}</div>`;
-      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;margin-bottom:4px;display:block;cursor:pointer;color:${nameColor};">${escapeHtml(senderName)}</span>${contentHtml}${timeHtml}</div>`;
+      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;margin-bottom:4px;display:block;cursor:pointer;color:#10b981;">${escapeHtml(senderName)}</span>${contentHtml}${timeHtml}</div>`;
       
       const bubble = row.querySelector('.chat-bubble');
       bubble.addEventListener('click', (e) => {
@@ -718,7 +787,6 @@
         el.addEventListener('click', (e) => { e.stopPropagation(); showLightbox(el.src, el.tagName.toLowerCase()); });
       });
       
-      // Profile click (mining stats)
       const avatarDiv = row.querySelector('.chat-avatar-bubble');
       const nameSpan = bubble.querySelector('.chat-sender-name');
       if (msgData.personaId && msgData.personaId !== 'user') {
@@ -740,7 +808,7 @@
       let content = text ? escapeHtml(text) : '';
       if(imageUrl) content = `<img src="${imageUrl}" class="chat-image"><br>${content}`;
       else if(videoUrl) content = `<video src="${videoUrl}" class="chat-video" controls></video><br>${content}`;
-      else if(audioUrl) content = `<div class="chat-audio"><i data-lucide="volume-2"></i><audio src="${audioUrl}" controls></audio></div><br>${content}`;
+      else if(audioUrl) content = `<div class="chat-audio"><audio src="${audioUrl}" controls></audio></div><br>${content}`;
       if(side==='outgoing'){
         row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks ${tickStatus||'sent'}">${tickStatus==='seen'?'✓✓':(tickStatus==='delivered'?'✓✓':'✓')}</span></div></div>`;
       } else {
@@ -798,7 +866,6 @@
       }
     };
 
-    // Send user message
     function sendUserMessage() {
       let text = chatInput.value.trim();
       if (!text && !pendingMedia) return;
@@ -819,7 +886,7 @@
     sendBtn.addEventListener('click', sendUserMessage);
     chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendUserMessage(); });
 
-    // Online count simulation for community chat
+    // Set header based on room (community shows counts, support does not)
     let onlineInterval;
     function startOnlineSimulation() {
       if (onlineInterval) clearInterval(onlineInterval);
@@ -835,13 +902,12 @@
       }, 25000);
     }
 
-    // Set header based on room
     function setChatHeader(room) {
       if (room === 'community') {
         chatRoomTitle.innerText = 'Neptune Community Chat';
         roomSub.innerHTML = `
           <span class="room-members"><i data-lucide="users" style="width:14px;height:14px;"></i> 3,418 members</span>
-          <span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">247 online</span></span>
+          <span class="room-online"><span class="online-dot"></span> <span id="onlineCountSpan">${Math.floor(Math.random() * (247-62+1)) + 62} online</span></span>
         `;
         startOnlineSimulation();
       } else {
@@ -852,12 +918,10 @@
       lucide.createIcons();
     }
 
-    // Open/close chat
     function openChat(room) {
       currentRoom = room;
       currentStorageRoom = room === 'community' ? 'general' : 'support';
       setChatHeader(room);
-      // Clear messages container and load stored
       msgContainer.innerHTML = `<div class="chat-date-sticker" id="chatDateSticker">Today • ${new Date().toISOString().split('T')[0]}</div>`;
       loadMessagesFromStorage(currentStorageRoom);
       chatShell.classList.add('is-open');
@@ -876,10 +940,6 @@
     document.getElementById('supportChatBtn').onclick = () => openChat('support');
     closeChatBtn.onclick = closeChat;
 
-    // Welcome message (only once)
-    window.chatAPI.addIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
-
-    // Lightbox for media
     function showLightbox(src, type) {
       const overlay = document.createElement('div');
       overlay.style.position = 'fixed'; overlay.style.top = '0'; overlay.style.left = '0'; overlay.style.right = '0'; overlay.style.bottom = '0';
@@ -889,9 +949,12 @@
       overlay.querySelector('button').onclick = () => overlay.remove();
     }
     window.showLightbox = showLightbox;
+
+    // Welcome message
+    window.chatAPI.addIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
   })();
 
-  // Mining profile modal (mining stats, not trading)
+  // Mining profile modal
   function showMiningProfileModal(personaData) {
     const amount = parseFloat(slider.value);
     const tier = tierSelect.value;
@@ -923,7 +986,7 @@
   lucide.createIcons();
 </script>
 
-<!-- EXTERNAL ENGINE AND MANIFEST (must exist in same folder) -->
+<!-- EXTERNAL ENGINE AND MANIFEST -->
 <script src="media-manifest.js"></script>
 <script src="ai-mining-engine.js"></script>
 
