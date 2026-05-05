@@ -1,26 +1,32 @@
-// ====================== AI PERSONA ENGINE v16 (MINING ADAPTED) ======================
-// Humanlike conversations about USDT mining, hash rates, rigs, daily earnings.
-// Uses window.MEDIA_MANIFEST (loaded via media-manifest.js) for media assets.
-// ===================================================================================
+// ====================== AI MINING ENGINE v18 (FINAL) ======================
+// ✓ Pure event‑driven simulation (no polling)
+// ✓ simulateJoin only shows system alert – no extra AI welcome
+// ✓ All 150 personas, mining‑themed phrase banks
+// ✓ Media queues use window.MEDIA_MANIFEST
+// ✓ System messages are properly flagged for HTML persistence
+// ==========================================================================================
 
 (function(){
   "use strict";
 
+  // ---------- CONFIGURATION ----------
   const CONFIG = {
     BASE_INTERVAL: 14000,
     BURST_CHANCE: 0.07,
     MINING_RESULT_INTERVAL: 28000,
     MINING_RESULT_CHANCE: 0.55,
-    TESTIMONIAL_CHANCE: 0.32,
-    JOIN_CHANCE: 0.04,
+    TESTIMONIAL_CHANCE: 0.35,
+    JOIN_CHANCE: 0.15,                   // more join notifications
     MAX_BURST_MESSAGES: 2,
     ENABLE_LOGGING: true,
     WATCHER_ACTIVITY_PENALTY: 0.65,
-    REPLY_CHANCE: 0.42,
-    REPLY_WITH_MEDIA_CHANCE: 0.12,
-    MEDIA_COOLDOWN_MINUTES: 12
+    REPLY_CHANCE: 0.45,
+    REPLY_WITH_MEDIA_CHANCE: 0.40,
+    MEDIA_COOLDOWN_MINUTES: 15,
+    FORCED_REPLY_COOLDOWN: 8000
   };
 
+  // ---------- MESSAGE TYPES (no JOIN in persona banks) ----------
   const MessageType = {
     QUESTION: "question",
     RESULT: "result",
@@ -32,7 +38,6 @@
     FLEX: "flex",
     COMMUNITY: "community",
     TESTIMONIAL: "testimonial",
-    JOIN: "join",
     SARCASTIC: "sarcastic",
     FUNNY: "funny",
     ANALYTICAL: "analytical"
@@ -49,7 +54,6 @@
     [MessageType.FLEX]:       [MessageType.REACTION, MessageType.HYPE, MessageType.TESTIMONIAL, MessageType.SARCASTIC],
     [MessageType.COMMUNITY]:  [MessageType.REACTION, MessageType.QUESTION, MessageType.GREETING],
     [MessageType.TESTIMONIAL]: [MessageType.REACTION, MessageType.QUESTION, MessageType.HYPE],
-    [MessageType.JOIN]:       [MessageType.GREETING, MessageType.REACTION, MessageType.COMMUNITY],
     [MessageType.SARCASTIC]:  [MessageType.REACTION, MessageType.FLEX, MessageType.QUESTION],
     [MessageType.FUNNY]:      [MessageType.REACTION, MessageType.HYPE, MessageType.COMMUNITY],
     [MessageType.ANALYTICAL]: [MessageType.ADVICE, MessageType.QUESTION, MessageType.REACTION]
@@ -59,6 +63,7 @@
   const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
   const log = (...args) => CONFIG.ENABLE_LOGGING && console.log('[MINING AI]', ...args);
 
+  // ---------- TIMEZONE ----------
   function getTimezoneForCountry(country) {
     const map = {
       Nigeria: "Africa/Lagos", "United Kingdom": "Europe/London", UAE: "Asia/Dubai",
@@ -69,6 +74,7 @@
     return map[country] || "UTC";
   }
 
+  // ---------- AVATARS ----------
   function getAvatarUrl(displayName, gender, country, isFallback) {
     if (!isFallback) {
       let safeName = displayName
@@ -97,7 +103,7 @@
     thoughtful: { archetype: 'analytical', experience: 'intermediate', intent: 'community' }
   };
 
-  // ----- 150+ Personas (same list – unchanged) -----
+  // 150 personas (same list as trading app)
   const customPersonas = [
     { name: "oladapo ogunsakin", gender: "men", country: "Nigeria", isFallback: false },
     { name: "narciso panganiban", gender: "men", country: "Mexico", isFallback: false },
@@ -274,25 +280,49 @@
   };
 
   const archetypeDefs = {
-    watcher: { name: "watcher", activityMult: 0.15, traits: ["quiet","observant"], messageTypes: [MessageType.REACTION, MessageType.COMMUNITY] },
-    active: { name: "active", activityMult: 1.0, traits: ["talkative","friendly"], messageTypes: Object.values(MessageType) },
-    leader: { name: "leader", activityMult: 0.9, traits: ["confident","authority"], messageTypes: [MessageType.ADVICE, MessageType.FLEX, MessageType.HYPE] },
-    sarcastic: { name: "sarcastic", activityMult: 0.7, traits: ["witty","sarcastic"], messageTypes: [MessageType.SARCASTIC, MessageType.REACTION, MessageType.FLEX] },
-    analytical: { name: "analytical", activityMult: 0.8, traits: ["logical","detailed"], messageTypes: [MessageType.ANALYTICAL, MessageType.ADVICE, MessageType.QUESTION] },
-    funny: { name: "funny", activityMult: 0.7, traits: ["humorous","joker"], messageTypes: [MessageType.FUNNY, MessageType.REACTION, MessageType.HYPE] }
+    watcher: { name: "watcher", activityMult: 0.15, traits: ["quiet","observant"],
+               messageTypes: [MessageType.REACTION, MessageType.COMMUNITY] },
+    active: { name: "active", activityMult: 1.0, traits: ["talkative","friendly"],
+              messageTypes: [MessageType.QUESTION, MessageType.RESULT, MessageType.REACTION, MessageType.ADVICE, MessageType.HYPE,
+                             MessageType.GREETING, MessageType.CONFUSED, MessageType.FLEX, MessageType.COMMUNITY,
+                             MessageType.TESTIMONIAL, MessageType.SARCASTIC, MessageType.FUNNY, MessageType.ANALYTICAL] },
+    leader: { name: "leader", activityMult: 0.9, traits: ["confident","authority"],
+              messageTypes: [MessageType.ADVICE, MessageType.FLEX, MessageType.HYPE] },
+    sarcastic: { name: "sarcastic", activityMult: 0.7, traits: ["witty","sarcastic"],
+                 messageTypes: [MessageType.SARCASTIC, MessageType.REACTION, MessageType.FLEX] },
+    analytical: { name: "analytical", activityMult: 0.8, traits: ["logical","detailed"],
+                  messageTypes: [MessageType.ANALYTICAL, MessageType.ADVICE, MessageType.QUESTION] },
+    funny: { name: "funny", activityMult: 0.7, traits: ["humorous","joker"],
+             messageTypes: [MessageType.FUNNY, MessageType.REACTION, MessageType.HYPE] }
   };
 
   // Build personas
   const personas = [];
   let idCounter = 1;
-  for (const p of customPersonas) {
-    let personalityKey = nameToPersonality[p.name] || 'active';
-    let personality = personalityPresets[personalityKey] || personalityPresets.active;
+
+  customPersonas.forEach((p, index) => {
+    let personality;
+    if (!p.isFallback && nameToPersonality[p.name]) {
+      personality = personalityPresets[nameToPersonality[p.name]];
+    } else {
+      const presets = Object.values(personalityPresets);
+      personality = presets[index % presets.length];
+    }
+
     const arch = archetypeDefs[personality.archetype] || archetypeDefs.active;
-    let typingBase = [1500, 2800];
-    let grammar = 'mixed';
-    let slang = 0.3;
+
+    let typingBase;
+    if (personality.experience === 'beginner') typingBase = [2500, 4500];
+    else if (personality.experience === 'intermediate') typingBase = [1500, 2800];
+    else typingBase = [900, 1600];
+
+    let grammar = personality.experience === 'beginner' ? 'informal' : (personality.experience === 'intermediate' ? 'mixed' : 'clean');
+    let slang = personality.experience === 'beginner' ? 0.8 : (personality.experience === 'intermediate' ? 0.55 : 0.2);
+    if (personality.archetype === 'sarcastic') slang = Math.min(1, slang + 0.25);
+    if (personality.archetype === 'analytical') grammar = 'clean';
+
     const avatarUrl = getAvatarUrl(p.name, p.gender, p.country, p.isFallback);
+
     personas.push({
       id: `p_${idCounter++}`,
       name: p.name,
@@ -306,16 +336,16 @@
       activityMult: arch.activityMult,
       traits: arch.traits,
       allowedTypes: arch.messageTypes,
-      typingSpeed: [typingBase[0] + idCounter * 2, typingBase[1] + idCounter * 5],
+      typingSpeed: [typingBase[0] + index * 3, typingBase[1] + index * 8],
       grammar: grammar,
-      slangLevel: slang,
-      activityLevel: 'medium',
+      slangLevel: Math.min(1, slang + (Math.random() * 0.2 - 0.1)),
+      activityLevel: personality.experience === 'advanced' ? 'low' : (personality.experience === 'intermediate' ? 'medium' : 'high'),
       onlineHours: [7, 23],
       messageBank: {}
     });
-  }
+  });
 
-  // ----- MINING PHRASE BANKS (no trading) -----
+  // Mining phrase banks
   const globalPhraseBank = {
     question: [
       "how much USDT per day with Bronze tier?", "what's the minimum investment?", "does the Cosmic tier really give 22 USDT/day?",
@@ -324,53 +354,67 @@
       "does the calculator include maintenance fees?", "can I upgrade my tier later?", "what happens if I stop paying?",
       "is there a demo mode?", "how to connect my wallet?", "which wallet is best for USDT (TRC20 or ERC20)?",
       "how fast are withdrawals?", "do you offer a referral bonus?", "can I see a live payout proof?",
-      "what's the peak hashrate of this miner?", "how many rigs are active?", "is it really 99.9% uptime?"
+      "what's the peak hashrate of this miner?", "how many rigs are active?", "is it really 99.9% uptime?",
+      "what's the electricity cost?", "do I need to keep my computer on?", "how often are payouts?",
+      "minimum withdrawal?", "why is my daily lower than the calculator?", "how to upgrade my tier?",
+      "what if the price of USDT drops?", "can I mine BTC as well?"
     ],
     result: [
       "just mined 22 USDT today 🔥", "daily payout received: 66 USDT", "Cosmic tier doing work 💰", "my hash rate is steady at 312 TH/s",
       "withdrew 150 USDT this morning", "Electricity cost? negligible, hosted facility", "upgraded to Platinum, seeing 44 USDT/day",
       "compounding my earnings, up 15% this month", "just hit my first 1000 USDT mined total", "rig has been running 24/7 for 2 weeks",
       "no downtime, consistent payouts", "earning more than I expected", "the S21 Pro is a beast", "hash board 3 running at 105 TH/s",
-      "daily profit target reached before noon", "stacking USDT every day", "passive income never felt so good"
+      "daily profit target reached before noon", "stacking USDT every day", "passive income never felt so good",
+      "another payment received, thank you Neptune", "my rig is humming along nicely", "hashrate stable, profits up",
+      "reinvested, now making 88 USDT/day", "paying my bills with mining income", "love the passive income"
     ],
     reaction: [
       "nice hashrate!", "🔥🔥 mining goals", "solid profit", "keep stacking USDT", "beautiful", "let's gooo", "love seeing the green",
       "respect the grind", "mining is the way", "passive income machine", "congrats on the payout", "that's what I'm talking about",
-      "sheeesh", "you're killing it", "inspiring", "goals", "I need that tier", "how long have you been mining?"
+      "sheeesh", "you're killing it", "inspiring", "goals", "I need that tier", "how long have you been mining?",
+      "nice earnings!", "mine on!"
     ],
     advice: [
       "compound your earnings", "reinvest daily profits", "monitor your hash rate", "stick with the Cosmic tier for best ROI",
       "don't withdraw every day if you want to grow", "use the calculator before investing", "trust the process, mining is long term",
       "keep your wallet secure", "never share your private keys", "admins never DM first", "start with Bronze to test",
       "upgrade gradually", "set a daily profit goal", "diversify across tiers", "check the history transactions for proof",
-      "ask questions in chat, we're here to help", "the rig farm is real, check the live stats"
+      "ask questions in chat, we're here to help", "the rig farm is real, check the live stats",
+      "withdrawals are fast, usually within hours", "check your wallet address before confirming",
+      "use a hardware wallet for large amounts"
     ],
     hype: [
       "this mining farm is too sweet 🔥", "USDT printing machine", "consistent payouts", "best decision I made",
       "passive income unlocked", "stacking sats everyday", "never looking back", "mining is the future",
       "my rig never sleeps", "24/7 earnings", "this is the way", "thank you Neptune AI", "to the moon",
-      "no more 9-5", "waking up to USDT", "life changer", "finally financial freedom"
+      "no more 9-5", "waking up to USDT", "life changer", "finally financial freedom",
+      "earning while I sleep", "let's go, miners!", "another green day"
     ],
     greeting: [
       "hey miners", "good morning mining fam", "what's up rig owners", "hello fellow earners", "how's the hash rate today?",
       "good evening", "who's mining right now?", "just checked my daily payout", "weekend mining is the best", "ready for another green day",
-      "anyone else seeing steady returns?", "checking in from [country]", "hope everyone is earning well"
+      "anyone else seeing steady returns?", "checking in from [country]", "hope everyone is earning well",
+      "mining and chilling", "just woke up, time to check earnings", "happy mining everyone"
     ],
     confused: [
       "I'm new, how do I start mining?", "what's a hash rate?", "how do I connect my wallet?", "can I mine without buying hardware?",
       "explain the tiers please", "what does 'Cosmic' give me?", "is this cloud mining?", "how often are payouts?",
       "I deposited but no earnings yet", "where do I see my hash power?", "what's the minimum withdrawal?",
-      "do I need to keep my computer on?", "I'm lost, please help", "how to upgrade my tier?", "why is my daily lower than the calculator?"
+      "do I need to keep my computer on?", "I'm lost, please help", "how to upgrade my tier?", "why is my daily lower than the calculator?",
+      "what if my wallet address is wrong?", "how long until first payout?", "can I cancel my order?",
+      "do you have a mobile app?"
     ],
     flex: [
       "just mined another 350 USDT", "my Cosmic tier is paying for itself", "holding my USDT, not selling", "already recouped my investment",
       "watch and learn", "this is light work", "mining on autopilot", "stacking deep", "profit machine", "can't stop winning",
-      "top earner this month", "hash rate maxed out", "leveled up to Legend tier", "anyone else in the top 10?"
+      "top earner this month", "hash rate maxed out", "leveled up to Legend tier", "anyone else in the top 10?",
+      "my portfolio is growing daily", "mining is my full‑time job now", "earning more than my previous salary"
     ],
     community: [
       "anyone from Brazil mining here?", "shoutout to all the miners", "we're all in this together", "love this community",
       "the support here is amazing", "no negativity, just mining", "who else is holding USDT?", "let's all get rich together",
-      "teamwork makes the dream work", "grateful for this group", "mining family strong", "keep stacking, stay humble"
+      "teamwork makes the dream work", "grateful for this group", "mining family strong", "keep stacking, stay humble",
+      "share your success stories!", "new to mining? ask questions, we'll help"
     ],
     testimonial: [
       "I started with 50 USDT two weeks ago. Now I'm at 150 USDT earned. This is legit!",
@@ -384,14 +428,10 @@
       "The support team answered all my questions. Highly recommended.",
       "I'm a full-time crypto miner now thanks to Neptune AI.",
       "Withdrew 500 USDT yesterday. Seamless and fast.",
-      "The calculator is accurate – I'm getting exactly 22 USDT/day on 50 USDT."
-    ],
-    join: [
-      "just joined the mining family! 👋", "hello everyone, new miner here!", "excited to start mining USDT 🚀",
-      "joined! looking forward to passive income.", "new member, just rented a Bronze rig.",
-      "hey guys, got my first payout today!", "finally joined the chat. let's mine!",
-      "just signed up. any tips for a beginner miner?", "ready to stack those USDT!",
-      "long time lurker, finally mining.", "heard great things about Neptune AI. Let's go!"
+      "The calculator is accurate – I'm getting exactly 22 USDT/day on 50 USDT.",
+      "Upgraded from Bronze to Cosmic, best move ever.",
+      "Proof of real mining: I visited the facility.",
+      "My wife didn't believe it until she saw the USDT arriving daily."
     ],
     sarcastic: [
       "oh wow, another great mining day... obviously", "sure, my rig never goes down... right",
@@ -414,9 +454,21 @@
       "historical data shows 99.8% uptime over the last month",
       "compound reinvestment could 10x your capital in 3 months",
       "the math checks out: 50 USDT → 22 USDT/day = 44% daily ROI",
-      "watched the rig temperature – stable at 68°C"
+      "watched the rig temperature – stable at 68°C",
+      "hash board 1 is running slightly cooler than board 2",
+      "power consumption is within spec, no efficiency loss"
     ]
   };
+
+  const joinPhrases = [
+    "just joined the mining family! 👋", "hello everyone, new miner here!", "excited to start mining USDT 🚀",
+    "joined! looking forward to passive income.", "new member, just rented a Bronze rig.",
+    "hey guys, got my first payout today!", "finally joined the chat. let's mine!",
+    "just signed up. any tips for a beginner miner?", "ready to stack those USDT!",
+    "long time lurker, finally mining.", "heard great things about Neptune AI. Let's go!",
+    "another miner checking in", "just got my rig online!",
+    "excited to be here, let's earn together"
+  ];
 
   const regionalPhrases = {
     Nigeria: ["how far", "this mining thing legit?", "make I try am", "abeg", "no wahala", "I dey mine"],
@@ -431,9 +483,10 @@
     Mexico: ["órale", "ándale", "qué padre", "wey", "neta"]
   };
 
-  // Populate message banks for each persona
+  // Populate message banks (delete join to prevent AI messages)
   personas.forEach(p => {
     const bank = { ...globalPhraseBank };
+    delete bank.join;
     if (regionalPhrases[p.country]) {
       bank.greeting = [...bank.greeting, ...regionalPhrases[p.country].slice(0,5)];
       bank.reaction = [...bank.reaction, ...regionalPhrases[p.country].slice(2,7)];
@@ -447,7 +500,7 @@
     p.messageBank = bank;
   });
 
-  // ----- Media queue using external manifest (window.MEDIA_MANIFEST) -----
+  // Media queues using window.MEDIA_MANIFEST
   const personaMediaQueue = new Map();
   const recentlyUsed = new Map();
   const personaLastMediaTime = new Map();
@@ -457,7 +510,7 @@
   function pickMediaForPersona(personaId, preferredTypes = ['images','videos','voices']) {
     cleanRecentlyUsed();
     const lastMediaTime = personaLastMediaTime.get(personaId) || 0;
-    if (Date.now() - lastMediaTime < 2 * 60 * 1000) return null;
+    if (Date.now() - lastMediaTime < 8 * 60 * 1000) return null;
     let queue = personaMediaQueue.get(personaId);
     if (!queue || !queue.length) return null;
     for (let i = 0; i < queue.length; i++) {
@@ -478,10 +531,7 @@
   }
 
   function buildMediaQueues() {
-    if (!window.MEDIA_MANIFEST) {
-      log('❌ MEDIA_MANIFEST not found – media will not be sent');
-      return;
-    }
+    if (!window.MEDIA_MANIFEST) { log('❌ MEDIA_MANIFEST not found'); return; }
     personaMediaQueue.clear();
     for (const p of personas) {
       const entry = window.MEDIA_MANIFEST[p.name];
@@ -495,20 +545,30 @@
     log(`✅ Media queues built. Personas with media: ${personaMediaQueue.size}`);
   }
 
-  // Simulation state
+  // ---------- SIMULATION STATE ----------
   let activeTimeouts = [], lastMessageType = null, lastPersonaId = null, simulationActive = false, miningResultInterval = null;
   const recentMessages = [];
-  const chatAPI = window.chatAPI || {};
+  let lastForcedReplyTime = 0;
+  const getChatAPI = () => window.chatAPI || {};
 
-  function isPersonaOnline(p){ try{ const h = new Date(new Date().toLocaleString('en-US',{timeZone:p.timezone})).getHours(); return h>=p.onlineHours[0] && h<p.onlineHours[1]; }catch{ return true; } }
+  function scheduleTimeout(fn, delay) {
+    const id = setTimeout(() => {
+      activeTimeouts = activeTimeouts.filter(t => t !== id);
+      fn();
+    }, delay);
+    activeTimeouts.push(id);
+    return id;
+  }
+
+  function isPersonaOnline(p){ try{ const h = new Date(new Date().toLocaleString('en-US',{timeZone:p.timezone})).getHours(); return h>=p.onlineHours[0] && h<p.onlineHours[1]; } catch{ return true; } }
   function getActivePersonas(){ return personas.filter(p=>isPersonaOnline(p) && (Math.random() < (1 - CONFIG.WATCHER_ACTIVITY_PENALTY * (p.archetype === 'watcher' ? 1 : 0)))); }
   function pickDifferentPersona(){ const active = getActivePersonas(); if(!active.length) return null; let f = active.filter(p=>p.id!==lastPersonaId); if(!f.length) f=active; return pick(f); }
 
   function applyTypos(text){
-    if(Math.random() > 0.15) return text;
+    if(Math.random() > 0.2) return text;
     const words = text.split(' ');
     return words.map(w => {
-      if(w.length < 4 || Math.random() > 0.1) return w;
+      if(w.length < 4 || Math.random() > 0.12) return w;
       const pos = Math.floor(Math.random() * (w.length - 1));
       const chars = w.split('');
       [chars[pos], chars[pos+1]] = [chars[pos+1], chars[pos]];
@@ -526,11 +586,14 @@
       }
       if(!type) type = pick(allowed.filter(t => persona.messageBank[t]?.length) || [MessageType.GREETING]);
     }
-    if(!persona.messageBank[type]?.length) type = pick(Object.keys(persona.messageBank));
+    if (!persona.messageBank[type] || !persona.messageBank[type].length) {
+      const validTypes = Object.keys(persona.messageBank).filter(k => persona.messageBank[k]?.length);
+      type = validTypes.length ? pick(validTypes) : 'greeting';
+    }
     let text = pick(persona.messageBank[type]);
     if(persona.slangLevel > 0.6 && Math.random() > 0.5) text = text.replace(/going to/g,'gonna').replace(/want to/g,'wanna');
     if(persona.grammar === 'informal' && Math.random() > 0.6) text = text.replace(/you are/g,'you\'re').replace(/I am/g,'I\'m');
-    if(Math.random() > 0.4){
+    if(Math.random() > 0.35){
       if(persona.archetype === 'sarcastic') text += ' 😏';
       else if(persona.archetype === 'funny') text += ' 😂';
       else if(persona.archetype === 'analytical') text += ' 📊';
@@ -541,14 +604,14 @@
   }
 
   function getTypingDelay(p, len){ return Math.min(randomBetween(p.typingSpeed[0], p.typingSpeed[1]) * len, 7000); }
-  function showTyping(p, typingType = 'text'){ if(chatAPI.showTypingForPersona) chatAPI.showTypingForPersona(p, typingType); }
-  function hideTyping(){ if(chatAPI.hideTyping) chatAPI.hideTyping(); }
-  function isGeneralChatActive() { return window.__activeChatRoom === 'general' && chatAPI.isChatRoomActive?.(); }
+  function showTyping(p, typingType = 'text'){ if(getChatAPI().showTypingForPersona) getChatAPI().showTypingForPersona(p, typingType); }
+  function hideTyping(){ if(getChatAPI().hideTyping) getChatAPI().hideTyping(); }
+  function isGeneralChatActive() { return window.__activeChatRoom === 'general' && getChatAPI().isChatRoomActive?.(); }
 
   function getLastReplyTarget(excludePersonaId = null) {
-    const target = [...recentMessages].reverse().find(m => m.text && m.personaId !== excludePersonaId);
+    const target = [...recentMessages].reverse().find(m => m.text && m.personaId !== excludePersonaId && !m.isForcedReply);
     if (!target) return null;
-    return { senderName: target.senderName, text: target.text.substring(0, 50), messageType: target.messageType };
+    return { senderName: target.senderName, text: target.text.substring(0, 50), messageType: target.messageType, id: target.id };
   }
 
   function buildReplyText(lastText, targetMessageType) {
@@ -580,7 +643,9 @@
     const isReplyToTestimonial = replyTo && replyTo.messageType === MessageType.TESTIMONIAL;
 
     if (!forceNoMedia && (qualifiesForMedia || isReplyToTestimonial)) {
-      const preferredTypes = (type === MessageType.TESTIMONIAL || isReplyToTestimonial) ? ['images','videos','voices'] : ['images','videos'];
+      const preferredTypes = (type === MessageType.TESTIMONIAL || isReplyToTestimonial) 
+        ? ['images','videos','voices'] 
+        : ['images','videos'];
       mediaItem = pickMediaForPersona(persona.id, preferredTypes);
     }
 
@@ -596,14 +661,13 @@
     const replyTarget = replyTo || getLastReplyTarget(persona.id);
     if(replyTarget) msgData.replyTo = replyTarget;
 
-    setTimeout(() => {
+    const api = getChatAPI();
+    scheduleTimeout(() => {
       hideTyping();
-      if(chatAPI.addIncomingMessage){
-        const el = chatAPI.addIncomingMessage(msgData);
-        if(el) {
-          recentMessages.push({ id: persona.id+'_'+Date.now(), personaId: persona.id, senderName: persona.name, text: msgData.text, messageType: type, element: el });
-          if(recentMessages.length>30) recentMessages.shift();
-        }
+      if(api.addIncomingMessage){
+        api.addIncomingMessage(msgData);
+        recentMessages.push({ id: persona.id+'_'+Date.now(), personaId: persona.id, senderName: persona.name, text: msgData.text, messageType: type, isForcedReply: false });
+        if(recentMessages.length>50) recentMessages.shift();
       }
       lastPersonaId = persona.id;
       log(`${persona.name}: ${msgData.text} ${mediaItem ? '[media]' : ''}`);
@@ -612,7 +676,9 @@
 
   function forceReplyToLastAIMessage() {
     if(!simulationActive || !isGeneralChatActive() || Math.random() > CONFIG.REPLY_CHANCE) return;
-    const lastAIMessage = [...recentMessages].reverse().find(m => m.personaId !== 'user');
+    if(Date.now() - lastForcedReplyTime < CONFIG.FORCED_REPLY_COOLDOWN) return;
+
+    const lastAIMessage = [...recentMessages].reverse().find(m => m.personaId !== 'user' && !m.isForcedReply);
     if(!lastAIMessage) return;
     const persona = pickDifferentPersona();
     if(!persona) return;
@@ -627,45 +693,57 @@
 
     const msgData = {
       senderName: persona.name, senderAvatar: persona.avatar, text: replyText, time: timeStr, personaId: persona.id,
-      replyTo: { senderName: lastAIMessage.senderName, text: lastAIMessage.text.substring(0, 50) }
+      replyTo: { senderName: lastAIMessage.senderName, text: lastAIMessage.text.substring(0, 50) },
+      messageType: MessageType.REACTION
     };
     if (mediaItem) { msgData.mediaType = mediaItem.mediaType; msgData.mediaUrl = mediaItem.url; }
 
-    log(`🤖 ${persona.name} reply to ${lastAIMessage.senderName} ${mediaItem ? '[with image]' : ''}`);
-    if(chatAPI.addIncomingMessage) chatAPI.addIncomingMessage(msgData);
-    lastPersonaId = persona.id;
+    const api = getChatAPI();
+    showTyping(persona, msgData.mediaType === 'audio' ? 'audio' : 'text');
+    scheduleTimeout(() => {
+      hideTyping();
+      if(api.addIncomingMessage) {
+        api.addIncomingMessage(msgData);
+        recentMessages.push({ id: persona.id+'_'+Date.now(), personaId: persona.id, senderName: persona.name, text: replyText, messageType: MessageType.REACTION, isForcedReply: true });
+        if(recentMessages.length>50) recentMessages.shift();
+        lastForcedReplyTime = Date.now();
+      }
+    }, 2500);
   }
 
   const sendPersonaMessage = function(persona, replyTo=null) {
     sendPersonaMessageOriginal(persona, replyTo);
-    setTimeout(() => { forceReplyToLastAIMessage(); }, randomBetween(3000, 6000));
+    scheduleTimeout(() => { forceReplyToLastAIMessage(); }, randomBetween(3000, 6000));
   };
 
-  // Join notification (system message)
+  // ========== SIMULATE JOIN (SYSTEM MESSAGE ONLY) ==========
   function simulateJoin(){
     if (!isGeneralChatActive()) return;
     const p = pick(personas.filter(p => !p.isFallback || Math.random() > 0.5));
     if(!p) return;
-    const joinText = pick(globalPhraseBank.join).replace('[country]', p.country);
+    const joinText = pick(joinPhrases).replace('[country]', p.country);
     const now = new Date(); const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    if(chatAPI.addSystemMessage) chatAPI.addSystemMessage({ text: `🎉 ${p.name} ${joinText}`, time: timeStr });
-    setTimeout(()=>{ if(!simulationActive) return; showTyping(p); setTimeout(()=>{ hideTyping(); if(chatAPI.addIncomingMessage) chatAPI.addIncomingMessage({ senderName:p.name, senderAvatar:p.avatar, text: pick(["thanks for the warm welcome!","excited to be mining here","hello everyone!"]), time: new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), personaId:p.id }); },1500); },3000);
+    const api = getChatAPI();
+    if(api.addSystemMessage) api.addSystemMessage({ text: `🎉 ${p.name} ${joinText}`, time: timeStr });
   }
 
   function triggerBurst(){
-    const count = randomBetween(2, CONFIG.MAX_BURST_MESSAGES);
     let sent = 0;
-    const int = setInterval(()=>{
-      if(sent>=count){ clearInterval(int); return; }
+    function sendNext() {
+      if(!simulationActive || sent >= CONFIG.MAX_BURST_MESSAGES) return;
       const p = pickDifferentPersona();
       if(p && !(p.archetype === 'watcher' && Math.random() > 0.2)){
         const {text} = generateMessage(p);
         showTyping(p);
-        setTimeout(()=>{ hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length));
+        scheduleTimeout(()=>{ hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length));
         sent++;
-      } else { sent++; }
-    }, randomBetween(800, 2000));
-    activeTimeouts.push(int);
+        scheduleTimeout(sendNext, randomBetween(800, 2000));
+      } else {
+        sent++;
+        if(sent < CONFIG.MAX_BURST_MESSAGES) scheduleTimeout(sendNext, randomBetween(800, 2000));
+      }
+    }
+    sendNext();
   }
 
   function simulationTick(){
@@ -677,24 +755,26 @@
       if(p && !(p.archetype === 'watcher' && Math.random() > 0.2)){
         const {text} = generateMessage(p);
         showTyping(p);
-        activeTimeouts.push(setTimeout(()=>{ hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length)+randomBetween(1000,4000)));
+        scheduleTimeout(()=>{ hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length)+randomBetween(1000,4000));
       }
     }
-    activeTimeouts.push(setTimeout(simulationTick, CONFIG.BASE_INTERVAL+randomBetween(-2000,5000)));
+    scheduleTimeout(simulationTick, CONFIG.BASE_INTERVAL+randomBetween(-2000,5000));
   }
 
   function injectMiningResult(){
     if (!isGeneralChatActive()) return;
     const tier = pick(["Bronze","Silver","Gold","Platinum","Diamond","Master","Grandmaster","Elite","Legend","Mythic","Divine","Cosmic"]);
     const usdtAmount = pick(["22","44","66","88","110","132","154","176","198","220","242","264"]);
+    const api = getChatAPI();
     if(Math.random() > 0.5){
       const p = pickDifferentPersona();
       if(p && !(p.archetype === 'watcher' && Math.random() > 0.2)){
         const text = pick([`just mined ${usdtAmount} USDT on ${tier} tier 🎯`,`${tier} payout: ${usdtAmount} USDT today`,`hash rate steady, +${usdtAmount} USDT`]);
         const now = new Date(); const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        if(chatAPI.addIncomingMessage) {
-          const el = chatAPI.addIncomingMessage({ senderName: p.name, senderAvatar: p.avatar, text, time: timeStr, personaId: p.id, messageType: MessageType.RESULT });
-          if (el) { recentMessages.push({ id: p.id+'_'+Date.now(), personaId: p.id, senderName: p.name, text, messageType: MessageType.RESULT, element: el }); if(recentMessages.length>30) recentMessages.shift(); }
+        if(api.addIncomingMessage) {
+          api.addIncomingMessage({ senderName: p.name, senderAvatar: p.avatar, text, time: timeStr, personaId: p.id, messageType: MessageType.RESULT });
+          recentMessages.push({ id: p.id+'_'+Date.now(), personaId: p.id, senderName: p.name, text, messageType: MessageType.RESULT, isForcedReply: false });
+          if(recentMessages.length>50) recentMessages.shift();
         }
         lastPersonaId = p.id; lastMessageType = MessageType.RESULT;
         return;
@@ -702,26 +782,42 @@
     }
     const text = `⛏️ Mining Update: ${Math.floor(Math.random() * 200 + 50)} USDT earned in the last hour across all rigs. 🚀`;
     const now = new Date(); const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    if(chatAPI.addSystemMessage) chatAPI.addSystemMessage({ text, time: timeStr });
+    if(api.addSystemMessage) api.addSystemMessage({ text, time: timeStr });
   }
 
   function startSimulation(){ if(simulationActive) return; simulationActive=true; lastMessageType=null; lastPersonaId=null; log('🚀 Mining simulation started'); simulationTick(); }
-  function stopSimulation(){ simulationActive=false; activeTimeouts.forEach(clearTimeout); activeTimeouts=[]; hideTyping(); log('🛑 Mining simulation stopped'); }
-  function startMiningResultInjection(){ if(miningResultInterval) clearInterval(miningResultInterval); miningResultInterval = setInterval(()=>{ if(!simulationActive||!isGeneralChatActive()) return; if(Math.random()<CONFIG.MINING_RESULT_CHANCE) injectMiningResult(); }, CONFIG.MINING_RESULT_INTERVAL); }
+  function stopSimulation(){
+    simulationActive=false;
+    activeTimeouts.forEach(clearTimeout); activeTimeouts=[];
+    hideTyping(); log('🛑 Mining simulation stopped');
+  }
+  function startMiningResultInjection(){
+    if(miningResultInterval) clearInterval(miningResultInterval);
+    miningResultInterval = setInterval(()=>{
+      if(!simulationActive||!isGeneralChatActive()) return;
+      if(Math.random()<CONFIG.MINING_RESULT_CHANCE) injectMiningResult();
+    }, CONFIG.MINING_RESULT_INTERVAL);
+  }
 
   const originalStartSimulation = startSimulation;
   startSimulation = function() {
     if(simulationActive) return;
     originalStartSimulation();
-    setTimeout(() => {
+    scheduleTimeout(() => {
       if(simulationActive && isGeneralChatActive()) {
         let count = 0;
-        const interval = setInterval(() => {
-          if(count >= 3 || !simulationActive) { clearInterval(interval); return; }
+        function sendNextWarmup() {
+          if(count >= 3 || !simulationActive) return;
           const p = pickDifferentPersona();
-          if(p) { const {text} = generateMessage(p); showTyping(p); setTimeout(() => { hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length)); }
+          if(p) {
+            const {text} = generateMessage(p);
+            showTyping(p);
+            scheduleTimeout(() => { hideTyping(); sendPersonaMessage(p); }, getTypingDelay(p, text.length));
+          }
           count++;
-        }, 2500);
+          scheduleTimeout(sendNextWarmup, 2500);
+        }
+        sendNextWarmup();
       }
     }, 2000);
   };
@@ -732,8 +828,8 @@
     else if (!active && simulationActive) { stopSimulation(); }
   }
 
+  // Only event‑driven – no polling
   window.addEventListener('chat-room-changed', () => { syncSimulationState(); });
-  setInterval(syncSimulationState, 1000);
 
   function initMedia() { buildMediaQueues(); }
   initMedia();
@@ -741,9 +837,9 @@
 
   window.AIPersonaSimulator = { isActive: ()=>simulationActive, getPersonas: ()=>personas, injectMiningResult: ()=>injectMiningResult() };
   window.onUserMessage = function(msg) {
-    recentMessages.push({ id: 'user_'+Date.now(), personaId:'user', senderName:msg.senderName, text:msg.text, element:null });
-    if(recentMessages.length > 30) recentMessages.shift();
+    recentMessages.push({ id: 'user_'+Date.now(), personaId:'user', senderName:msg.senderName, text:msg.text, isForcedReply: false });
+    if(recentMessages.length > 50) recentMessages.shift();
   };
 
-  log(`🤖 MINING AI Persona Engine v16 ready. Chat about USDT mining, hash rates, and daily profits.`);
+  log(`🤖 Mining AI Persona Engine v18 ready. Fully event‑driven, no duplicate AI messages.`);
 })();
