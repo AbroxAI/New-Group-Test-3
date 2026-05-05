@@ -162,7 +162,9 @@
       font-weight: 600;
       font-size: 16px;
       cursor: pointer;
+      overflow: hidden;
     }
+    .chat-avatar-bubble img { width: 100%; height: 100%; object-fit: cover; }
     .chat-bubble {
       --bg: #1a2536;
       max-width: 75%;
@@ -596,7 +598,7 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (works with external engine) ==========
+  // ========== CHAT CORE (FIXED FOR EXTERNAL ENGINE) ==========
   (function() {
     lucide.createIcons();
     document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
@@ -697,16 +699,18 @@
     });
     stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
 
+    // ===== FIXED SYSTEM MESSAGE HANDLING =====
     function saveMessagesToStorage(room) {
       if (isHydrating) return;
       try {
         const messages = [];
         document.querySelectorAll('#chatMessagesContainer .chat-msg-row').forEach(row => {
           const isOutgoing = row.classList.contains('outgoing');
+          const isSystem = row.getAttribute('data-is-system') === 'true';
           const bubble = row.querySelector('.chat-bubble');
           if (!bubble) return;
           const clone = bubble.cloneNode(true);
-          clone.querySelectorAll('.chat-bubble-time, .chat-ticks, .reply-preview').forEach(el => el.remove());
+          clone.querySelectorAll('.chat-bubble-time, .chat-ticks, .reply-preview, .chat-sender-name').forEach(el => el.remove());
           const text = clone.innerText.trim();
           const time = bubble.querySelector('.chat-bubble-time')?.innerText || '';
           const image = bubble.querySelector('.chat-image')?.src || null;
@@ -721,10 +725,14 @@
               else tickStatus = 'sent';
             }
           }
+          let senderName;
+          if (isOutgoing) senderName = 'You';
+          else if (isSystem) senderName = 'System';
+          else senderName = bubble.querySelector('.chat-sender-name')?.innerText || 'Unknown';
+
           messages.push({
             side: isOutgoing ? 'outgoing' : 'incoming',
-            senderName: isOutgoing ? 'You' : (bubble.querySelector('.chat-sender-name')?.innerText || 'User'),
-            text, time, imageUrl: image, videoUrl: video, audioUrl: audio, tickStatus
+            senderName, text, time, imageUrl: image, videoUrl: video, audioUrl: audio, tickStatus, isSystem
           });
         });
         localStorage.setItem(ROOM_STORAGE_PREFIX + room, JSON.stringify(messages));
@@ -741,6 +749,15 @@
         messages.forEach(msg => {
           if (msg.side === 'outgoing') {
             addMessageToFeed('outgoing', msg.text, msg.time, msg.tickStatus, msg.imageUrl, msg.videoUrl, msg.audioUrl, false);
+          } else if (msg.isSystem) {
+            const row = document.createElement('div');
+            row.className = 'chat-msg-row incoming';
+            row.setAttribute('data-is-system', 'true');
+            row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div>
+              <div class="chat-bubble incoming" style="background:#1e3a5f;">
+                <span class="chat-sender-name" style="display:none;">System</span>${msg.text}<div class="chat-bubble-time">${msg.time}</div>
+              </div>`;
+            msgContainer.appendChild(row);
           } else {
             buildIncomingMessage({
               senderName: msg.senderName,
@@ -755,82 +772,6 @@
       finally { isHydrating = false; }
     }
 
-    function buildIncomingMessage(msgData, shouldSave = true) {
-      const row = document.createElement('div');
-      row.className = 'chat-msg-row incoming';
-      const avatarHtml = msgData.senderAvatar 
-        ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover;"></div>`
-        : `<div class="chat-avatar-bubble">${msgData.senderName?.charAt(0) || 'U'}</div>`;
-      let contentHtml = '';
-      const senderName = msgData.senderName || 'AI';
-      if (msgData.replyTo) {
-        contentHtml += `<div class="reply-preview" style="background: rgba(16,185,129,0.1); padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #10b981;">
-          <div style="font-size: 11px; color: #6ee7b7;">↳ ${msgData.replyTo.senderName}</div>
-          <div style="font-size: 12px; color: #cbd5e1;">${msgData.replyTo.text}</div>
-        </div>`;
-      }
-      if (msgData.mediaUrl) {
-        if (msgData.mediaType === 'image') contentHtml += `<img src="${msgData.mediaUrl}" class="chat-image">`;
-        else if (msgData.mediaType === 'video') contentHtml += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
-        else if (msgData.mediaType === 'audio') contentHtml += `<div class="chat-audio"><audio src="${msgData.mediaUrl}" controls></audio></div>`;
-      }
-      if (msgData.text) contentHtml += `<div style="margin-top: ${msgData.mediaUrl ? '8px' : '0'};">${msgData.text}</div>`;
-      const timeHtml = `<div class="chat-bubble-time">${msgData.time || getTime()}</div>`;
-      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;margin-bottom:4px;display:block;cursor:pointer;color:#10b981;">${escapeHtml(senderName)}</span>${contentHtml}${timeHtml}</div>`;
-      
-      const bubble = row.querySelector('.chat-bubble');
-      bubble.addEventListener('click', (e) => {
-        if (e.target.closest('.chat-image') || e.target.closest('.chat-video')) return;
-        setReplyTarget(senderName, msgData.text || 'Media message');
-      });
-      row.querySelectorAll('.chat-image, .chat-video').forEach(el => {
-        el.addEventListener('click', (e) => { e.stopPropagation(); showLightbox(el.src, el.tagName.toLowerCase()); });
-      });
-      
-      const avatarDiv = row.querySelector('.chat-avatar-bubble');
-      const nameSpan = bubble.querySelector('.chat-sender-name');
-      if (msgData.personaId && msgData.personaId !== 'user') {
-        avatarDiv.style.cursor = 'pointer';
-        avatarDiv.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
-        nameSpan.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
-      }
-      
-      msgContainer.appendChild(row);
-      scrollIfNeeded();
-      lucide.createIcons();
-      if (shouldSave && !isHydrating) saveMessagesToStorage(currentStorageRoom);
-      return row;
-    }
-
-    function addMessageToFeed(side, text, time, tickStatus=null, imageUrl=null, videoUrl=null, audioUrl=null, shouldSave = true) {
-      const row = document.createElement('div');
-      row.className = `chat-msg-row ${side}`;
-      let content = text ? escapeHtml(text) : '';
-      if(imageUrl) content = `<img src="${imageUrl}" class="chat-image"><br>${content}`;
-      else if(videoUrl) content = `<video src="${videoUrl}" class="chat-video" controls></video><br>${content}`;
-      else if(audioUrl) content = `<div class="chat-audio"><audio src="${audioUrl}" controls></audio></div><br>${content}`;
-      if(side==='outgoing'){
-        row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks ${tickStatus||'sent'}">${tickStatus==='seen'?'✓✓':(tickStatus==='delivered'?'✓✓':'✓')}</span></div></div>`;
-      } else {
-        row.innerHTML = `<div class="chat-avatar-bubble">👤</div><div class="chat-bubble incoming"><span class="chat-sender-name">You</span>${content}<div class="chat-bubble-time">${time}</div></div>`;
-      }
-      msgContainer.appendChild(row);
-      scrollIfNeeded();
-      lucide.createIcons();
-      if (shouldSave && !isHydrating) saveMessagesToStorage(currentStorageRoom);
-      return row;
-    }
-
-    function addSystemMessage(msgData) {
-      const row = document.createElement('div');
-      row.className = 'chat-msg-row incoming';
-      row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div><div class="chat-bubble incoming" style="background:#1e3a5f;">${msgData.text}<div class="chat-bubble-time">${msgData.time || getTime()}</div></div>`;
-      msgContainer.appendChild(row);
-      scrollIfNeeded();
-      if (!isHydrating) saveMessagesToStorage(currentStorageRoom);
-    }
-
-    // Expose chatAPI for external engine
     window.chatAPI = {
       showTypingForPersona: function(persona, typingType = 'text') {
         const existing = document.getElementById('typingIndicator');
@@ -839,7 +780,7 @@
         row.className = 'chat-msg-row incoming';
         row.id = 'typingIndicator';
         const avatarHtml = persona.avatar 
-          ? `<div class="chat-avatar-bubble" style="background-image: url('${persona.avatar}'); background-size: cover;"></div>`
+          ? `<div class="chat-avatar-bubble" style="background-image: url('${persona.avatar}'); background-size: cover; background-position: center;"></div>`
           : `<div class="chat-avatar-bubble">${persona.name.charAt(0)}</div>`;
         let typingContent = '';
         if (typingType === 'audio') {
@@ -859,12 +800,86 @@
         return buildIncomingMessage(msgData, true);
       },
       addSystemMessage: function(msgData) {
-        addSystemMessage(msgData);
+        const row = document.createElement('div');
+        row.className = 'chat-msg-row incoming';
+        row.setAttribute('data-is-system', 'true');
+        row.innerHTML = `<div class="chat-avatar-bubble" style="background:#3b82f6;">📢</div>
+          <div class="chat-bubble incoming" style="background:#1e3a5f;">
+            <span class="chat-sender-name" style="display:none;">System</span>${msgData.text}<div class="chat-bubble-time">${msgData.time || getTime()}</div>
+          </div>`;
+        msgContainer.appendChild(row);
+        scrollIfNeeded();
+        if (!isHydrating) saveMessagesToStorage(currentStorageRoom);
       },
       isChatRoomActive: function() {
         return chatShell.classList.contains('is-open') && currentRoom === 'community';
       }
     };
+
+    function buildIncomingMessage(msgData, shouldSave = true) {
+      const row = document.createElement('div');
+      row.className = 'chat-msg-row incoming';
+      row.dataset.personaId = msgData.personaId;
+      row.dataset.messageType = msgData.messageType;
+      const avatarHtml = msgData.senderAvatar 
+        ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover; background-position: center;"></div>`
+        : `<div class="chat-avatar-bubble">${msgData.senderName?.charAt(0) || 'U'}</div>`;
+      let contentHtml = '';
+      const senderName = msgData.senderName || 'AI';
+      if (msgData.replyTo) {
+        contentHtml += `<div class="reply-preview" style="background: rgba(16,185,129,0.1); padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #10b981;">
+          <div style="font-size: 11px; color: #6ee7b7;">↳ ${msgData.replyTo.senderName}</div>
+          <div style="font-size: 12px; color: #cbd5e1;">${msgData.replyTo.text}</div></div>`;
+      }
+      if (msgData.mediaUrl) {
+        if (msgData.mediaType === 'image') contentHtml += `<img src="${msgData.mediaUrl}" class="chat-image" loading="lazy">`;
+        else if (msgData.mediaType === 'video') contentHtml += `<video src="${msgData.mediaUrl}" class="chat-video" controls></video>`;
+        else if (msgData.mediaType === 'audio') contentHtml += `<div class="chat-audio"><audio src="${msgData.mediaUrl}" controls></audio></div>`;
+      }
+      if (msgData.text) contentHtml += `<div style="margin-top: ${msgData.mediaUrl ? '8px' : '0'};">${msgData.text}</div>`;
+      const timeHtml = `<div class="chat-bubble-time">${msgData.time || getTime()}</div>`;
+      row.innerHTML = `${avatarHtml}<div class="chat-bubble incoming"><span class="chat-sender-name" style="font-weight:700;margin-bottom:4px;display:block;cursor:pointer;color:#10b981;">${escapeHtml(senderName)}</span>${contentHtml}${timeHtml}</div>`;
+
+      const bubble = row.querySelector('.chat-bubble');
+      bubble.addEventListener('click', (e) => {
+        if (e.target.closest('.chat-image') || e.target.closest('.chat-video')) return;
+        setReplyTarget(senderName, msgData.text || 'Media message');
+      });
+      row.querySelectorAll('.chat-image, .chat-video').forEach(el => {
+        el.addEventListener('click', (e) => { e.stopPropagation(); showLightbox(el.src, el.tagName.toLowerCase()); });
+      });
+      const avatarDiv = row.querySelector('.chat-avatar-bubble');
+      const nameSpan = bubble.querySelector('.chat-sender-name');
+      if (msgData.personaId && msgData.personaId !== 'user') {
+        avatarDiv.style.cursor = 'pointer';
+        avatarDiv.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
+        nameSpan.addEventListener('click', (e) => { e.stopPropagation(); showMiningProfileModal(msgData); });
+      }
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+      lucide.createIcons();
+      if (shouldSave && !isHydrating) saveMessagesToStorage(currentStorageRoom);
+      return row;
+    }
+
+    function addMessageToFeed(side, text, time, tickStatus=null, imageUrl=null, videoUrl=null, audioUrl=null, shouldSave = true) {
+      const row = document.createElement('div');
+      row.className = `chat-msg-row ${side}`;
+      let content = text ? escapeHtml(text) : '';
+      if(imageUrl) content = `<img src="${imageUrl}" class="chat-image" loading="lazy"><br>${content}`;
+      else if(videoUrl) content = `<video src="${videoUrl}" class="chat-video" controls></video><br>${content}`;
+      else if(audioUrl) content = `<div class="chat-audio"><audio src="${audioUrl}" controls></audio></div><br>${content}`;
+      if(side==='outgoing'){
+        row.innerHTML = `<div class="chat-bubble outgoing">${content}<div class="chat-bubble-time">${time}<span class="chat-ticks ${tickStatus||'sent'}">${tickStatus==='seen'?'✓✓':(tickStatus==='delivered'?'✓✓':'✓')}</span></div></div>`;
+      } else {
+        row.innerHTML = `<div class="chat-avatar-bubble">👤</div><div class="chat-bubble incoming"><span class="chat-sender-name">You</span>${content}<div class="chat-bubble-time">${time}</div></div>`;
+      }
+      msgContainer.appendChild(row);
+      scrollIfNeeded();
+      lucide.createIcons();
+      if (shouldSave && !isHydrating) saveMessagesToStorage(currentStorageRoom);
+      return row;
+    }
 
     function sendUserMessage() {
       let text = chatInput.value.trim();
@@ -950,45 +965,40 @@
     }
     window.showLightbox = showLightbox;
 
-    // Welcome message
-    window.chatAPI.addIncomingMessage({ senderName: 'Neptune Bot', text: 'Welcome to Neptune AI Community! Ask about USDT mining, hash rates, or daily profits.' });
+    // Mining profile modal
+    function showMiningProfileModal(personaData) {
+      const amount = parseFloat(slider.value);
+      const tier = tierSelect.value;
+      const daily = calculateDailyUSDT(amount, tier);
+      const totalEarned = (daily * (Math.floor(Math.random() * 30) + 1)).toFixed(2);
+      const durationDays = Math.floor(Math.random() * 60) + 1;
+      const hoursToPayout = Math.floor(Math.random() * 12) + 1;
+      const modalContent = document.getElementById('profileModalContent');
+      modalContent.innerHTML = `
+        <div class="profile-avatar">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
+        <div class="profile-name">${escapeHtml(personaData.senderName)}</div>
+        <div class="profile-stats">
+          <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${amount.toLocaleString()} USDT</span></div>
+          <div class="stat-row"><span class="stat-label">Daily Profit</span><span class="stat-value">${daily.toFixed(2)} USDT</span></div>
+          <div class="stat-row"><span class="stat-label">Total Earned</span><span class="stat-value">${parseFloat(totalEarned).toLocaleString()} USDT</span></div>
+          <div class="stat-row"><span class="stat-label">Hashrate</span><span class="stat-value">312.5 TH/s</span></div>
+          <div class="stat-row"><span class="stat-label">Mining Unit</span><span class="stat-value">${tierSelect.options[tierSelect.selectedIndex].text}</span></div>
+          <div class="stat-row"><span class="stat-label">Mining Duration</span><span class="stat-value">${durationDays} days</span></div>
+          <div class="stat-row"><span class="stat-label">Next Payout</span><span class="stat-value">in ${hoursToPayout} hours</span></div>
+        </div>
+        <button class="profile-message-btn" id="closeProfileModalBtn">Close</button>
+      `;
+      document.getElementById('profileModal').classList.add('active');
+      document.getElementById('closeProfileModalBtn').onclick = () => document.getElementById('profileModal').classList.remove('active');
+    }
+    window.showMiningProfileModal = showMiningProfileModal;
+    window.escapeHtml = escapeHtml;
+
+    lucide.createIcons();
   })();
-
-  // Mining profile modal
-  function showMiningProfileModal(personaData) {
-    const amount = parseFloat(slider.value);
-    const tier = tierSelect.value;
-    const daily = calculateDailyUSDT(amount, tier);
-    const totalEarned = (daily * (Math.floor(Math.random() * 30) + 1)).toFixed(2);
-    const durationDays = Math.floor(Math.random() * 60) + 1;
-    const hoursToPayout = Math.floor(Math.random() * 12) + 1;
-    const modalContent = document.getElementById('profileModalContent');
-    modalContent.innerHTML = `
-      <div class="profile-avatar">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
-      <div class="profile-name">${escapeHtml(personaData.senderName)}</div>
-      <div class="profile-stats">
-        <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${amount.toLocaleString()} USDT</span></div>
-        <div class="stat-row"><span class="stat-label">Daily Profit</span><span class="stat-value">${daily.toFixed(2)} USDT</span></div>
-        <div class="stat-row"><span class="stat-label">Total Earned</span><span class="stat-value">${parseFloat(totalEarned).toLocaleString()} USDT</span></div>
-        <div class="stat-row"><span class="stat-label">Hashrate</span><span class="stat-value">312.5 TH/s</span></div>
-        <div class="stat-row"><span class="stat-label">Mining Unit</span><span class="stat-value">${tierSelect.options[tierSelect.selectedIndex].text}</span></div>
-        <div class="stat-row"><span class="stat-label">Mining Duration</span><span class="stat-value">${durationDays} days</span></div>
-        <div class="stat-row"><span class="stat-label">Next Payout</span><span class="stat-value">in ${hoursToPayout} hours</span></div>
-      </div>
-      <button class="profile-message-btn" id="closeProfileModalBtn">Close</button>
-    `;
-    document.getElementById('profileModal').classList.add('active');
-    document.getElementById('closeProfileModalBtn').onclick = () => document.getElementById('profileModal').classList.remove('active');
-  }
-  window.showMiningProfileModal = showMiningProfileModal;
-  window.escapeHtml = (str) => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
-
-  lucide.createIcons();
 </script>
 
-<!-- EXTERNAL ENGINE AND MANIFEST -->
 <script src="media-manifest.js"></script>
 <script src="ai-mining-engine.js"></script>
-
 </body>
 </html>
