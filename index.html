@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* ========== FULL MINING RIG STYLES (ORIGINAL) ========== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: #0b0f17;
@@ -287,9 +286,25 @@
     .profile-avatar {
       width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
       background: #0e1522; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border: 2px solid #10b981;
+      cursor: pointer; border: 2px solid #10b981; overflow: hidden;
     }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .profile-name { font-size: 20px; font-weight: 800; color: #fff; }
+    .online-badge-profile {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      padding: 2px 8px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .online-dot-profile {
+      width: 8px; height: 8px; background: #10b981; border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
     .profile-stats { background: #0e1522; border-radius: 20px; padding: 12px; margin-top: 8px; }
     .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a3a4e; font-size: 13px; }
     .stat-row:last-child { border-bottom: none; }
@@ -321,7 +336,6 @@
     .toast-notification .text-emerald-400 {
       color: #34d399 !important;
     }
-    /* Fix transaction history text */
     #transactionBody td, #transactionBody th {
       color: #e2e8f0 !important;
     }
@@ -526,7 +540,9 @@
 </div>
 
 <!-- PROFILE MODAL -->
-<div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-container" id="profileModalContent"></div></div>
+<div class="profile-modal-overlay" id="profileModal">
+  <div class="profile-modal-container" id="profileModalContent"></div>
+</div>
 
 <script>
   // ========== MINING CALCULATOR & TRANSACTIONS ==========
@@ -598,7 +614,7 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (FIXED FOR EXTERNAL ENGINE) ==========
+  // ========== CHAT CORE (UPDATED WITH PROFILE & AVATAR FIXES) ==========
   (function() {
     lucide.createIcons();
     document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
@@ -699,7 +715,6 @@
     });
     stopRecordingBtn.onclick = () => { if(mediaRecorder && isRecording) mediaRecorder.stop(); };
 
-    // ===== FIXED SYSTEM MESSAGE HANDLING =====
     function saveMessagesToStorage(room) {
       if (isHydrating) return;
       try {
@@ -745,7 +760,7 @@
       try {
         isHydrating = true;
         const messages = JSON.parse(stored);
-        msgContainer.innerHTML = `<div class="chat-date-sticker" id="chatDateSticker">Today • ${new Date().toISOString().split('T')[0]}</div>`;
+        msgContainer.innerHTML = `<div class="chat-date-sticker">Today • ${new Date().toISOString().split('T')[0]}</div>`;
         messages.forEach(msg => {
           if (msg.side === 'outgoing') {
             addMessageToFeed('outgoing', msg.text, msg.time, msg.tickStatus, msg.imageUrl, msg.videoUrl, msg.audioUrl, false);
@@ -821,6 +836,7 @@
       row.className = 'chat-msg-row incoming';
       row.dataset.personaId = msgData.personaId;
       row.dataset.messageType = msgData.messageType;
+      // Avatar with fallback to letter
       const avatarHtml = msgData.senderAvatar 
         ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover; background-position: center;"></div>`
         : `<div class="chat-avatar-bubble">${msgData.senderName?.charAt(0) || 'U'}</div>`;
@@ -901,7 +917,6 @@
     sendBtn.addEventListener('click', sendUserMessage);
     chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendUserMessage(); });
 
-    // Set header based on room (community shows counts, support does not)
     let onlineInterval;
     function startOnlineSimulation() {
       if (onlineInterval) clearInterval(onlineInterval);
@@ -937,7 +952,7 @@
       currentRoom = room;
       currentStorageRoom = room === 'community' ? 'general' : 'support';
       setChatHeader(room);
-      msgContainer.innerHTML = `<div class="chat-date-sticker" id="chatDateSticker">Today • ${new Date().toISOString().split('T')[0]}</div>`;
+      msgContainer.innerHTML = `<div class="chat-date-sticker">Today • ${new Date().toISOString().split('T')[0]}</div>`;
       loadMessagesFromStorage(currentStorageRoom);
       chatShell.classList.add('is-open');
       window.__activeChatRoom = room === 'community' ? 'general' : null;
@@ -965,34 +980,66 @@
     }
     window.showLightbox = showLightbox;
 
-    // Mining profile modal
+    // ===== UPDATED MINING PROFILE MODAL (UNIQUE STATS, ONLINE PILL, FALLBACK AVATAR) =====
     function showMiningProfileModal(personaData) {
-      const amount = parseFloat(slider.value);
-      const tier = tierSelect.value;
-      const daily = calculateDailyUSDT(amount, tier);
-      const totalEarned = (daily * (Math.floor(Math.random() * 30) + 1)).toFixed(2);
-      const durationDays = Math.floor(Math.random() * 60) + 1;
-      const hoursToPayout = Math.floor(Math.random() * 12) + 1;
+      const seed = (personaData.senderName || 'Trader').split('').reduce((a,b)=>a+b.charCodeAt(0),0);
+      const tiers = ["Bronze","Silver","Gold","Platinum","Diamond","Master","Grandmaster","Elite","Legend","Mythic","Divine","Cosmic"];
+      const tierIndex = seed % tiers.length;
+      const tierName = tiers[tierIndex];
+      const investmentBase = 30 + (seed % 9970);
+      const investment = Math.round(investmentBase / 10) * 10;
+      const dailyProfit = (investment * DAILY_YIELD_RATE * (tierMultiplier[tierName] || 1)).toFixed(2);
+      const daysActive = 1 + (seed % 30);
+      const totalEarned = (parseFloat(dailyProfit) * daysActive).toFixed(2);
+      const hashrate = (312.5 + (seed % 100) - 50).toFixed(1) + ' TH/s';
+      const hoursToPayout = 1 + (seed % 11);
+
       const modalContent = document.getElementById('profileModalContent');
       modalContent.innerHTML = `
-        <div class="profile-avatar">${personaData.senderAvatar ? `<img src="${personaData.senderAvatar}">` : personaData.senderName.charAt(0)}</div>
+        <div class="profile-avatar">
+          ${personaData.senderAvatar 
+            ? `<img src="${personaData.senderAvatar}" onerror="this.style.display='none'; this.parentElement.textContent='${personaData.senderName.charAt(0)}'">`
+            : personaData.senderName.charAt(0)}
+        </div>
         <div class="profile-name">${escapeHtml(personaData.senderName)}</div>
+        <div class="flex items-center justify-center gap-2 mt-2 mb-4">
+          <span class="online-badge-profile">
+            <span class="online-dot-profile"></span> Online
+          </span>
+        </div>
         <div class="profile-stats">
-          <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${amount.toLocaleString()} USDT</span></div>
-          <div class="stat-row"><span class="stat-label">Daily Profit</span><span class="stat-value">${daily.toFixed(2)} USDT</span></div>
+          <div class="stat-row"><span class="stat-label">Mining Unit</span><span class="stat-value">${tierName}</span></div>
+          <div class="stat-row"><span class="stat-label">Investment</span><span class="stat-value">${investment.toLocaleString()} USDT</span></div>
+          <div class="stat-row"><span class="stat-label">Daily Profit</span><span class="stat-value">${dailyProfit} USDT</span></div>
           <div class="stat-row"><span class="stat-label">Total Earned</span><span class="stat-value">${parseFloat(totalEarned).toLocaleString()} USDT</span></div>
-          <div class="stat-row"><span class="stat-label">Hashrate</span><span class="stat-value">312.5 TH/s</span></div>
-          <div class="stat-row"><span class="stat-label">Mining Unit</span><span class="stat-value">${tierSelect.options[tierSelect.selectedIndex].text}</span></div>
-          <div class="stat-row"><span class="stat-label">Mining Duration</span><span class="stat-value">${durationDays} days</span></div>
+          <div class="stat-row"><span class="stat-label">Hashrate</span><span class="stat-value">${hashrate}</span></div>
           <div class="stat-row"><span class="stat-label">Next Payout</span><span class="stat-value">in ${hoursToPayout} hours</span></div>
         </div>
         <button class="profile-message-btn" id="closeProfileModalBtn">Close</button>
       `;
       document.getElementById('profileModal').classList.add('active');
       document.getElementById('closeProfileModalBtn').onclick = () => document.getElementById('profileModal').classList.remove('active');
+      lucide.createIcons();
     }
     window.showMiningProfileModal = showMiningProfileModal;
     window.escapeHtml = escapeHtml;
+
+    // Avatar preloader (just like trading)
+    (function preloadAvatars() {
+      const checkInterval = setInterval(() => {
+        if (window.AIPersonaSimulator && typeof window.AIPersonaSimulator.getPersonas === 'function') {
+          clearInterval(checkInterval);
+          const personas = window.AIPersonaSimulator.getPersonas();
+          personas.forEach(p => {
+            if (p.avatar && !p.avatar.includes('ui-avatars.com')) {
+              const img = new Image();
+              img.src = p.avatar;
+            }
+          });
+          console.log('✅ Preloaded mining persona avatars');
+        }
+      }, 200);
+    })();
 
     lucide.createIcons();
   })();
