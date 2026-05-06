@@ -271,6 +271,7 @@
     }
     @keyframes wave { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
 
+    /* Profile modal */
     .profile-modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
       z-index: 300; display: flex; align-items: center; justify-content: center;
@@ -339,7 +340,6 @@
       color: #e2e8f0 !important;
     }
 
-    /* Lock body scroll when chat is open */
     .body-no-scroll {
       overflow: hidden;
       position: fixed;
@@ -347,7 +347,7 @@
       height: 100%;
     }
 
-    /* FAQ Panel styles */
+    /* FAQ Panel – always visible */
     .faq-panel {
       position: fixed;
       bottom: 140px;
@@ -356,15 +356,6 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: opacity 0.3s, transform 0.3s;
-    }
-    .faq-panel.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
     }
     .faq-btn {
       background: #1e293b;
@@ -552,7 +543,7 @@
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
 </div>
 
-<!-- FAQ PANEL (floating near support button) -->
+<!-- FAQ PANEL (always visible above support button) -->
 <div class="faq-panel" id="faqPanel">
   <button class="faq-btn" onclick="askFAQ('How do I start mining?')">💬 How do I start mining?</button>
   <button class="faq-btn" onclick="askFAQ('What is the minimum investment?')">💰 Minimum investment?</button>
@@ -1104,7 +1095,7 @@
     lucide.createIcons();
   })();
 
-  // ===== FAQ SUPPORT LOGIC =====
+  // ===== FAQ SUPPORT LOGIC (always‑visible FAQ) =====
   const supportAnswers = {
     "How do I start mining?": "To start mining, click the 'Start Mining USDT' button, choose your investment amount and mining tier, then enter your email and USDT wallet address. After payment, your hash power activates immediately and you'll see daily payouts in your dashboard.",
     "What is the minimum investment?": "The minimum investment is 50 USDT. With the Bronze tier, you can earn approximately 2.2 USDT per day. Higher tiers multiply your daily payout proportionally.",
@@ -1125,10 +1116,12 @@
   }
 
   window.askFAQ = function(question) {
+    // Open support chat if not already open
     if (!document.getElementById('chatRoomShell').classList.contains('is-open') || window.__activeChatRoom !== 'support') {
       document.getElementById('supportChatBtn').click();
     }
 
+    // Wait for chat to open, then send user message and reply
     setTimeout(() => {
       const chatInput = document.getElementById('chatInput');
       const sendBtn = document.getElementById('sendBtn');
@@ -1154,30 +1147,6 @@
       }, typingDuration + 500);
     }, 500);
   };
-
-  let faqVisible = false;
-  document.getElementById('supportChatBtn').addEventListener('click', function(e) {
-    if (document.getElementById('chatRoomShell').classList.contains('is-open') && window.__activeChatRoom === 'support') {
-      e.stopPropagation();
-      faqVisible = !faqVisible;
-      document.getElementById('faqPanel').classList.toggle('active', faqVisible);
-    } else {
-      faqVisible = false;
-      document.getElementById('faqPanel').classList.remove('active');
-    }
-  });
-
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.faq-panel') && !e.target.closest('#supportChatBtn')) {
-      faqVisible = false;
-      document.getElementById('faqPanel').classList.remove('active');
-    }
-  });
-
-  document.getElementById('closeChatBtn').addEventListener('click', function() {
-    faqVisible = false;
-    document.getElementById('faqPanel').classList.remove('active');
-  });
 </script>
 
 <script src="media-manifest.js"></script>
