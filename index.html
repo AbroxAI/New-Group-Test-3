@@ -56,7 +56,7 @@
     .float-btn.support { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
     .float-btn.support:hover { background: #2563eb; }
 
-    /* Chat drawer */
+    /* Chat drawer – solid background, no bleed */
     .chat-room-shell {
       position: fixed;
       top: 0;
@@ -64,7 +64,7 @@
       bottom: 0;
       width: 100%;
       max-width: 460px;
-      background: #0a0f17;
+      background: #0a0f17;               /* solid */
       z-index: 200;
       display: flex;
       flex-direction: column;
@@ -133,6 +133,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      background: #0a0f17;               /* solid */
     }
     .chat-date-sticker {
       width: max-content;
@@ -614,7 +615,7 @@
   setTimeout(showRandomToast, 5000);
   setInterval(showRandomToast, 25000);
 
-  // ========== CHAT CORE (UPDATED WITH PROFILE & AVATAR FIXES) ==========
+  // ========== CHAT CORE (UPDATED) ==========
   (function() {
     lucide.createIcons();
     document.getElementById('chatDateSticker').innerText = `Today • ${new Date().toISOString().split('T')[0]}`;
@@ -836,7 +837,6 @@
       row.className = 'chat-msg-row incoming';
       row.dataset.personaId = msgData.personaId;
       row.dataset.messageType = msgData.messageType;
-      // Avatar with fallback to letter
       const avatarHtml = msgData.senderAvatar 
         ? `<div class="chat-avatar-bubble" style="background-image: url('${msgData.senderAvatar}'); background-size: cover; background-position: center;"></div>`
         : `<div class="chat-avatar-bubble">${msgData.senderName?.charAt(0) || 'U'}</div>`;
@@ -1024,7 +1024,7 @@
     window.showMiningProfileModal = showMiningProfileModal;
     window.escapeHtml = escapeHtml;
 
-    // Avatar preloader (just like trading)
+    // Avatar preloader
     (function preloadAvatars() {
       const checkInterval = setInterval(() => {
         if (window.AIPersonaSimulator && typeof window.AIPersonaSimulator.getPersonas === 'function') {
