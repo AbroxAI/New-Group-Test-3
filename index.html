@@ -132,7 +132,7 @@
       flex-direction: column;
       gap: 12px;
       background: #0a0f17;
-      overscroll-behavior: contain;   /* prevents scroll bleed */
+      overscroll-behavior: contain;
     }
     .chat-date-sticker {
       width: max-content;
@@ -271,7 +271,6 @@
     }
     @keyframes wave { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
 
-    /* Profile modal (mining stats) */
     .profile-modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
       z-index: 300; display: flex; align-items: center; justify-content: center;
@@ -346,6 +345,42 @@
       position: fixed;
       width: 100%;
       height: 100%;
+    }
+
+    /* FAQ Panel styles */
+    .faq-panel {
+      position: fixed;
+      bottom: 140px;
+      right: 24px;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .faq-panel.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .faq-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: background 0.2s;
+      text-align: left;
+    }
+    .faq-btn:hover {
+      background: #334155;
     }
   </style>
 </head>
@@ -515,6 +550,14 @@
   <!-- HISTORY TRANSACTIONS (white text) -->
   <div class="bg-[#111827] border border-[#1f2a3a] rounded-3xl p-4 md:p-6 mb-8"><h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i> History Transactions (USDT)</h3><div class="overflow-x-auto"><table class="w-full text-xs md:text-sm"><thead class="text-gray-400 border-b border-[#2a3a4a]"><tr><th class="text-left py-2">Time</th><th class="text-left">Address</th><th class="text-right">Amount (USDT)</th><th class="text-right">Status</th></tr></thead><tbody id="transactionBody"></tbody></table></div></div>
   <div class="text-center text-gray-500 text-xs md:text-sm">Neptune AI · Refundable on any purchase · USDT mining powered by real hardware</div>
+</div>
+
+<!-- FAQ PANEL (floating near support button) -->
+<div class="faq-panel" id="faqPanel">
+  <button class="faq-btn" onclick="askFAQ('How do I start mining?')">💬 How do I start mining?</button>
+  <button class="faq-btn" onclick="askFAQ('What is the minimum investment?')">💰 Minimum investment?</button>
+  <button class="faq-btn" onclick="askFAQ('How long until I get paid?')">⏱️ How long until payout?</button>
+  <button class="faq-btn" onclick="askFAQ('Is the mining rig real?')">🔍 Is the rig real?</button>
 </div>
 
 <!-- FLOATING CHAT BUTTONS -->
@@ -1060,6 +1103,81 @@
 
     lucide.createIcons();
   })();
+
+  // ===== FAQ SUPPORT LOGIC =====
+  const supportAnswers = {
+    "How do I start mining?": "To start mining, click the 'Start Mining USDT' button, choose your investment amount and mining tier, then enter your email and USDT wallet address. After payment, your hash power activates immediately and you'll see daily payouts in your dashboard.",
+    "What is the minimum investment?": "The minimum investment is 50 USDT. With the Bronze tier, you can earn approximately 2.2 USDT per day. Higher tiers multiply your daily payout proportionally.",
+    "How long until I get paid?": "Payouts are processed automatically every 24 hours. If you just enrolled, your first payout will arrive within 24 hours of your investment confirmation. You can track your earnings in the History Transactions table.",
+    "Is the mining rig real?": "Yes, all our mining rigs are physical ASIC machines (S21 Pro) hosted in a geothermal‑cooled data center. We provide live hashrate stats, fan RPM, and uptime information right on the dashboard. You can verify through our live monitoring."
+  };
+
+  const genericSupportReply = "Thank you for contacting Neptune AI Support. I'll connect you with a specialist who can help with that. Please hold on.";
+
+  function showSupportTyping(durationMs) {
+    const chatAPI = window.chatAPI;
+    if (!chatAPI || !chatAPI.showTypingForPersona) return;
+    const botPersona = { name: 'Support Team', avatar: '' };
+    chatAPI.showTypingForPersona(botPersona, 'text');
+    setTimeout(() => {
+      chatAPI.hideTyping();
+    }, durationMs);
+  }
+
+  window.askFAQ = function(question) {
+    if (!document.getElementById('chatRoomShell').classList.contains('is-open') || window.__activeChatRoom !== 'support') {
+      document.getElementById('supportChatBtn').click();
+    }
+
+    setTimeout(() => {
+      const chatInput = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+      if (chatInput && sendBtn) {
+        chatInput.value = question;
+        sendBtn.click();
+      }
+
+      const answer = supportAnswers[question] || genericSupportReply;
+      const typingDuration = Math.min(answer.length * 50, 4000);
+      showSupportTyping(typingDuration);
+
+      setTimeout(() => {
+        const chatAPI = window.chatAPI;
+        if (chatAPI && chatAPI.addIncomingMessage) {
+          chatAPI.addIncomingMessage({
+            senderName: 'Support Team',
+            text: answer,
+            time: new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}),
+            personaId: 'support'
+          });
+        }
+      }, typingDuration + 500);
+    }, 500);
+  };
+
+  let faqVisible = false;
+  document.getElementById('supportChatBtn').addEventListener('click', function(e) {
+    if (document.getElementById('chatRoomShell').classList.contains('is-open') && window.__activeChatRoom === 'support') {
+      e.stopPropagation();
+      faqVisible = !faqVisible;
+      document.getElementById('faqPanel').classList.toggle('active', faqVisible);
+    } else {
+      faqVisible = false;
+      document.getElementById('faqPanel').classList.remove('active');
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.faq-panel') && !e.target.closest('#supportChatBtn')) {
+      faqVisible = false;
+      document.getElementById('faqPanel').classList.remove('active');
+    }
+  });
+
+  document.getElementById('closeChatBtn').addEventListener('click', function() {
+    faqVisible = false;
+    document.getElementById('faqPanel').classList.remove('active');
+  });
 </script>
 
 <script src="media-manifest.js"></script>
